@@ -1,0 +1,67 @@
+/* [project]/Downloads/ai-blog/app/monument_928f2418.module.css [app-client] (css) */
+@font-face {
+  font-family: monument;
+  src: url("../media/MonumentGrotesk_Regular-s.p.d3cfc223.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: monument;
+  src: url("../media/MonumentGrotesk_Italic-s.p.0682c6f8.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: monument;
+  src: url("../media/MonumentGrotesk_Medium-s.p.3ba2d28d.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: monument;
+  src: url("../media/MonumentGrotesk_MediumItalic-s.p.ee475905.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: monument;
+  src: url("../media/MonumentGrotesk_Bold-s.p.21258c4d.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: monument;
+  src: url("../media/MonumentGrotesk_BoldItalic-s.p.dabe37b7.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: monument Fallback;
+  src: local(Arial);
+  ascent-override: 221.38%;
+  descent-override: 59.69%;
+  line-gap-override: 0.0%;
+  size-adjust: 99.14%;
+}
+
+.monument_928f2418-module__VKL5tq__className {
+  font-family: monument, monument Fallback;
+}
+
+.monument_928f2418-module__VKL5tq__variable {
+  --font-monument: "monument", "monument Fallback";
+}
+
+/*# sourceMappingURL=Downloads_ai-blog_app_monument_928f2418_module_css_bad6b30c._.single.css.map*/

@@ -1,0 +1,11 @@
+var R=require("../../../../chunks/[turbopack]_runtime.js")("server/app/api/articles/search/route.js")
+R.c("server/chunks/71275_@supabase_supabase-js_dist_esm_wrapper_mjs_24c0bfed._.js")
+R.c("server/chunks/71275_next_fb6843bf._.js")
+R.c("server/chunks/71275_@supabase_realtime-js_dist_module_fd8e6cb3._.js")
+R.c("server/chunks/71275_@supabase_storage-js_dist_module_02a95a02._.js")
+R.c("server/chunks/71275_@supabase_auth-js_dist_module_e2e53478._.js")
+R.c("server/chunks/71275_6b51e05d._.js")
+R.c("server/chunks/[root-of-the-server]__f44444c9._.js")
+R.c("server/chunks/6c7f9_ai-blog__next-internal_server_app_api_articles_search_route_actions_b154c9a5.js")
+R.m("[project]/Downloads/ai-blog/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/Downloads/ai-blog/app/api/articles/search/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)")
+module.exports=R.m("[project]/Downloads/ai-blog/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/Downloads/ai-blog/app/api/articles/search/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)").exports

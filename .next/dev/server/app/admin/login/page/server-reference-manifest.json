@@ -1,0 +1,35 @@
+{
+  "node": {
+    "00768595761dc294f8edb1a23aac622cf7a9c6c945": {
+      "workers": {
+        "app/admin/login/page": {
+          "moduleId": "[project]/Downloads/ai-blog/.next-internal/server/app/admin/login/page/actions.js { ACTIONS_MODULE0 => \"[project]/Downloads/ai-blog/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "logoutAction",
+          "filename": "Downloads/ai-blog/app/actions/auth.ts"
+        }
+      },
+      "layer": {
+        "app/admin/login/page": "action-browser"
+      },
+      "exportedName": "logoutAction",
+      "filename": "Downloads/ai-blog/app/actions/auth.ts"
+    },
+    "40505bdc77eaafbb21c537a679ad1a98fe2f226c1d": {
+      "workers": {
+        "app/admin/login/page": {
+          "moduleId": "[project]/Downloads/ai-blog/.next-internal/server/app/admin/login/page/actions.js { ACTIONS_MODULE0 => \"[project]/Downloads/ai-blog/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "loginAction",
+          "filename": "Downloads/ai-blog/app/actions/auth.ts"
+        }
+      },
+      "layer": {
+        "app/admin/login/page": "action-browser"
+      },
+      "exportedName": "loginAction",
+      "filename": "Downloads/ai-blog/app/actions/auth.ts"
+    }
+  },
+  "edge": {}
+}

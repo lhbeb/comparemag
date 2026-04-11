@@ -1,0 +1,11 @@
+var R=require("../../chunks/ssr/[turbopack]_runtime.js")("server/app/_not-found/page.js")
+R.c("server/chunks/ssr/71275_next_dist_9068dbd6._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__0172965f._.js")
+R.c("server/chunks/ssr/71275_next_dist_1fc9674b._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__7f148858._.js")
+R.c("server/chunks/ssr/Downloads_ai-blog_793ca142._.js")
+R.c("server/chunks/ssr/Downloads_ai-blog_app_not-found_tsx_3326fc90._.js")
+R.c("server/chunks/ssr/71275_next_dist_client_components_91e1683b._.js")
+R.c("server/chunks/ssr/Downloads_ai-blog__next-internal_server_app__not-found_page_actions_5f38986c.js")
+R.m("[project]/Downloads/ai-blog/node_modules/next/dist/esm/build/templates/app-page.js?page=/_not-found/page { MODULE_0 => \"[project]/Downloads/ai-blog/app/layout.tsx [app-rsc] (ecmascript, Next.js Server Component)\", MODULE_1 => \"[project]/Downloads/ai-blog/app/not-found.tsx [app-rsc] (ecmascript, Next.js Server Component)\", MODULE_2 => \"[project]/Downloads/ai-blog/node_modules/next/dist/client/components/builtin/forbidden.js [app-rsc] (ecmascript, Next.js Server Component)\", MODULE_3 => \"[project]/Downloads/ai-blog/node_modules/next/dist/client/components/builtin/unauthorized.js [app-rsc] (ecmascript, Next.js Server Component)\", MODULE_4 => \"[project]/Downloads/ai-blog/app/not-found.tsx [app-rsc] (ecmascript, Next.js Server Component)\" } [app-rsc] (ecmascript)")
+module.exports=R.m("[project]/Downloads/ai-blog/node_modules/next/dist/esm/build/templates/app-page.js?page=/_not-found/page { MODULE_0 => \"[project]/Downloads/ai-blog/app/layout.tsx [app-rsc] (ecmascript, Next.js Server Component)\", MODULE_1 => \"[project]/Downloads/ai-blog/app/not-found.tsx [app-rsc] (ecmascript, Next.js Server Component)\", MODULE_2 => \"[project]/Downloads/ai-blog/node_modules/next/dist/client/components/builtin/forbidden.js [app-rsc] (ecmascript, Next.js Server Component)\", MODULE_3 => \"[project]/Downloads/ai-blog/node_modules/next/dist/client/components/builtin/unauthorized.js [app-rsc] (ecmascript, Next.js Server Component)\", MODULE_4 => \"[project]/Downloads/ai-blog/app/not-found.tsx [app-rsc] (ecmascript, Next.js Server Component)\" } [app-rsc] (ecmascript)").exports

@@ -1,0 +1,9 @@
+{
+  "/admin/articles/edit/[slug]/page": "app/admin/articles/edit/[slug]/page.js",
+  "/admin/articles/page": "app/admin/articles/page.js",
+  "/api/articles/list/route": "app/api/articles/list/route.js",
+  "/api/articles/search/route": "app/api/articles/search/route.js",
+  "/api/writers/route": "app/api/writers/route.js",
+  "/blog/[slug]/page": "app/blog/[slug]/page.js",
+  "/page": "app/page.js"
+}

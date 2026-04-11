@@ -1,0 +1,224 @@
+/* ============================================================
+   CompareMag Admin Dashboard — Design System
+   Deep navy sidebar + clean white content area
+   ============================================================ */
+
+.admin-page {
+  /* Sidebar tokens */
+  --sidebar-bg:        #0F172A;   /* slate-900 */
+  --sidebar-border:    #1E293B;   /* slate-800 */
+  --sidebar-text:      #94A3B8;   /* slate-400 */
+  --sidebar-text-hover: #F1F5F9; /* slate-100 */
+  --sidebar-active-bg: #1E3A8A;  /* blue-900 */
+  --sidebar-active-text: #BFDBFE;/* blue-200 */
+  --sidebar-active-indicator: #3B82F6; /* blue-500 */
+  --sidebar-section:   #475569;   /* slate-600 */
+  --sidebar-icon-muted: #64748B; /* slate-500 */
+
+  /* Content area tokens */
+  --content-bg:        #F8FAFC;
+  --content-surface:   #FFFFFF;
+  --content-border:    #E2E8F0;   /* slate-200 */
+  --content-border-hover: #3B82F6;
+  --content-text:      #0F172A;   /* slate-900 */
+  --content-text-secondary: #64748B; /* slate-500 */
+  --content-text-muted: #94A3B8;
+
+  /* Brand */
+  --admin-primary:     #1D4ED8;   /* blue-700 */
+  --admin-primary-hover: #1E40AF; /* blue-800 */
+  --admin-primary-light: #DBEAFE; /* blue-100 */
+  --admin-cta:         #EA580C;   /* orange-600 */
+  --admin-cta-hover:   #C2410C;
+
+  /* States */
+  --admin-success:     #059669;
+  --admin-success-bg:  #D1FAE5;
+  --admin-draft-bg:    #F1F5F9;
+  --admin-draft-text:  #64748B;
+  --admin-generated-bg: #F3E8FF;
+  --admin-generated-text: #7E22CE;
+
+  /* Shadows */
+  --shadow-sm:  0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:  0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg:  0 8px 24px rgba(0,0,0,0.1);
+}
+
+/* ============================================================
+   Global admin background
+   ============================================================ */
+.admin-page {
+  background-color: var(--content-bg);
+  min-height: 100vh;
+  font-family: 'Nunito Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ============================================================
+   Input / Form fields
+   ============================================================ */
+.admin-page input,
+.admin-page textarea,
+.admin-page select {
+  background-color: var(--content-surface) !important;
+  border-color: var(--content-border) !important;
+  color: var(--content-text) !important;
+  font-family: 'Nunito Sans', sans-serif;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-page input:focus,
+.admin-page textarea:focus,
+.admin-page select:focus {
+  border-color: var(--admin-primary) !important;
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.12) !important;
+  outline: none !important;
+}
+
+.admin-page input::placeholder,
+.admin-page textarea::placeholder {
+  color: var(--content-text-muted) !important;
+}
+
+/* ============================================================
+   Labels
+   ============================================================ */
+.admin-page label {
+  color: var(--content-text) !important;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
+}
+
+/* ============================================================
+   CMS Layout Patterns
+   ============================================================ */
+.cms-editor-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .cms-editor-layout {
+    grid-template-columns: minmax(0, 70fr) minmax(0, 30fr); /* 70/30 split */
+  }
+}
+
+.cms-sidebar-card {
+  background: var(--content-surface);
+  border: 1px solid var(--content-border);
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.02);
+  margin-bottom: 1.5rem;
+}
+
+.cms-sidebar-card-header {
+  padding: 1rem 1.25rem 0.75rem;
+  font-weight: 700;
+  color: var(--content-text);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cms-sidebar-card-body {
+  padding: 1.25rem;
+}
+
+/* ============================================================
+   Admin cards (article / editor list items)
+   ============================================================ */
+.admin-card {
+  background-color: var(--content-surface);
+  border: 1px solid var(--content-border);
+  box-shadow: var(--shadow-sm);
+  border-radius: 0.875rem;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.admin-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--admin-primary);
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   Status badges
+   ============================================================ */
+.status-published {
+  background-color: var(--admin-success-bg);
+  color: var(--admin-success);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.status-draft {
+  background-color: var(--admin-draft-bg);
+  color: var(--admin-draft-text);
+  border: 1px solid var(--content-border);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.status-generated {
+  background-color: var(--admin-generated-bg);
+  color: var(--admin-generated-text);
+  border: 1px solid rgba(126, 34, 206, 0.2);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ============================================================
+   Code / Monospace
+   ============================================================ */
+.admin-page code {
+  background-color: var(--admin-primary-light);
+  color: var(--admin-primary);
+  border: 1px solid rgba(29, 78, 216, 0.15);
+  font-size: 0.75em;
+  border-radius: 0.3rem;
+  padding: 0.1em 0.4em;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* ============================================================
+   Select / Combobox
+   ============================================================ */
+.admin-page [role="combobox"],
+.admin-page [role="listbox"] {
+  background-color: var(--content-surface) !important;
+  border-color: var(--content-border) !important;
+  color: var(--content-text) !important;
+}
+
+/* ============================================================
+   Admin-specific link override (prevent navbar style bleed)
+   ============================================================ */
+.admin-page main a:not([class*="btn"]):not([class*="Button"]) {
+  color: inherit;
+}

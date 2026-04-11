@@ -1,0 +1,20 @@
+{
+  "node": {
+    "00768595761dc294f8edb1a23aac622cf7a9c6c945": {
+      "workers": {
+        "app/admin/articles/page": {
+          "moduleId": "[project]/Downloads/ai-blog/.next-internal/server/app/admin/articles/page/actions.js { ACTIONS_MODULE0 => \"[project]/Downloads/ai-blog/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "logoutAction",
+          "filename": "Downloads/ai-blog/app/actions/auth.ts"
+        }
+      },
+      "layer": {
+        "app/admin/articles/page": "action-browser"
+      },
+      "exportedName": "logoutAction",
+      "filename": "Downloads/ai-blog/app/actions/auth.ts"
+    }
+  },
+  "edge": {}
+}

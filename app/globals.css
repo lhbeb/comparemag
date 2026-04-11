@@ -1,0 +1,591 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   CompareMag Design System – Product Reviews Edition
+   Color Strategy:
+   - Primary: Deep Indigo-Blue (#1E40AF → blue-800)  → Trust, Authority
+   - Accent CTA: Vivid Orange (#EA580C → orange-600) → Energy, Action
+   - Surface: Near-white warm grey #F8FAFC            → Clean, Readable
+   - Text: Slate-900 / Slate-700 / Slate-500          → WCAG AA contrast
+   - Score/Rating: Amber-500                          → Familiar star gold
+   - Deal badge: Emerald-600                          → Positive, "Save money"
+   ============================================================ */
+
+:root {
+  /* Core surfaces */
+  --background: 214 32% 97.5%;       /* warm near-white #F5F7FA */
+  --foreground: 222 47% 11%;         /* deep slate */
+
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+
+  /* Brand primary — authoritative deep blue */
+  --primary: 221 78% 42%;            /* #1E3FA8 – deeper, more trustworthy */
+  --primary-foreground: 210 40% 98%;
+
+  /* Secondary surface */
+  --secondary: 214 32% 94%;
+  --secondary-foreground: 222 47% 20%;
+
+  /* Muted text */
+  --muted: 214 32% 94%;
+  --muted-foreground: 215 16% 47%;
+
+  /* Accent — energetic blue for interactive elements */
+  --accent: 221 78% 42%;
+  --accent-foreground: 210 40% 98%;
+
+  /* States */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 214 28% 89%;
+  --input: 214 28% 89%;
+  --ring: 221 78% 42%;
+
+  /* Border radius */
+  --radius: 0.625rem;
+
+  /* Custom design tokens */
+  --header-height: 80px;
+  --section-gap: 6rem;
+}
+
+/* ============================================================
+   Base Typography
+   ============================================================ */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    border-color: hsl(var(--border));
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-monument), ui-sans-serif, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-optical-sizing: auto;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-monument), sans-serif;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: hsl(222 47% 11%);
+  }
+
+  h1 { letter-spacing: -0.03em; line-height: 1.1; font-weight: 800; }
+  h2 { letter-spacing: -0.025em; line-height: 1.15; font-weight: 800; }
+  h3 { letter-spacing: -0.02em; line-height: 1.25; font-weight: 700; }
+  h4, h5, h6 { letter-spacing: -0.015em; font-weight: 700; }
+}
+
+/* ============================================================
+   Inline text alignment inside flex icon+text pairs
+   Only targets spans/labels that sit alongside SVG icons in
+   flex rows — prevents body line-height from expanding the text
+   node's invisible box beyond the glyph, causing optical drift.
+   ============================================================ */
+.inline-flex > span,
+.inline-flex > label,
+a.inline-flex > span {
+  line-height: 1;
+}
+
+/* ============================================================
+   Prose (Article content) – WCAG AA: min 4.5:1 contrast
+   ============================================================ */
+.prose {
+  color: hsl(222 28% 18%);
+  font-family: var(--font-monument), ui-sans-serif, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.8;
+}
+
+.prose h1, .prose h2, .prose h3,
+.prose h4, .prose h5, .prose h6 {
+  font-family: var(--font-monument), sans-serif;
+  color: hsl(222 47% 10%);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.prose p, .prose li {
+  color: hsl(222 20% 22%);
+}
+
+.prose strong  { color: hsl(222 47% 10%); }
+.prose code    { color: hsl(221 78% 38%); background: hsl(214 32% 94%); padding: 0.125em 0.375em; border-radius: 0.25rem; font-size: 0.875em; }
+.prose a       { color: hsl(221 78% 40%); font-weight: 500; text-underline-offset: 3px; }
+.prose a:hover { color: hsl(221 78% 30%); }
+.prose blockquote { border-left-color: hsl(221 78% 50%); background: hsl(214 32% 97%); padding: 1rem 1.5rem; border-radius: 0 0.5rem 0.5rem 0; }
+
+/* ============================================================
+   Header
+   ============================================================ */
+header.site-header {
+  background: linear-gradient(135deg, hsl(222 68% 28%) 0%, hsl(221 75% 35%) 100%);
+  border-bottom: 1px solid hsl(221 68% 22% / 0.6);
+  box-shadow: 0 1px 3px hsl(221 68% 18% / 0.4), 0 4px 16px hsl(221 68% 18% / 0.15);
+}
+
+@supports (backdrop-filter: blur(12px)) {
+  header.site-header {
+    backdrop-filter: blur(12px) saturate(180%);
+  }
+}
+
+/* ============================================================
+   Navigation pills
+   ============================================================ */
+.nav-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  font-size: 0.9375rem; /* ~15px, up from 14px */
+  font-weight: 600;
+  font-family: var(--font-monument), sans-serif;
+  color: hsl(210 40% 88%);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-pill:hover {
+  color: white;
+  background: hsl(0 0% 100% / 0.12);
+}
+
+.nav-pill.active {
+  color: white;
+  background: hsl(0 0% 100% / 0.2);
+}
+
+/* ============================================================
+   Cards — Review Cards
+   ============================================================ */
+.review-card {
+  background: white;
+  border: 1px solid hsl(214 28% 89%);
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.22s ease,
+              border-color 0.22s ease;
+  will-change: transform;
+}
+
+.review-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px hsl(221 78% 42% / 0.12),
+              0 4px 12px hsl(0 0% 0% / 0.06);
+  border-color: hsl(221 78% 60% / 0.4);
+}
+
+/* ============================================================
+   Category badges
+   ============================================================ */
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  padding: 0.35rem 0.625rem;
+  border-radius: 9999px;
+  background: hsl(221 78% 42% / 0.1);
+  color: hsl(221 78% 38%);
+}
+
+/* Deal/sale badge */
+.deal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  padding: 0.35rem 0.625rem;
+  border-radius: 9999px;
+  background: hsl(142 72% 92%);
+  color: hsl(142 72% 26%);
+}
+
+/* Score/rating badge */
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1;
+  padding: 0.35rem 0.625rem;
+  border-radius: 0.5rem;
+  background: hsl(43 96% 56%);
+  color: hsl(30 80% 20%);
+  letter-spacing: -0.01em;
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  background: hsl(25 95% 53%);    /* vivid orange */
+  color: white;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
+  box-shadow: 0 2px 8px hsl(25 95% 53% / 0.35);
+}
+
+.btn-primary:hover {
+  background: hsl(25 95% 44%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px hsl(25 95% 53% / 0.45);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  background: hsl(0 0% 100% / 0.12);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border-radius: 9999px;
+  border: 2px solid hsl(0 0% 100% / 0.3);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  backdrop-filter: blur(8px);
+}
+
+.btn-ghost:hover {
+  background: white;
+  color: hsl(222 68% 28%);
+  border-color: white;
+}
+
+/* ============================================================
+   Section headings with accent line
+   ============================================================ */
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.section-heading::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 1.4em;
+  border-radius: 4px;
+  background: linear-gradient(to bottom, hsl(25 95% 53%), hsl(25 95% 40%));
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   Hero section
+   ============================================================ */
+.hero-section {
+  background: linear-gradient(135deg,
+    hsl(222 68% 22%) 0%,
+    hsl(221 72% 30%) 40%,
+    hsl(218 65% 35%) 100%
+  );
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 85% 50%, hsl(221 78% 55% / 0.25) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 15% 80%, hsl(25 95% 53% / 0.08) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+
+/* ============================================================
+   Newsletter section
+   ============================================================ */
+.newsletter-section {
+  background: linear-gradient(135deg, hsl(222 68% 22%) 0%, hsl(221 72% 30%) 100%);
+  border-radius: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.newsletter-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 80% at 90% 50%, hsl(25 95% 53% / 0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ============================================================
+   Star ratings
+   ============================================================ */
+.star-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+  color: hsl(43 96% 50%);
+}
+
+/* ============================================================
+   Scrollbar – brand tinted
+   ============================================================ */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: hsl(214 32% 94%); }
+::-webkit-scrollbar-thumb { 
+  background: hsl(221 78% 65%); 
+  border-radius: 999px; 
+  border: 2px solid hsl(214 32% 94%);
+}
+::-webkit-scrollbar-thumb:hover { background: hsl(221 78% 50%); }
+
+/* ============================================================
+   Search input inside header
+   ============================================================ */
+.header-search input {
+  background: hsl(0 0% 100% / 0.1);
+  border-color: hsl(0 0% 100% / 0.2);
+  color: white;
+}
+
+.header-search input::placeholder { color: hsl(0 0% 100% / 0.55); }
+.header-search input:focus {
+  background: hsl(0 0% 100% / 0.18);
+  border-color: hsl(0 0% 100% / 0.4);
+  box-shadow: 0 0 0 3px hsl(0 0% 100% / 0.1);
+}
+
+/* ============================================================
+   Animations
+   ============================================================ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Loading skeleton shimmer */
+.skeleton {
+  background: linear-gradient(90deg, hsl(214 32% 92%) 25%, hsl(214 32% 96%) 50%, hsl(214 32% 92%) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 0.375rem;
+}
+
+/* ============================================================
+   Expert / Editor cards — Magazine Style
+   ============================================================ */
+.expert-card {
+  background: white;
+  border: 1px solid hsl(214 28% 89%);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.25s ease,
+              border-color 0.25s ease;
+  box-shadow: 0 2px 8px hsl(221 78% 42% / 0.06);
+}
+
+.expert-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 60px hsl(221 78% 42% / 0.15), 0 6px 20px hsl(0 0% 0% / 0.07);
+  border-color: hsl(221 78% 60% / 0.4);
+}
+
+/* The big photo area at the top */
+.expert-card-photo {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.expert-card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.5s ease;
+}
+
+.expert-card:hover .expert-card-photo img {
+  transform: scale(1.06);
+}
+
+/* Gradient overlay sitting on top of photo */
+.expert-card-photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 30%,
+    hsl(222 68% 14% / 0.85) 100%
+  );
+}
+
+/* Name + role text pinned to bottom of photo */
+.expert-card-photo-name {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 1.25rem 1rem;
+  color: white;
+  text-align: left;
+}
+
+.expert-card-photo-name h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0 0 0.25rem;
+  color: white;
+}
+
+/* Specialty badge on card photo */
+.expert-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.625rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  background: hsl(25 95% 53% / 0.9);
+  color: white;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(4px);
+}
+
+/* Body section below photo */
+.expert-card-body {
+  padding: 1.5rem 1.5rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.expert-card-bio {
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  color: hsl(215 16% 47%);
+  flex: 1;
+  margin-bottom: 1rem;
+}
+
+.expert-card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  background: hsl(221 78% 42%);
+  color: white;
+  transition: background 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
+  box-shadow: 0 2px 8px hsl(221 78% 42% / 0.3);
+  text-decoration: none;
+  align-self: flex-start;
+}
+
+.expert-card-link:hover {
+  background: hsl(25 95% 53%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px hsl(25 95% 53% / 0.4);
+}
+
+/* No-image fallback avatar */
+.expert-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 9999px;
+  object-fit: cover;
+  margin: 0 auto 1rem;
+  box-shadow: 0 0 0 3px hsl(221 78% 93%), 0 0 0 5px hsl(221 78% 42% / 0.15);
+}
+
+/* ============================================================
+   Footer
+   ============================================================ */
+.site-footer {
+  background: hsl(222 47% 9%);
+  color: hsl(214 28% 72%);
+}
+
+.site-footer a:hover { color: white; }
+
+/* ============================================================
+   Utility: gradient text
+   ============================================================ */
+.text-gradient {
+  background: linear-gradient(135deg, hsl(25 95% 55%) 0%, hsl(25 90% 70%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================================
+   Focus ring — accessible
+   ============================================================ */
+:focus-visible {
+  outline: 3px solid hsl(221 78% 55%);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

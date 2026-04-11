@@ -1,0 +1,240 @@
+import { getWriterBySlug, getAllWriters } from '@/lib/supabase/writers'
+import { getAllArticles } from '@/lib/supabase/articles'
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import Image from 'next/image'
+import { SupabaseImage } from '@/components/supabase-image'
+import { format } from 'date-fns'
+import { User, Mail, Globe, Twitter, Linkedin, Github, Clock, Rss } from 'lucide-react'
+import { Logo } from '@/components/logo'
+
+export async function generateStaticParams() {
+  try {
+    const writers = await getAllWriters()
+    return writers.map((writer) => ({
+      slug: writer.slug,
+    }))
+  } catch {
+    return []
+  }
+}
+
+export default async function WriterPage({
+  params,
+}: {
+  params: Promise<{ slug: string }> | { slug: string }
+}) {
+  const resolvedParams = await Promise.resolve(params)
+  let writer
+  let articles
+
+  try {
+    writer = await getWriterBySlug(resolvedParams.slug)
+    
+    // Get all articles and filter by author name 
+    const allArticles = await getAllArticles(true)
+    articles = allArticles.filter((article) => article.author === writer.name)
+  } catch (error) {
+    console.error('Error fetching writer:', error)
+    notFound()
+  }
+
+  return (
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+
+
+      <main className="container mx-auto px-4 py-12">
+        {/* Writer Profile */}
+        <div className="max-w-4xl mx-auto mb-12 bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+          <div className="flex flex-col md:flex-row gap-8 items-start">
+            {writer.avatar_url ? (
+              <div className="relative w-32 h-32 md:w-40 md:h-40 flex-shrink-0">
+                <Image
+                  src={writer.avatar_url}
+                  alt={writer.name}
+                  fill
+                  className="rounded-full object-cover border-4 border-blue-50 shadow-md"
+                />
+              </div>
+            ) : (
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 border-4 border-white shadow-md">
+                <User className="h-16 w-16 md:h-20 md:w-20 text-blue-600" />
+              </div>
+            )}
+            
+            <div className="flex-1">
+              <h1 className="text-4xl font-bold mb-4 text-slate-900">{writer.name}</h1>
+              
+              {writer.bio && (
+                <div className="prose prose-slate max-w-none mb-6">
+                  {writer.bio_html ? (
+                    <div dangerouslySetInnerHTML={{ __html: writer.bio_html }} />
+                  ) : (
+                    <p className="text-slate-600 text-lg leading-relaxed">{writer.bio}</p>
+                  )}
+                </div>
+              )}
+
+              {/* Social Links */}
+              <div className="flex flex-wrap gap-4 mt-6">
+                {writer.email && (
+                  <a
+                    href={`mailto:${writer.email}`}
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-700 hover:bg-blue-50 hover:text-blue-700 rounded-full transition-colors text-sm font-medium border border-slate-200 hover:border-blue-200"
+                  >
+                    <Mail className="h-4 w-4" />
+                    <span>Email</span>
+                  </a>
+                )}
+                {writer.website && (
+                  <a
+                    href={writer.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-700 hover:bg-blue-50 hover:text-blue-700 rounded-full transition-colors text-sm font-medium border border-slate-200 hover:border-blue-200"
+                  >
+                    <Globe className="h-4 w-4" />
+                    <span>Website</span>
+                  </a>
+                )}
+                {writer.twitter_handle && (
+                  <a
+                    href={`https://twitter.com/${writer.twitter_handle.replace('@', '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-700 hover:bg-blue-50 hover:text-blue-700 rounded-full transition-colors text-sm font-medium border border-slate-200 hover:border-blue-200"
+                  >
+                    <Twitter className="h-4 w-4" />
+                    <span>{writer.twitter_handle}</span>
+                  </a>
+                )}
+                {writer.linkedin_url && (
+                  <a
+                    href={writer.linkedin_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-700 hover:bg-blue-50 hover:text-blue-700 rounded-full transition-colors text-sm font-medium border border-slate-200 hover:border-blue-200"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                    <span>LinkedIn</span>
+                  </a>
+                )}
+                {writer.github_url && (
+                  <a
+                    href={writer.github_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-700 hover:bg-blue-50 hover:text-blue-700 rounded-full transition-colors text-sm font-medium border border-slate-200 hover:border-blue-200"
+                  >
+                    <Github className="h-4 w-4" />
+                    <span>GitHub</span>
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Articles by Writer */}
+        <div className="max-w-4xl mx-auto border-t border-slate-200 pt-12">
+          <h2 className="text-2xl font-bold mb-8 text-slate-900">
+            Reviews by {writer.name}
+          </h2>
+
+          {articles.length === 0 ? (
+            <div className="text-center py-12 border border-slate-200 rounded-xl bg-slate-50 text-slate-500">
+              No reviews published yet by this expert.
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-6">
+              {articles.map((article) => {
+                const description = article.content
+                  .replace(/<[^>]*>/g, '')
+                  .substring(0, 150)
+                  .trim() + '...'
+
+                return (
+                  <Link
+                    key={article.id}
+                    href={`/blog/${article.slug}/`}
+                    className="group bg-white rounded-xl overflow-hidden border border-slate-200 transition-all duration-200 hover:shadow-md hover:border-blue-300 flex flex-col h-full"
+                  >
+                    {article.image_url && (
+                      <div className="relative h-48 w-full flex-shrink-0">
+                        <SupabaseImage
+                          src={article.image_url}
+                          alt={article.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    )}
+                    <div className="p-5 flex flex-col flex-grow">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 mb-2 uppercase tracking-wider">
+                        <span>{article.category}</span>
+                      </div>
+                      <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                        {article.title}
+                      </h3>
+                      <p className="text-slate-600 text-sm mb-4 line-clamp-3 flex-grow">{description}</p>
+                      <div className="flex items-center gap-2 text-xs text-slate-500 pt-4 border-t border-slate-100">
+                        <Clock className="h-4 w-4" />
+                        <span>{format(new Date(article.created_at), 'MMMM d, yyyy')}</span>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          )}
+        </div>
+      </main>
+
+      <footer className="py-12 bg-slate-900 text-slate-300 mt-12 border-t border-slate-800">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-6 md:gap-8">
+            <div className="space-y-4">
+              <Logo width={140} height={40} />
+              <p className="text-slate-400 text-sm">
+                Your trusted source for unbiased product reviews, price comparisons, and the latest tech news.
+              </p>
+              <div className="flex space-x-4">
+                <Link href="#" className="text-slate-400 hover:text-white transition-colors"><Twitter className="h-5 w-5" /></Link>
+                <Link href="#" className="text-slate-400 hover:text-white transition-colors"><Github className="h-5 w-5" /></Link>
+                <Link href="#" className="text-slate-400 hover:text-white transition-colors"><Linkedin className="h-5 w-5" /></Link>
+                <Link href="#" className="text-slate-400 hover:text-white transition-colors"><Rss className="h-5 w-5" /></Link>
+              </div>
+            </div>
+            <div>
+              <h3 className="font-medium mb-4 text-white">Categories</h3>
+              <ul className="space-y-2 text-sm text-slate-400">
+                <li><Link href="/topics/" className="hover:text-white transition-colors">Smartphones</Link></li>
+                <li><Link href="/topics/" className="hover:text-white transition-colors">Laptops & PCs</Link></li>
+                <li><Link href="/topics/" className="hover:text-white transition-colors">Audio & Headphones</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-medium mb-4 text-white">Useful Links</h3>
+              <ul className="space-y-2 text-sm text-slate-400">
+                <li><Link href="/articles/" className="hover:text-white transition-colors">All Reviews</Link></li>
+                <li><Link href="/about/" className="hover:text-white transition-colors">About Us</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-medium mb-4 text-white">Contact</h3>
+              <ul className="space-y-2 text-sm text-slate-400">
+                <li className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  <span className="break-all">ameyaudeshmukh@gmail.com</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-slate-800 mt-12 pt-6 text-sm text-slate-500">
+            <p>© {new Date().getFullYear()} CompareMag. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  )
+}
