@@ -170,6 +170,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "invalid json" }, { status: 400 })
   }
 
+  // Do not track admin dashboard visits
+  if (String(body.url ?? "").includes("/admin")) {
+    return NextResponse.json({ ok: true, skipped: true })
+  }
+
   const ip = getClientIP(req)
 
   // Kick off the slow work (geo + Telegram) without blocking the response
