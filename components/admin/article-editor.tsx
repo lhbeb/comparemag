@@ -16,7 +16,8 @@ import {
   X, Save, Send, ChevronDown, 
   ChevronUp, User, PlusCircle, Layout, Settings, 
   Eye, Image as ImageIcon, Globe, Info, Wand2,
-  Bold, Italic, Link as LinkIcon, Heading2, Heading3, Quote, Code, List
+  Bold, Italic, Link as LinkIcon, Heading2, Heading3, Quote, Code, List,
+  Search, Upload
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
