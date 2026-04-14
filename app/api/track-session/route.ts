@@ -141,7 +141,7 @@ function buildMessage(ip: string, geo: ReturnType<typeof getGeoData> extends Pro
     : "direct"
 
   return [
-    `🌐 <b>${domain}</b>`,
+    `👁 <b>New Visit</b>`,
     `📄 <a href="${body.url}">${body.url}</a>`,
     ``,
     `🔗 Ref: <code>${referrer}</code>`,
