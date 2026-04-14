@@ -6,9 +6,7 @@ import dynamic from 'next/dynamic'
 export const LazySearchBar = dynamic(() => import('./search-bar').then(mod => ({ default: mod.SearchBar })), {
   ssr: false,
   loading: () => (
-    <div className="relative w-full max-w-md">
-      <div className="w-full h-10 bg-gray-900 border border-gray-700 rounded-lg animate-pulse" />
-    </div>
+    <div className="w-[220px] lg:w-[260px] h-11 bg-white/5 border border-white/10 rounded-full animate-pulse shadow-sm" />
   ),
 })
 

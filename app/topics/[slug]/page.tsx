@@ -177,13 +177,13 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
               <ul className="space-y-2 text-sm text-slate-400">
                 <li className="flex items-center gap-2">
                   <Mail className="h-4 w-4" />
-                  <span className="break-all">ameyaudeshmukh@gmail.com</span>
+                  <span className="break-all">contact@compareradar.com</span>
                 </li>
               </ul>
             </div>
           </div>
           <div className="border-t border-slate-800 mt-12 pt-6 text-sm text-slate-500">
-            <p>© {new Date().getFullYear()} CompareMag. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Compareradar.com. All rights reserved.</p>
           </div>
         </div>
       </footer>

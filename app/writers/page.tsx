@@ -74,7 +74,7 @@ export default async function EditorsPage() {
       <footer className="py-12 bg-slate-900 text-slate-300 mt-12">
         <div className="container mx-auto px-4">
           <div className="border-t border-slate-800 pt-6 text-sm text-slate-500 text-center">
-            <p>© {new Date().getFullYear()} CompareMag. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Compareradar.com. All rights reserved.</p>
           </div>
         </div>
       </footer>

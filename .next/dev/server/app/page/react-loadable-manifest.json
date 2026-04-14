@@ -1,9 +1,9 @@
 {
-  "[project]/Downloads/ai-blog/components/search-bar.tsx [app-client] (ecmascript, next/dynamic entry)": {
-    "id": "[project]/Downloads/ai-blog/components/search-bar.tsx [app-client] (ecmascript, next/dynamic entry)",
+  "[project]/components/search-bar.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/components/search-bar.tsx [app-client] (ecmascript, next/dynamic entry)",
     "files": [
-      "static/chunks/Downloads_ai-blog_5804ca9a._.js",
-      "static/chunks/Downloads_ai-blog_components_search-bar_tsx_79616a60._.js"
+      "static/chunks/_19dbe8c6._.js",
+      "static/chunks/components_search-bar_tsx_7378ce1f._.js"
     ]
   }
 }
