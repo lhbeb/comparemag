@@ -5,6 +5,8 @@ import { getAllProducts } from '@/lib/supabase/products'
 import { getAllWriters } from '@/lib/supabase/writers'
 import { FileText, Users, ShoppingBag, Wand2, Plus, ArrowRight } from 'lucide-react'
 import { format } from 'date-fns'
+import { SupabaseImage } from '@/components/supabase-image'
+import { PromoBarControl } from './components/promo-bar-control'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,7 +34,8 @@ async function getDashboardData() {
       totalProducts: products.length,
       totalWriters: writers.length
     },
-    recentArticles
+    recentArticles,
+    allArticles: articles
   }
 }
 
@@ -130,23 +133,36 @@ export default async function AdminDashboardOverview() {
               <div className="divide-y divide-slate-100">
                 {data.recentArticles.map((article: any) => (
                   <div key={article.id} className="p-4 hover:bg-slate-50 flex items-center justify-between transition-colors">
-                    <div className="min-w-0 pr-4 flex-1">
-                      <div className="flex items-center gap-2 mb-1 opacity-90">
-                        {article.published ? (
-                          <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
-                        ) : article.article_type === 'programmatic' ? (
-                          <span className="w-2 h-2 rounded-full bg-purple-500 flex-shrink-0" />
-                        ) : (
-                          <span className="w-2 h-2 rounded-full bg-slate-400 flex-shrink-0" />
-                        )}
-                        <h4 className="text-sm font-semibold text-slate-900 truncate">{article.title}</h4>
+                    <div className="flex items-center gap-4 min-w-0 flex-1 pr-4">
+                      {/* Thumbnail */}
+                      <div className="relative w-12 h-12 flex-shrink-0 rounded-md overflow-hidden border border-slate-200 shadow-sm bg-slate-100 hidden sm:block">
+                        <SupabaseImage 
+                          src={article.image_url || "/placeholder.svg"} 
+                          alt="Thumbnail" 
+                          fill 
+                          className="object-cover" 
+                        />
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-slate-500">
-                        <span className="capitalize">{article.article_type === 'programmatic' ? 'Generated' : 'Manual'}</span>
-                        <span>•</span>
-                        <span>{format(new Date(article.updated_at), 'MMM d')}</span>
-                        <span>•</span>
-                        <span className="truncate">By {article.author}</span>
+                      
+                      {/* Details */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-1 opacity-90">
+                          {article.published ? (
+                            <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
+                          ) : article.article_type === 'programmatic' ? (
+                            <span className="w-2 h-2 rounded-full bg-purple-500 flex-shrink-0" />
+                          ) : (
+                            <span className="w-2 h-2 rounded-full bg-slate-400 flex-shrink-0" />
+                          )}
+                          <h4 className="text-sm font-semibold text-slate-900 truncate">{article.title}</h4>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-slate-500 truncate">
+                          <span className="capitalize">{article.article_type === 'programmatic' ? 'Generated' : 'Manual'}</span>
+                          <span>•</span>
+                          <span>{format(new Date(article.updated_at), 'MMM d')}</span>
+                          <span>•</span>
+                          <span className="truncate">By {article.author}</span>
+                        </div>
                       </div>
                     </div>
                     <Button 
@@ -200,6 +216,10 @@ export default async function AdminDashboardOverview() {
                 Invite Editor
               </Link>
             </Button>
+          </div>
+
+          <div className="mt-8">
+            <PromoBarControl articles={data.allArticles} />
           </div>
         </div>
 

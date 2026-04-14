@@ -79,6 +79,7 @@ export interface Database {
           programmatic_template: string | null
           seo_score: number | null
           twitter_card: string | null
+          is_featured: boolean | null
         }
         Insert: {
           article_type?: string | null
@@ -107,6 +108,7 @@ export interface Database {
           title: string
           twitter_card?: string | null
           updated_at?: string
+          is_featured?: boolean | null
         }
         Update: {
           article_type?: string | null
@@ -135,6 +137,7 @@ export interface Database {
           title?: string
           twitter_card?: string | null
           updated_at?: string
+          is_featured?: boolean | null
         }
       }
       product_cards: {

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Edit, Eye, EyeOff, FileText, Wand2 } from 'lucide-react'
 import { format } from 'date-fns'
+import { SupabaseImage } from '@/components/supabase-image'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
 import { Article } from '@/lib/supabase/types'
 
@@ -71,44 +72,57 @@ function ArticleList({ articles }: { articles: any[] }) {
       {articles.map((article) => (
         <div key={article.id} className="admin-card px-5 py-4">
           <div className="flex items-center justify-between gap-4">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
-                {article.published ? (
-                  <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
-                ) : article.article_type === 'programmatic' ? (
-                  <span className="w-2 h-2 rounded-full bg-purple-500 flex-shrink-0" />
-                ) : (
-                  <span className="w-2 h-2 rounded-full bg-slate-400 flex-shrink-0" />
-                )}
-                
-                <h2 className="font-semibold text-base leading-tight truncate text-slate-900">
-                  {article.title}
-                </h2>
-                
-                {article.published ? (
-                  <span className="status-published px-2 py-0.5 rounded-full inline-flex items-center gap-1 flex-shrink-0">
-                    <Eye className="h-2.5 w-2.5" /> Published
-                  </span>
-                ) : article.article_type === 'programmatic' ? (
-                  <span className="status-generated px-2 py-0.5 rounded-full inline-flex items-center gap-1 flex-shrink-0">
-                    <Wand2 className="h-2.5 w-2.5" /> Generated
-                  </span>
-                ) : (
-                  <span className="status-draft px-2 py-0.5 rounded-full inline-flex items-center gap-1 flex-shrink-0">
-                    <EyeOff className="h-2.5 w-2.5" /> Draft
-                  </span>
-                )}
-              </div>
+            <div className="flex items-center gap-4 flex-1 min-w-0">
               
-              <div className="flex items-center gap-3 text-xs flex-wrap text-slate-500">
-                <span className="px-2 py-0.5 rounded-md font-medium bg-blue-50 text-blue-700">
-                  {article.category}
-                </span>
-                <span>By <strong className="text-slate-900">{article.author}</strong></span>
-                <span className="text-slate-300">·</span>
-                <span>{format(new Date(article.created_at), 'MMM d, yyyy')}</span>
-                <span className="text-slate-300">·</span>
-                <code className="font-mono text-[11px] truncate max-w-[200px] inline-block align-bottom">{article.slug}</code>
+              {/* Thumbnail */}
+              <div className="relative w-14 h-14 flex-shrink-0 rounded-md overflow-hidden border border-slate-200 shadow-sm bg-slate-100 hidden sm:block">
+                <SupabaseImage 
+                  src={article.image_url || "/placeholder.svg"} 
+                  alt="Thumbnail" 
+                  fill 
+                  className="object-cover" 
+                />
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
+                  {article.published ? (
+                    <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
+                  ) : article.article_type === 'programmatic' ? (
+                    <span className="w-2 h-2 rounded-full bg-purple-500 flex-shrink-0" />
+                  ) : (
+                    <span className="w-2 h-2 rounded-full bg-slate-400 flex-shrink-0" />
+                  )}
+                  
+                  <h2 className="font-semibold text-base leading-tight truncate text-slate-900">
+                    {article.title}
+                  </h2>
+                  
+                  {article.published ? (
+                    <span className="status-published px-2 py-0.5 rounded-full inline-flex items-center gap-1 flex-shrink-0">
+                      <Eye className="h-2.5 w-2.5" /> Published
+                    </span>
+                  ) : article.article_type === 'programmatic' ? (
+                    <span className="status-generated px-2 py-0.5 rounded-full inline-flex items-center gap-1 flex-shrink-0">
+                      <Wand2 className="h-2.5 w-2.5" /> Generated
+                    </span>
+                  ) : (
+                    <span className="status-draft px-2 py-0.5 rounded-full inline-flex items-center gap-1 flex-shrink-0">
+                      <EyeOff className="h-2.5 w-2.5" /> Draft
+                    </span>
+                  )}
+                </div>
+                
+                <div className="flex items-center gap-3 text-xs flex-wrap text-slate-500">
+                  <span className="px-2 py-0.5 rounded-md font-medium bg-blue-50 text-blue-700">
+                    {article.category}
+                  </span>
+                  <span>By <strong className="text-slate-900">{article.author}</strong></span>
+                  <span className="text-slate-300">·</span>
+                  <span>{format(new Date(article.created_at), 'MMM d, yyyy')}</span>
+                  <span className="text-slate-300">·</span>
+                  <code className="font-mono text-[11px] truncate max-w-[200px] inline-block align-bottom">{article.slug}</code>
+                </div>
               </div>
             </div>
 
