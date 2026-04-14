@@ -3,8 +3,6 @@ import "./globals.css"
 import type { Metadata } from "next"
 import { Toaster } from "@/components/ui/toaster"
 import localFont from "next/font/local"
-import Link from "next/link"
-import { ArrowRight } from "lucide-react"
 
 const monument = localFont({
   src: [
@@ -48,8 +46,6 @@ const monument = localFont({
   ],
 })
 
-import { SiteHeader } from "@/components/site-header"
-
 export const metadata: Metadata = {
   title: "CompareMag - Product Reviews, News & Price Comparisons",
   description: "Your trusted source for in-depth product reviews, the latest tech and consumer news, and smart price comparisons to help you buy better.",
@@ -73,14 +69,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://fgkvrbdpmwyfjvpubzxn.supabase.co" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
       </head>
-      <body className={`${monument.variable} font-sans`}>
-        <div className="bg-[#0D1321] py-2.5 px-4 w-full flex justify-center">
-          <Link href="#" className="inline-flex items-center gap-2 group transition-colors">
-            <ArrowRight className="h-4 w-4 flex-shrink-0 text-orange-500 group-hover:translate-x-0.5 transition-transform" />
-            <span className="text-white text-xs sm:text-sm font-bold leading-none">Tomorrow belongs to those who embrace it today</span>
-          </Link>
-        </div>
-        <SiteHeader />
+      <body className={`${monument.variable} font-sans flex flex-col min-h-screen`}>
         {children}
         <Toaster />
       </body>
