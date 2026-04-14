@@ -8,7 +8,7 @@ function getMissingColumnName(message: string) {
 }
 
 async function retryWithoutMissingColumns<T extends Record<string, unknown>>(
-  operation: (payload: T) => Promise<{ data: unknown; error: { message: string } | null }>,
+  operation: (payload: T) => PromiseLike<{ data: unknown; error: { message: string } | null }>,
   payload: T,
 ) {
   let nextPayload = { ...payload }

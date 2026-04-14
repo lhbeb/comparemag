@@ -7,6 +7,7 @@ import { SupabaseImage } from '@/components/supabase-image'
 import { format } from 'date-fns'
 import { User, Mail, Globe, Twitter, Linkedin, Github, Clock, Rss } from 'lucide-react'
 import { Logo } from '@/components/logo'
+import type { Writer, Article } from '@/lib/supabase/types'
 
 export async function generateStaticParams() {
   try {
@@ -25,8 +26,8 @@ export default async function WriterPage({
   params: Promise<{ slug: string }> | { slug: string }
 }) {
   const resolvedParams = await Promise.resolve(params)
-  let writer
-  let articles
+  let writer: Writer
+  let articles: Article[]
 
   try {
     writer = await getWriterBySlug(resolvedParams.slug)
@@ -39,8 +40,28 @@ export default async function WriterPage({
     notFound()
   }
 
+  const personSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: writer.name,
+    url: `https://comparemag.blog/writers/${writer.slug}`,
+    image: writer.avatar_url,
+    jobTitle: writer.specialty || 'Tech Reviewer',
+    description: writer.bio,
+    sameAs: [
+      writer.twitter_handle ? `https://twitter.com/${writer.twitter_handle.replace('@', '')}` : null,
+      writer.linkedin_url,
+      writer.github_url,
+      writer.website
+    ].filter(Boolean)
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
 
 
       <main className="container mx-auto px-4 py-12">

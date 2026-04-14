@@ -1,16 +1,12 @@
-"use client"
-
 import Link from "next/link"
 import Image from "next/image"
 import { SupabaseImage } from "@/components/supabase-image"
 import { Logo } from "@/components/logo"
-import { ArrowLeft, BrainCircuit, Clock, Share2, Twitter, Facebook, Linkedin, Rss, Mail, Github } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useToast } from "@/components/ui/use-toast"
-import { useEffect } from "react"
+import { BrainCircuit, Clock, Twitter, Facebook, Linkedin, Rss, Mail, Github } from "lucide-react"
 import type { BlogPost } from "@/lib/data/blogPosts"
 import type { Article } from "@/lib/supabase/types"
 import { Breadcrumbs } from "@/components/seo/breadcrumbs"
+import { ArticleShareButtons } from "@/components/article-share-buttons"
 
 interface BlogPostContentProps {
   post: BlogPost
@@ -18,66 +14,23 @@ interface BlogPostContentProps {
 }
 
 export function BlogPostContent({ post, article }: BlogPostContentProps) {
-  const { toast } = useToast()
-
-  useEffect(() => {
-    if (!post) {
-      toast({
-        title: "Post not found",
-        description: "The requested blog post could not be found.",
-        variant: "destructive",
-      })
-    }
-  }, [post, toast])
+  if (!post) return null
 
   // Generate breadcrumb items
+  const categorySlug = (post.category || 'General').toLowerCase().replace(/\s+/g, '-')
+  
   const breadcrumbItems = [
     { label: 'Articles', href: '/articles' },
-    { label: post?.category || 'General', href: `/topics/` },
+    { label: post.category || 'General', href: `/topics/${categorySlug}` },
   ]
 
   // Generate proper alt text for hero image
   const heroImageAlt = article?.image_url 
-    ? `${post?.title} - Featured image for article about ${post?.category}`
+    ? `${post.title} - Featured image for article about ${post.category}`
     : 'Article hero image'
-
-  const handleShare = (platform: string) => {
-    const url = window.location.href
-    const text = `Check out this article: ${post?.title}`
-
-    let shareUrl = ""
-
-    switch (platform) {
-      case "twitter":
-        shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`
-        break
-      case "facebook":
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
-        break
-      case "linkedin":
-        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
-        break
-      default:
-        // Copy to clipboard
-        navigator.clipboard.writeText(url)
-        toast({
-          title: "Link copied",
-          description: "The article link has been copied to your clipboard.",
-        })
-        return
-    }
-
-    if (shareUrl) {
-      window.open(shareUrl, "_blank")
-    }
-  }
-
-  if (!post) return null;
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-
-
       <main className="container mx-auto px-4 py-12 bg-white">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
           
@@ -120,7 +73,7 @@ export function BlogPostContent({ post, article }: BlogPostContentProps) {
             <header className="mb-8">
               <div className="flex items-center gap-2 text-sm text-blue-600 font-medium mb-4" itemProp="articleSection">
                 <BrainCircuit className="h-5 w-5" aria-hidden="true" />
-                <span>{post.category}</span>
+                <Link href={`/topics/${categorySlug}`} className="hover:underline">{post.category}</Link>
               </div>
 
               <h1 
@@ -142,7 +95,7 @@ export function BlogPostContent({ post, article }: BlogPostContentProps) {
                 </div>
                 <span itemProp="timeRequired">{post.readTime}</span>
                 <div itemProp="author" itemScope itemType="https://schema.org/Person">
-                  <span>By <span itemProp="name" className="font-semibold text-slate-700">{post.author}</span></span>
+                  <span>By <Link href={`/writers/${post.author.toLowerCase().replace(/\s+/g, '-')}`} itemProp="url" className="font-semibold text-blue-600 hover:underline"><span itemProp="name">{post.author}</span></Link></span>
                 </div>
                 {article?.updated_at && article.updated_at !== article.created_at && (
                   <meta itemProp="dateModified" content={article.updated_at} />
@@ -162,46 +115,8 @@ export function BlogPostContent({ post, article }: BlogPostContentProps) {
               </div>
             </header>
 
-            <div className="flex justify-between items-center mb-8 bg-slate-50 p-4 rounded-lg border border-slate-100">
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-9 border-slate-200 text-slate-700 hover:bg-white hover:text-blue-600"
-                  onClick={() => handleShare("twitter")}
-                >
-                  <Twitter className="h-4 w-4 mr-2" />
-                  Tweet
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-9 border-slate-200 text-slate-700 hover:bg-white hover:text-blue-600"
-                  onClick={() => handleShare("facebook")}
-                >
-                  <Facebook className="h-4 w-4 mr-2" />
-                  Share
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-9 border-slate-200 text-slate-700 hover:bg-white hover:text-blue-600"
-                  onClick={() => handleShare("linkedin")}
-                >
-                  <Linkedin className="h-4 w-4 mr-2" />
-                  Post
-                </Button>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9 border-slate-200 text-slate-700 hover:bg-white hover:text-blue-600"
-                onClick={() => handleShare("clipboard")}
-              >
-                <Share2 className="h-4 w-4 mr-2" />
-                Copy
-              </Button>
-            </div>
+            {/* Share island */}
+            <ArticleShareButtons title={post.title} />
 
             {/* Article Content */}
             <div 

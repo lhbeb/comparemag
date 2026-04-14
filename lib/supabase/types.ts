@@ -53,6 +53,8 @@ export interface Database {
       }
       articles: {
         Row: {
+          article_type: string | null
+          canonical_url: string | null
           id: string
           slug: string
           title: string
@@ -65,6 +67,7 @@ export interface Database {
           created_at: string
           updated_at: string
           published_at: string | null
+          focus_keyword: string | null
           meta_description: string | null
           meta_keywords: string | null
           og_description: string | null

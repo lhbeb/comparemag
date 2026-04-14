@@ -93,7 +93,7 @@ export function generateArticleMetadata(article: Article, siteUrl: string = 'htt
   }
 }
 
-export function generateArticleStructuredData(article: Article, siteUrl: string = 'https://neuralpulse.blog') {
+export function generateArticleStructuredData(article: Article, siteUrl: string = 'https://comparemag.blog') {
   const url = `${siteUrl}/blog/${article.slug}`
   const imageUrl = article.image_url || `${siteUrl}/placeholder.svg`
   
@@ -103,9 +103,17 @@ export function generateArticleStructuredData(article: Article, siteUrl: string 
     .substring(0, 200)
     .trim()
 
+  let schemaType = 'BlogPosting'
+  const cat = article.category.toLowerCase()
+  if (cat.includes('review') || article.title.toLowerCase().includes('review')) {
+    schemaType = 'Review'
+  } else if (cat.includes('news') || article.title.toLowerCase().includes('news')) {
+    schemaType = 'NewsArticle'
+  }
+
   return {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': schemaType,
     headline: article.title,
     description: description,
     image: imageUrl,
@@ -114,15 +122,9 @@ export function generateArticleStructuredData(article: Article, siteUrl: string 
     author: {
       '@type': 'Person',
       name: article.author,
+      url: `${siteUrl}/writers/${article.author.toLowerCase().replace(/\s+/g, '-')}`
     },
-    publisher: {
-      '@type': 'Organization',
-      name: 'CompareMag',
-      logo: {
-        '@type': 'ImageObject',
-        url: `${siteUrl}/icon.svg`,
-      },
-    },
+    publisher: generateOrganizationStructuredData(siteUrl),
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': url,

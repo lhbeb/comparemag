@@ -23,6 +23,7 @@ export default async function EditWriterPage({
       initialData={{
         slug: writer.slug,
         name: writer.name,
+        specialty: writer.specialty,
         bio: writer.bio,
         bio_html: writer.bio_html,
         avatar_url: writer.avatar_url,
@@ -35,4 +36,3 @@ export default async function EditWriterPage({
     />
   )
 }
-

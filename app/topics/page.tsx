@@ -133,7 +133,7 @@ export default function TopicsPage() {
 
 function TopicCard({ title, description, icon, count, slug = "" }: any) {
   return (
-    <Link href={`/articles/`} className="group">
+    <Link href={`/topics/${slug}`} className="group">
       <Card className="bg-white border-gray-200 hover:border-blue-300 transition-colors h-full shadow-sm">
         <CardHeader>
           <div className="flex items-center justify-between">

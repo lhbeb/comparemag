@@ -26,6 +26,9 @@ const nextConfig = {
   // Performance optimizations
   compress: true,
   poweredByHeader: false,
+  turbopack: {
+    root: __dirname,
+  },
   // Removed basePath and trailingSlash for cleaner URLs with API routes
 }
 

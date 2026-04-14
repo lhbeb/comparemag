@@ -1,186 +1,35 @@
-"use client"
-
-import React, { useState, useRef, useEffect, type FormEvent, Suspense } from "react"
+import React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { ShoppingBag, Star, TrendingUp, Tag, Github, Linkedin, Mail, Rss, Search, Twitter, BarChart3, Newspaper, User, Award, Menu, X } from "lucide-react"
-import { useToast } from "@/components/ui/use-toast"
-import { LazySearchBar } from "@/components/lazy-search-bar"
+import { ShoppingBag, Star, TrendingUp, Tag, Github, Linkedin, Mail, Rss, Twitter, BarChart3, Newspaper, User, Award } from "lucide-react"
 import { LazyFeaturedCard } from "@/components/lazy-featured-card"
 import { LazyArticleCard } from "@/components/lazy-article-card"
 import { Logo } from "@/components/logo"
+import { NewsletterForm } from "@/components/newsletter-form"
+import { getAllArticles } from "@/lib/supabase/articles"
+import { getAllWriters } from "@/lib/supabase/writers"
 
-export default function Home() {
-  const [email, setEmail] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [articles, setArticles] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [editors, setEditors] = useState<any[]>([])
-  const [editorsLoading, setEditorsLoading] = useState(true)
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { toast } = useToast()
-  const newsletterRef = useRef<HTMLElement>(null)
+export default async function Home() {
+  const rawArticles = await getAllArticles(true).catch(() => [])
+  const editors = await getAllWriters().catch(() => [])
 
-  // Fetch articles on mount with optimized caching
-  useEffect(() => {
-    let isMounted = true
-    const controller = new AbortController()
-
-    async function fetchArticles() {
-      try {
-        // Small delay to ensure page is fully loaded
-        await new Promise(resolve => setTimeout(resolve, 100))
-
-        if (!isMounted) return
-
-        // Use absolute URL in development to avoid fetch issues
-        const apiUrl = typeof window !== 'undefined'
-          ? `${window.location.origin}/api/articles/list`
-          : '/api/articles/list'
-
-        console.log('Fetching articles from:', apiUrl)
-
-        const response = await fetch(apiUrl, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          cache: 'default',
-          signal: controller.signal,
-        })
-
-        if (!isMounted) return
-
-        if (!response.ok) {
-          const text = await response.text().catch(() => 'Unable to read error response')
-          console.error('API error:', response.status, text.substring(0, 200))
-          throw new Error(`Failed to fetch articles: ${response.status} ${response.statusText}`)
-        }
-
-        const contentType = response.headers.get('content-type')
-        if (!contentType || !contentType.includes('application/json')) {
-          const text = await response.text().catch(() => 'Unable to read response')
-          console.error('Response is not JSON:', text.substring(0, 200))
-          throw new Error('Response is not JSON')
-        }
-
-        const data = await response.json()
-
-        if (!isMounted) return
-
-        // Handle both array and object with articles property
-        const articlesArray = Array.isArray(data) ? data : (data?.articles || [])
-        setArticles(articlesArray)
-        setLoading(false)
-      } catch (err: any) {
-        if (!isMounted) return
-
-        if (err.name === 'AbortError') {
-          return // Request was aborted, ignore
-        }
-
-        // More detailed error logging
-        if (err instanceof TypeError && err.message === 'Failed to fetch') {
-          console.error('Network error - API route may not be accessible')
-          console.error('This usually means:')
-          console.error('1. The dev server is not running')
-          console.error('2. The API route does not exist')
-          console.error('3. There is a network/CORS issue')
-        } else {
-          console.error('Error fetching articles:', err)
-        }
-
-        console.error('Error details:', {
-          name: err.name,
-          message: err.message,
-          stack: err.stack,
-        })
-
-        // Set empty array on error to prevent crashes
-        setArticles([])
-        setLoading(false)
-
-        // Show toast notification with helpful message
-        const errorMessage = err instanceof TypeError && err.message === 'Failed to fetch'
-          ? 'Unable to connect to the server. Please ensure the dev server is running and try again.'
-          : (err.message || 'Could not fetch articles from the server. Please check your connection and try again.')
-
-        toast({
-          title: 'Failed to load articles',
-          description: errorMessage,
-          variant: 'destructive',
-        })
-      }
-    }
-
-    fetchArticles()
-
-    // Cleanup function
-    return () => {
-      isMounted = false
-      controller.abort()
-    }
-  }, [toast])
-
-  // Fetch editors for Meet the Experts section
-  useEffect(() => {
-    async function fetchEditors() {
-      try {
-        const res = await fetch('/api/writers')
-        if (res.ok) {
-          const data = await res.json()
-          setEditors(Array.isArray(data) ? data : [])
-        }
-      } catch (e) {
-        console.error('Failed to load editors', e)
-      } finally {
-        setEditorsLoading(false)
-      }
-    }
-    fetchEditors()
-  }, [])
-
-  const scrollToNewsletter = () => {
-    newsletterRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
-
-  const handleSubscribe = async (e: FormEvent) => {
-    e.preventDefault()
-
-    if (!email || !email.includes("@")) {
-      toast({
-        title: "Invalid email",
-        description: "Please enter a valid email address.",
-        variant: "destructive",
-      })
-      return
-    }
-
-    setIsSubmitting(true)
-
-    // Simulate subscription process
-    setTimeout(() => {
-      toast({
-        title: "Subscription successful!",
-        description: "Thank you for subscribing to our newsletter.",
-      })
-      setEmail("")
-      setIsSubmitting(false)
-    }, 1000)
-
-    // For GitHub Pages, you could use a service like Formspree or a Google Form
-    // to collect emails without needing a backend
-    // Example: window.open(`https://formspree.io/f/yourformid?email=${encodeURIComponent(email)}`, '_blank')
-  }
+  // Format articles to match the expected schema
+  const articles = rawArticles.map(article => ({
+    slug: article.slug,
+    title: article.title,
+    description: article.content.replace(/<[^>]*>/g, '').substring(0, 200).trim() + '...',
+    category: article.category,
+    date: new Date(article.created_at).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }),
+    image: article.image_url || '/placeholder.svg'
+  }))
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-
-
       <main className="container mx-auto px-4 pt-6 pb-16 overflow-visible">
         {/* Hero */}
         <section className="hero-section mb-0 rounded-t-[2rem] rounded-b-none p-8 md:p-12 lg:p-16 shadow-2xl overflow-hidden relative">
@@ -193,15 +42,15 @@ export default function Home() {
                 In-depth product reviews, breaking consumer news, and side-by-side price comparisons so you always buy better.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                <Button className="bg-orange-600 hover:bg-orange-700 text-white w-full sm:w-auto h-11 px-7 text-base font-bold shadow-lg transition-all rounded-full">
+                <Button className="bg-orange-600 hover:bg-orange-700 text-white w-full sm:w-auto h-11 px-7 text-base font-bold shadow-lg transition-all rounded-full" asChild>
                   <Link href="/articles/">Latest Reviews</Link>
                 </Button>
                 <Button
                   variant="outline"
                   className="bg-white/10 border-2 border-white/30 hover:bg-white hover:text-blue-900 text-white w-full sm:w-auto h-11 px-7 text-base font-semibold backdrop-blur-md transition-all rounded-full"
-                  onClick={scrollToNewsletter}
+                  asChild
                 >
-                  Join Newsletter
+                  <Link href="#newsletter">Join Newsletter</Link>
                 </Button>
               </div>
             </div>
@@ -215,7 +64,6 @@ export default function Home() {
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 quality={85}
               />
-              {/* Fade image into the section background */}
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0"
@@ -237,9 +85,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {loading ? (
-              <div className="col-span-1 sm:col-span-2 lg:col-span-4 text-center py-8 text-gray-600">Loading articles...</div>
-            ) : articles.length === 0 ? (
+            {articles.length === 0 ? (
               <div className="col-span-1 sm:col-span-2 lg:col-span-4 text-center py-8 text-gray-600">No articles yet</div>
             ) : (
               articles.slice(0, 4).map((article) => {
@@ -270,7 +116,7 @@ export default function Home() {
         </section>
 
         {/* Meet the Experts */}
-        {(editorsLoading || editors.length > 0) && (
+        {editors.length > 0 && (
           <section className="mb-16 md:mb-24">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-10 gap-4">
               <div className="section-heading max-w-2xl">
@@ -286,55 +132,37 @@ export default function Home() {
               </Link>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {editorsLoading ? (
-                [1,2,3].map((i) => (
-                  <div key={i} className="expert-card animate-pulse">
-                    <div className="expert-card-photo skeleton" />
-                    <div className="expert-card-body gap-3">
-                      <div className="skeleton h-4 w-3/4 rounded" />
-                      <div className="skeleton h-3 w-full rounded" />
-                      <div className="skeleton h-3 w-5/6 rounded" />
-                    </div>
-                  </div>
-                ))
-              ) : (
-                editors.map((editor) => (
-                  <div key={editor.id} className="expert-card">
-                    {/* Photo panel */}
-                    <div className="expert-card-photo">
-                      {editor.avatar_url ? (
-                        <img src={editor.avatar_url} alt={editor.name} />
-                      ) : (
-                        <div className="w-full h-full bg-blue-100 flex items-center justify-center">
-                          <User className="h-16 w-16 text-blue-400" />
-                        </div>
-                      )}
-                      {/* dark gradient */}
-                      <div className="expert-card-photo-overlay" />
-                      {/* name + badge pinned to bottom of photo */}
-                      <div className="expert-card-photo-name">
-                        {editor.specialty && (
-                          <span className="expert-card-badge mb-2 block w-fit">
-                            <Award className="h-3 w-3 inline-block mr-1" />
-                            {editor.specialty}
-                          </span>
-                        )}
-                        <h3>{editor.name}</h3>
+              {editors.map((editor) => (
+                <div key={editor.id} className="expert-card">
+                  <div className="expert-card-photo">
+                    {editor.avatar_url ? (
+                      <img src={editor.avatar_url} alt={editor.name} />
+                    ) : (
+                      <div className="w-full h-full bg-blue-100 flex items-center justify-center">
+                        <User className="h-16 w-16 text-blue-400" />
                       </div>
-                    </div>
-
-                    {/* Body */}
-                    <div className="expert-card-body">
-                      {editor.bio && (
-                        <p className="expert-card-bio line-clamp-3">{editor.bio}</p>
+                    )}
+                    <div className="expert-card-photo-overlay" />
+                    <div className="expert-card-photo-name">
+                      {editor.specialty && (
+                        <span className="expert-card-badge mb-2 block w-fit">
+                          <Award className="h-3 w-3 inline-block mr-1" />
+                          {editor.specialty}
+                        </span>
                       )}
-                      <Link href={`/writers/${editor.slug}`} className="expert-card-link">
-                        Full bio & credentials →
-                      </Link>
+                      <h3>{editor.name}</h3>
                     </div>
                   </div>
-                ))
-              )}
+                  <div className="expert-card-body">
+                    {editor.bio && (
+                      <p className="expert-card-bio line-clamp-3">{editor.bio}</p>
+                    )}
+                    <Link href={`/writers/${editor.slug}`} className="expert-card-link">
+                      Full bio & credentials →
+                    </Link>
+                  </div>
+                </div>
+              ))}
             </div>
           </section>
         )}
@@ -345,83 +173,22 @@ export default function Home() {
             <h2 className="text-3xl md:text-[2.5rem] leading-tight tracking-tight font-bold text-slate-900">Recent Reviews & News</h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {loading ? (
-              <div className="col-span-3 text-center py-10 text-gray-600">Loading articles...</div>
-            ) : articles.length === 0 ? (
-              <div className="col-span-3 text-center py-10 text-gray-600">No articles yet</div>
-            ) : (
-              articles.slice(3).map((article) => (
-                <LazyArticleCard
-                  key={article.slug}
-                  title={article.title}
-                  description={article.description}
-                  category={article.category}
-                  date={article.date}
-                  slug={article.slug}
-                  image={article.image}
-                />
-              ))
-            )}
-          </div>
-        </section>
-
-        {/* CompareMag Recommends */}
-        <section className="mb-16 md:mb-24">
-          <div className="section-heading mb-10">
-            <h2 className="text-3xl md:text-[2.5rem] leading-tight tracking-tight font-bold text-slate-900">CompareMag Recommends</h2>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {loading ? (
-              <div className="col-span-3 text-center py-10 text-gray-600">Loading articles...</div>
-            ) : articles.length === 0 ? (
-              <div className="col-span-3 text-center py-10 text-gray-600">No articles yet</div>
-            ) : (
-              // Reusing a slightly shifted slice for demonstration
-              articles.slice(1, 4).map((article) => (
-                <LazyArticleCard
-                  key={`recommend-${article.slug}`}
-                  title={article.title}
-                  description={article.description}
-                  category={article.category}
-                  date={article.date}
-                  slug={article.slug}
-                  image={article.image}
-                />
-              ))
-            )}
-          </div>
-        </section>
-
-        {/* CompareMag In Depth */}
-        <section className="mb-16 md:mb-24">
-          <div className="section-heading mb-10">
-            <h2 className="text-3xl md:text-[2.5rem] leading-tight tracking-tight font-bold text-slate-900">CompareMag In Depth</h2>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {loading ? (
-              <div className="col-span-3 text-center py-10 text-gray-600">Loading articles...</div>
-            ) : articles.length === 0 ? (
-              <div className="col-span-3 text-center py-10 text-gray-600">No articles yet</div>
-            ) : (
-              // Reusing a slightly shifted slice for demonstration
-              articles.slice(2, 5).map((article) => (
-                <LazyArticleCard
-                  key={`indepth-${article.slug}`}
-                  title={article.title}
-                  description={article.description}
-                  category={article.category}
-                  date={article.date}
-                  slug={article.slug}
-                  image={article.image}
-                />
-              ))
-            )}
+            {articles.slice(3, 9).map((article) => (
+              <LazyArticleCard
+                key={article.slug}
+                title={article.title}
+                description={article.description}
+                category={article.category}
+                date={article.date}
+                slug={article.slug}
+                image={article.image}
+              />
+            ))}
           </div>
         </section>
 
         {/* Newsletter */}
         <section
-          ref={newsletterRef}
           id="newsletter"
           className="newsletter-section mb-12 sm:mb-16 p-8 sm:p-12 md:p-16"
         >
@@ -435,23 +202,7 @@ export default function Home() {
                 Get the latest reviews, price drop alerts, and exclusive buying guides delivered straight to your inbox.
               </p>
             </div>
-            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
-              <Input
-                type="email"
-                placeholder="your@email.com"
-                className="h-12 sm:h-14 text-base px-6 bg-white/10 border-white/30 text-white placeholder:text-blue-200 focus-visible:bg-white/20 focus-visible:ring-white/30 flex-1 rounded-full"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <Button
-                type="submit"
-                className="h-12 sm:h-14 text-base px-8 bg-orange-600 hover:bg-orange-700 whitespace-nowrap text-white w-full sm:w-auto font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 rounded-full transition-all"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Subscribing..." : "Subscribe Free"}
-              </Button>
-            </form>
+            <NewsletterForm />
           </div>
         </section>
       </main>
@@ -482,61 +233,16 @@ export default function Home() {
             <div>
               <h3 className="font-medium mb-4 text-white">Categories</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>
-                  <Link href="/topics/" className="hover:text-white transition-colors">
-                    Smartphones
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/topics/" className="hover:text-white transition-colors">
-                    Laptops & PCs
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/topics/" className="hover:text-white transition-colors">
-                    Audio & Headphones
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/topics/" className="hover:text-white transition-colors">
-                    Home Appliances
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/topics/" className="hover:text-white transition-colors">
-                    Gaming
-                  </Link>
-                </li>
+                <li><Link href="/topics/" className="hover:text-white transition-colors">Smartphones</Link></li>
+                <li><Link href="/topics/" className="hover:text-white transition-colors">Laptops & PCs</Link></li>
+                <li><Link href="/topics/" className="hover:text-white transition-colors">Audio & Headphones</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="font-medium mb-4 text-white">Useful Links</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>
-                  <Link href="/articles/" className="hover:text-white transition-colors">
-                    All Reviews
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/articles/" className="hover:text-white transition-colors">
-                    Price Comparisons
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/articles/" className="hover:text-white transition-colors">
-                    Best Deals
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/articles/" className="hover:text-white transition-colors">
-                    Buying Guides
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/about/" className="hover:text-white transition-colors">
-                    About Us
-                  </Link>
-                </li>
+                <li><Link href="/articles/" className="hover:text-white transition-colors">All Reviews</Link></li>
+                <li><Link href="/about/" className="hover:text-white transition-colors">About Us</Link></li>
               </ul>
             </div>
             <div>
@@ -554,7 +260,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-    </div >
+    </div>
   )
 }
-
