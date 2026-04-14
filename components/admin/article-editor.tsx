@@ -84,6 +84,8 @@ export function ArticleEditor({ initialData, mode }: ArticleEditorProps) {
   const [editorsLoading, setEditorsLoading] = useState(true)
   const [showProductModal, setShowProductModal] = useState(false)
   const [products, setProducts] = useState<any[]>([])
+  const [modalMode, setModalMode] = useState<'product' | 'embed'>('product')
+  const [embedCode, setEmbedCode] = useState('')
 
   // Load Editors
   useEffect(() => {
@@ -174,6 +176,14 @@ export function ArticleEditor({ initialData, mode }: ArticleEditorProps) {
     setContent(prev => prev + shortcode)
     setShowProductModal(false)
     toast({ title: 'Shortcode Inserted', description: `Added ${productSlug} to content.` })
+  }
+
+  const handleInsertEmbed = () => {
+    if (!embedCode.trim()) return
+    setContent(prev => prev + '\n\n' + embedCode + '\n\n')
+    setEmbedCode('')
+    setShowProductModal(false)
+    toast({ title: 'Embed Code Inserted' })
   }
 
   return (
@@ -406,36 +416,68 @@ export function ArticleEditor({ initialData, mode }: ArticleEditorProps) {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-               <div>
-                 <h3 className="text-lg font-bold text-slate-900">Select Product Card</h3>
-                 <p className="text-xs text-slate-500">Choose a product to embed in your article content.</p>
+               <div className="flex gap-4">
+                 <button 
+                  onClick={() => setModalMode('product')}
+                  className={`text-sm font-bold pb-1 border-b-2 transition-all ${modalMode === 'product' ? 'text-blue-600 border-blue-600' : 'text-slate-400 border-transparent hover:text-slate-600'}`}
+                 >
+                   Products
+                 </button>
+                 <button 
+                  onClick={() => setModalMode('embed')}
+                  className={`text-sm font-bold pb-1 border-b-2 transition-all ${modalMode === 'embed' ? 'text-blue-600 border-blue-600' : 'text-slate-400 border-transparent hover:text-slate-600'}`}
+                 >
+                   Embed Code
+                 </button>
                </div>
                <Button variant="ghost" size="icon" onClick={() => setShowProductModal(false)} className="rounded-full">
                  <X className="w-5 h-5" />
                </Button>
             </div>
             
-            <div className="p-6 max-h-[400px] overflow-y-auto space-y-3">
-              {products.length === 0 ? (
-                <div className="text-center py-10 text-slate-400">Loading products...</div>
-              ) : (
-                products.map(p => (
-                  <div key={p.id} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all group">
-                    <div className="min-w-0 pr-4">
-                      <h4 className="text-sm font-bold text-slate-900 truncate">{p.title}</h4>
-                      <p className="text-xs text-slate-500 font-mono mt-0.5">{p.slug}</p>
+            {modalMode === 'product' ? (
+              <div className="p-6 max-h-[400px] overflow-y-auto space-y-3">
+                {products.length === 0 ? (
+                  <div className="text-center py-10 text-slate-400">Loading products...</div>
+                ) : (
+                  products.map(p => (
+                    <div key={p.id} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all group">
+                      <div className="min-w-0 pr-4">
+                        <h4 className="text-sm font-bold text-slate-900 truncate">{p.title}</h4>
+                        <p className="text-xs text-slate-500 font-mono mt-0.5">{p.slug}</p>
+                      </div>
+                      <Button 
+                        size="sm" 
+                        onClick={() => insertProductCode(p.slug)}
+                        className="bg-white text-slate-900 border-slate-200 hover:bg-blue-600 hover:text-white transition-colors"
+                      >
+                        Insert
+                      </Button>
                     </div>
-                    <Button 
-                      size="sm" 
-                      onClick={() => insertProductCode(p.slug)}
-                      className="bg-white text-slate-900 border-slate-200 hover:bg-blue-600 hover:text-white transition-colors"
-                    >
-                      Insert
-                    </Button>
-                  </div>
-                ))
-              )}
-            </div>
+                  ))
+                )}
+              </div>
+            ) : (
+              <div className="p-6 space-y-4">
+                <div className="space-y-2">
+                  <Label>Embed Code (HTML)</Label>
+                  <Textarea 
+                    value={embedCode}
+                    onChange={(e) => setEmbedCode(e.target.value)}
+                    placeholder="Paste TikTok, YouTube, or Other HTML embed code here..."
+                    className="min-h-[200px] font-mono text-sm leading-relaxed"
+                  />
+                  <p className="text-[10px] text-slate-400 italic">This will be injected exactly as provided into the article body.</p>
+                </div>
+                <Button 
+                  onClick={handleInsertEmbed}
+                  disabled={!embedCode.trim()}
+                  className="w-full bg-blue-600"
+                >
+                  Insert Embed Code
+                </Button>
+              </div>
+            )}
             
             <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
                <Button variant="ghost" onClick={() => setShowProductModal(false)}>Cancel</Button>

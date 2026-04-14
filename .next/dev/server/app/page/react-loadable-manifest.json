@@ -2,8 +2,8 @@
   "[project]/components/search-bar.tsx [app-client] (ecmascript, next/dynamic entry)": {
     "id": "[project]/components/search-bar.tsx [app-client] (ecmascript, next/dynamic entry)",
     "files": [
-      "static/chunks/_19dbe8c6._.js",
-      "static/chunks/components_search-bar_tsx_7378ce1f._.js"
+      "static/chunks/_0d66a0e0._.js",
+      "static/chunks/components_search-bar_tsx_a6a2fdeb._.js"
     ]
   }
 }

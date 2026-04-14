@@ -7,6 +7,7 @@ import type { BlogPost } from "@/lib/data/blogPosts"
 import type { Article } from "@/lib/supabase/types"
 import { Breadcrumbs } from "@/components/seo/breadcrumbs"
 import { ArticleShareButtons } from "@/components/article-share-buttons"
+import { EmbedHydrator } from "@/components/embed-hydrator"
 
 interface BlogPostContentProps {
   post: BlogPost
@@ -120,10 +121,13 @@ export function BlogPostContent({ post, article }: BlogPostContentProps) {
 
             {/* Article Content */}
             <div 
-              className="prose prose-lg prose-slate max-w-none prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-headings:text-slate-900 prose-img:rounded-xl"
+              className="prose prose-lg prose-slate max-w-none prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-headings:text-slate-900 prose-img:rounded-xl [&_iframe]:w-full [&_iframe]:aspect-video [&_iframe]:rounded-xl [&_iframe]:border-0 [&_iframe]:shadow-sm my-8"
               itemProp="articleBody"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
+            
+            {/* Embed Runtime Hydrator */}
+            <EmbedHydrator />
 
             {/* Article Footer */}
             <footer className="mt-12 pt-8 border-t border-slate-200">

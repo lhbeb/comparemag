@@ -32,3 +32,5 @@ Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
 [04:08:35.676] Server  LOG      ✓ Compiled in 111ms
 [04:08:37.006] Server  LOG      ✓ Compiled in 182ms
 [04:09:27.740] Server  LOG      ✓ Compiled in 219ms
+[04:38:09.916] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[04:40:01.789] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
