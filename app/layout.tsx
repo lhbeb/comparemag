@@ -3,6 +3,7 @@ import "./globals.css"
 import type { Metadata } from "next"
 import { Toaster } from "@/components/ui/toaster"
 import localFont from "next/font/local"
+import SessionTracker from "@/components/SessionTracker"
 
 const monument = localFont({
   src: [
@@ -72,6 +73,7 @@ export default function RootLayout({
       <body className={`${monument.variable} font-sans flex flex-col min-h-screen`}>
         {children}
         <Toaster />
+        <SessionTracker />
       </body>
     </html>
   )
