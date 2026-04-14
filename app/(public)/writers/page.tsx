@@ -2,6 +2,23 @@ import Link from "next/link"
 import { Logo } from "@/components/logo"
 import { Github, Linkedin, Mail, Rss, Twitter, User, Award } from "lucide-react"
 import { getAllWriters } from "@/lib/supabase/writers"
+import { StructuredData } from "@/components/seo/structured-data"
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: "Our Expert Reviewers | CompareMag",
+  description: "Meet the team of tech experts and reviewers behind CompareMag's in-depth product analysis.",
+  alternates: {
+    canonical: "https://comparemag.blog/writers",
+  },
+  openGraph: {
+    title: "Our Expert Reviewers | CompareMag",
+    description: "Meet the team of tech experts and reviewers behind CompareMag's in-depth product analysis.",
+    siteName: "CompareMag",
+    url: "https://comparemag.blog/writers",
+    type: "profile",
+  },
+}
 
 async function getEditors() {
   try {
@@ -15,10 +32,29 @@ async function getEditors() {
 export default async function EditorsPage() {
   const editors = await getEditors()
 
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Our Expert Reviewers | CompareMag',
+    description: "Meet the team of tech experts and reviewers behind CompareMag's in-depth product analysis.",
+    url: 'https://comparemag.blog/writers',
+    itemListElement: editors.map((editor, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'Person',
+        name: editor.name,
+        description: editor.bio || "Tech reviewer at CompareMag",
+        jobTitle: (editor as any).specialty || "Reviewer",
+        url: `https://comparemag.blog/writers/${editor.slug}`,
+        image: editor.avatar_url,
+      }
+    }))
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-
-
+      <StructuredData data={schemaData} />
       <main className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900 text-center">Meet Our Experts</h1>

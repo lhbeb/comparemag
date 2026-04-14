@@ -7,6 +7,7 @@ import { getAllArticles } from "@/lib/supabase/articles"
 import { SupabaseImage } from "@/components/supabase-image"
 import { format } from "date-fns"
 import { Breadcrumbs } from "@/components/seo/breadcrumbs"
+import { StructuredData } from "@/components/seo/structured-data"
 import type { Metadata } from "next"
 
 const topicsData = {
@@ -65,8 +66,44 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
     { label: topic.title, href: `/topics/${resolvedParams.slug}` },
   ]
 
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${topic.title} Reviews & News | CompareMag`,
+    description: topic.description,
+    url: `https://comparemag.blog/topics/${resolvedParams.slug}`,
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: categoryArticles.map((article, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'Article',
+          name: article.title,
+          url: `https://comparemag.blog/blog/${article.slug}`,
+          datePublished: article.published_at || article.created_at,
+          author: {
+            '@type': 'Person',
+            name: article.author
+          }
+        }
+      }))
+    }
+  }
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://comparemag.blog' },
+      { '@type': 'ListItem', position: 2, name: 'Categories', item: 'https://comparemag.blog/topics' },
+      { '@type': 'ListItem', position: 3, name: topic.title, item: `https://comparemag.blog/topics/${resolvedParams.slug}` }
+    ]
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+      <StructuredData data={[schemaData, breadcrumbSchema]} />
       <main className="container mx-auto px-4 py-8">
         <Breadcrumbs items={breadcrumbItems} />
         

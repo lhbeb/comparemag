@@ -6,6 +6,23 @@ import { BrainCircuit, Clock, Github, Linkedin, Mail, Rss, Twitter } from "lucid
 import { getAllArticles } from "@/lib/supabase/articles"
 import { format } from 'date-fns'
 import { ArticlesSubscribeButton } from '@/components/articles-subscribe-button'
+import { StructuredData } from '@/components/seo/structured-data'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: "All Reviews & Articles | CompareMag",
+  description: "Browse our complete archive of in-depth product reviews, buying guides, and tech news.",
+  alternates: {
+    canonical: "https://comparemag.blog/articles",
+  },
+  openGraph: {
+    title: "All Reviews & Articles | CompareMag",
+    description: "Browse our complete archive of in-depth product reviews, buying guides, and tech news.",
+    siteName: "CompareMag",
+    url: "https://comparemag.blog/articles",
+    type: "website",
+  },
+}
 
 async function getArticles() {
   try {
@@ -19,10 +36,43 @@ async function getArticles() {
 export default async function ArticlesPage() {
   const articles = await getArticles()
 
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'All Reviews & Articles | CompareMag',
+    description: 'Browse our complete archive of in-depth product reviews, buying guides, and tech news.',
+    url: 'https://comparemag.blog/articles',
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: articles.map((article, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'Article',
+          name: article.title,
+          url: `https://comparemag.blog/blog/${article.slug}`,
+          datePublished: article.published_at || article.created_at,
+          author: {
+            '@type': 'Person',
+            name: article.author
+          }
+        }
+      }))
+    }
+  }
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://comparemag.blog' },
+      { '@type': 'ListItem', position: 2, name: 'Articles', item: 'https://comparemag.blog/articles' }
+    ]
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-
-
+      <StructuredData data={[schemaData, breadcrumbSchema]} />
       <main className="container mx-auto px-4 py-12">
         <section className="mb-12">
           <h1 className="text-4xl font-bold mb-8 text-slate-900">All Reviews</h1>

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   FileText, Users, Home, LayoutDashboard,
-  PlusCircle, ChevronRight, ArrowUpRight, Newspaper, ShoppingBag, Wand2, LogOut
+  PlusCircle, ChevronRight, ArrowUpRight, Newspaper, ShoppingBag, Wand2, LogOut, Database
 } from 'lucide-react'
 import { logoutAction } from '@/app/actions/auth'
 import './admin.css'
@@ -22,10 +22,10 @@ const navGroups = [
     ],
   },
   {
-    groupLabel: 'Content',
+    groupLabel: 'Content Operations',
     items: [
       {
-        label: 'Articles',
+        label: 'Manual Articles',
         href: '/admin/articles',
         icon: Newspaper,
         children: [
@@ -38,21 +38,33 @@ const navGroups = [
         href: '/admin/programmatic',
         icon: Wand2,
         children: [
-          { label: 'Generate', href: '/admin/programmatic/new' },
+          { label: 'Templates', href: '/admin/programmatic/templates' },
+          { label: 'Generated Pages', href: '/admin/programmatic/generated-pages' },
+          { label: 'Bulk Generate', href: '/admin/programmatic/new' },
         ],
       },
     ],
   },
   {
-    groupLabel: 'Commerce',
+    groupLabel: 'Database',
     items: [
       {
-        label: 'Product Cards',
+        label: 'Products',
         href: '/admin/products',
         icon: ShoppingBag,
         children: [
           { label: 'All Products', href: '/admin/products' },
           { label: 'New Product', href: '/admin/products/new' },
+        ],
+      },
+      {
+        label: 'Imports & Exports',
+        href: '/admin/imports-exports',
+        icon: Database,
+        children: [
+          { label: 'Import Products', href: '/admin/imports-exports/import-products' },
+          { label: 'Import Programmatic Data', href: '/admin/imports-exports/import-programmatic' },
+          { label: 'Export Data', href: '/admin/imports-exports/export-data' },
         ],
       },
     ],

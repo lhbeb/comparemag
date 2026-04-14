@@ -2,7 +2,7 @@ import { getArticleBySlug, getAllSlugs, getAllArticles } from "@/lib/supabase/ar
 import { BlogPostContent } from "@/components/blog-post-content"
 import { notFound } from "next/navigation"
 import type { BlogPost } from "@/lib/data/blogPosts"
-import { generateArticleMetadata, generateArticleStructuredData, generateBreadcrumbStructuredData, generateOrganizationStructuredData } from "@/lib/seo/article-seo"
+import { generateArticleMetadata, generateArticleStructuredDataGraph } from "@/lib/seo/article-seo"
 import { StructuredData } from "@/components/seo/structured-data"
 import { parseProductShortcodes } from "@/lib/products/embed"
 import type { Metadata } from "next"
@@ -84,14 +84,12 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     relatedPosts: relatedArticles,
   }
 
-  // Generate structured data for SEO
-  const articleStructuredData = generateArticleStructuredData(article)
-  const breadcrumbStructuredData = generateBreadcrumbStructuredData(article)
-  const organizationStructuredData = generateOrganizationStructuredData()
+  // Generate structured data for SEO (Fully connected @graph)
+  const articleStructuredDataGraph = generateArticleStructuredDataGraph(article)
 
   return (
     <>
-      <StructuredData data={[articleStructuredData, breadcrumbStructuredData, organizationStructuredData]} />
+      <StructuredData data={articleStructuredDataGraph} />
       <BlogPostContent post={post} article={article} />
     </>
   )

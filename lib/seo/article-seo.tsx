@@ -93,7 +93,7 @@ export function generateArticleMetadata(article: Article, siteUrl: string = 'htt
   }
 }
 
-export function generateArticleStructuredData(article: Article, siteUrl: string = 'https://comparemag.blog') {
+export function generateArticleStructuredDataGraph(article: Article, siteUrl: string = 'https://comparemag.blog') {
   const url = `${siteUrl}/blog/${article.slug}`
   const imageUrl = article.image_url || `${siteUrl}/placeholder.svg`
   
@@ -111,79 +111,114 @@ export function generateArticleStructuredData(article: Article, siteUrl: string 
     schemaType = 'NewsArticle'
   }
 
-  return {
-    '@context': 'https://schema.org',
-    '@type': schemaType,
-    headline: article.title,
-    description: description,
-    image: imageUrl,
-    datePublished: article.published_at || article.created_at,
-    dateModified: article.updated_at,
-    author: {
-      '@type': 'Person',
-      name: article.author,
-      url: `${siteUrl}/writers/${article.author.toLowerCase().replace(/\s+/g, '-')}`
-    },
-    publisher: generateOrganizationStructuredData(siteUrl),
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': url,
-    },
-    articleSection: article.category,
-    keywords: article.category,
-    inLanguage: 'en-US',
-    isAccessibleForFree: true,
-    wordCount: article.content.replace(/<[^>]*>/g, '').split(/\s+/).length,
-    timeRequired: article.read_time,
-  }
-}
+  const authorUrl = `${siteUrl}/writers/${article.author.toLowerCase().replace(/\s+/g, '-')}`
+  const siteLogo = `${siteUrl}/favicon.png`
 
-export function generateBreadcrumbStructuredData(article: Article, siteUrl: string = 'https://comparemag.blog') {
   return {
     '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
+    '@graph': [
       {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: siteUrl,
+        '@type': 'Organization',
+        '@id': `${siteUrl}/#organization`,
+        name: 'CompareMag',
+        url: siteUrl,
+        logo: {
+          '@type': 'ImageObject',
+          '@id': `${siteUrl}/#logo`,
+          inLanguage: 'en-US',
+          url: siteLogo,
+          contentUrl: siteLogo,
+        },
+        sameAs: [
+          'https://twitter.com/comparemag',
+          'https://github.com/comparemag',
+          'https://linkedin.com/company/comparemag',
+        ],
+        description: 'Your trusted source for in-depth product reviews, price comparisons, and honest buying guides.',
       },
       {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Articles',
-        item: `${siteUrl}/articles`,
+        '@type': 'WebSite',
+        '@id': `${siteUrl}/#website`,
+        url: siteUrl,
+        name: 'CompareMag',
+        description: 'Your trusted source for in-depth product reviews, price comparisons, and honest buying guides.',
+        publisher: { '@id': `${siteUrl}/#organization` },
+        inLanguage: 'en-US'
       },
       {
-        '@type': 'ListItem',
-        position: 3,
-        name: article.category,
-        item: `${siteUrl}/topics/${article.category.toLowerCase().replace(/\s+/g, '-')}`,
+        '@type': 'ImageObject',
+        '@id': `${url}#primaryimage`,
+        inLanguage: 'en-US',
+        url: imageUrl,
+        contentUrl: imageUrl,
       },
       {
-        '@type': 'ListItem',
-        position: 4,
+        '@type': 'WebPage',
+        '@id': `${url}#webpage`,
+        url: url,
         name: article.title,
-        item: `${siteUrl}/blog/${article.slug}`,
+        isPartOf: { '@id': `${siteUrl}/#website` },
+        primaryImageOfPage: { '@id': `${url}#primaryimage` },
+        datePublished: article.published_at || article.created_at,
+        dateModified: article.updated_at,
+        description: description,
+        inLanguage: 'en-US',
       },
-    ],
-  }
-}
-
-export function generateOrganizationStructuredData(siteUrl: string = 'https://comparemag.blog') {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'CompareMag',
-    url: siteUrl,
-    logo: `${siteUrl}/icon.svg`,
-    sameAs: [
-      'https://twitter.com/comparemag',
-      'https://github.com/comparemag',
-      'https://linkedin.com/company/comparemag',
-    ],
-    description: 'Exploring the frontiers of artificial intelligence, generative AI, computer vision, and deep learning.',
+      {
+        '@type': 'Person',
+        '@id': `${authorUrl}#author`,
+        name: article.author,
+        url: authorUrl,
+      },
+      {
+        '@type': schemaType,
+        '@id': `${url}#article`,
+        isPartOf: { '@id': `${url}#webpage` },
+        author: { '@id': `${authorUrl}#author` },
+        publisher: { '@id': `${siteUrl}/#organization` },
+        headline: article.title,
+        datePublished: article.published_at || article.created_at,
+        dateModified: article.updated_at,
+        mainEntityOfPage: { '@id': `${url}#webpage` },
+        image: { '@id': `${url}#primaryimage` },
+        articleSection: article.category,
+        keywords: article.category,
+        inLanguage: 'en-US',
+        isAccessibleForFree: true,
+        wordCount: article.content.replace(/<[^>]*>/g, '').split(/\s+/).length,
+        timeRequired: article.read_time,
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${url}#breadcrumb`,
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: siteUrl,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Articles',
+            item: `${siteUrl}/articles`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: article.category,
+            item: `${siteUrl}/topics/${article.category.toLowerCase().replace(/\s+/g, '-')}`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 4,
+            name: article.title,
+            item: url,
+          },
+        ],
+      }
+    ]
   }
 }
 
