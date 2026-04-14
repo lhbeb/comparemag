@@ -1,25 +1,27 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
+import { usePathname } from "next/navigation"
 
-// ─── Session deduplication ────────────────────────────────────────────────────
-// One report per browser tab (sessionStorage). A fresh tab = fresh report.
-function getOrCreateSessionId(): string | null {
+// ─── Session ID (stable for the whole tab) ────────────────────────────────────
+function getSessionId(): string {
   try {
-    const FIRED_KEY = "cm_tracked"
-    const SID_KEY = "cm_sid"
-    if (sessionStorage.getItem(FIRED_KEY)) return null // already tracked this tab
-    sessionStorage.setItem(FIRED_KEY, "1")
-    let sid = sessionStorage.getItem(SID_KEY)
+    const KEY = "cm_sid"
+    let sid = sessionStorage.getItem(KEY)
     if (!sid) {
       sid = Math.random().toString(36).slice(2) + Date.now().toString(36)
-      sessionStorage.setItem(SID_KEY, sid)
+      sessionStorage.setItem(KEY, sid)
     }
     return sid
   } catch {
     return "storage-blocked"
   }
 }
+
+// ─── Per-path dedup — track each unique path once per tab ─────────────────────
+// Stored in memory (a Set) so SPA navigations back to the same URL don't double-fire,
+// but a hard reload (new tab) always fires fresh.
+const reportedPaths = new Set<string>()
 
 // ─── Canvas fingerprint ───────────────────────────────────────────────────────
 function getCanvasHash(): string {
@@ -113,59 +115,61 @@ function buildPayload(sessionId: string) {
   }
 }
 
-// ─── Send — guaranteed delivery, zero UX impact ───────────────────────────────
-// sendBeacon: fires even when user closes tab, never blocks the browser
-// fetch keepalive: fallback with identical guarantees on browsers without sendBeacon
+// ─── Send — fire-and-forget, zero UX impact ───────────────────────────────────
 function sendPayload(payload: object) {
   const endpoint = "/api/track-session"
-  const blob = new Blob([JSON.stringify(payload)], {
-    type: "application/json",
-  })
+  const blob = new Blob([JSON.stringify(payload)], { type: "application/json" })
 
   if (typeof navigator.sendBeacon === "function") {
     const sent = navigator.sendBeacon(endpoint, blob)
-    if (sent) return // done — browser queued it
+    if (sent) return
   }
 
-  // Fallback: keepalive fetch (won't cancel on page unload)
   fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
     keepalive: true,
-  }).catch(() => {
-    /* silent — server has its own retry logic */
-  })
+  }).catch(() => { /* silent */ })
 }
 
-// ─── Scheduler: runs during browser idle time ─────────────────────────────────
-// requestIdleCallback waits until the browser has nothing more important to do.
-// This guarantees zero impact on FCP, LCP, TTI, or any core web vital.
+// ─── Scheduler: runs only during browser idle time ────────────────────────────
 function scheduleWhenIdle(task: () => void) {
   if (typeof window.requestIdleCallback === "function") {
-    // timeout: 6000ms — if browser never goes idle within 6s, run anyway
     requestIdleCallback(task, { timeout: 6000 })
   } else {
-    // Safari fallback — still deferred past all critical rendering
-    setTimeout(task, 3000)
+    setTimeout(task, 3000) // Safari fallback
   }
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function SessionTracker() {
-  useEffect(() => {
-    scheduleWhenIdle(() => {
-      const sessionId = getOrCreateSessionId()
-      if (!sessionId) return // already tracked this tab
+  const pathname = usePathname() // re-renders on every SPA navigation
+  const sessionId = useRef<string | null>(null)
 
+  useEffect(() => {
+    // Initialise session ID once per tab
+    if (!sessionId.current) {
+      sessionId.current = getSessionId()
+    }
+
+    const currentPath = window.location.pathname
+
+    // Skip if this exact path was already reported in this tab
+    if (reportedPaths.has(currentPath)) return
+    reportedPaths.add(currentPath)
+
+    const sid = sessionId.current
+
+    scheduleWhenIdle(() => {
       try {
-        const payload = buildPayload(sessionId)
+        const payload = buildPayload(sid)
         sendPayload(payload)
       } catch {
-        // Never propagate — this must never affect UX
+        // Never propagate — must never affect UX
       }
     })
-  }, [])
+  }, [pathname]) // ← fires on every route change, including direct loads
 
   return null
 }
