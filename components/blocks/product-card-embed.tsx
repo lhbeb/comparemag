@@ -10,7 +10,7 @@ export interface ProductCardData {
   brand?: string | null
   image_url?: string | null
   short_description?: string | null
-  cta_label?: string
+  cta_label?: string | null
   external_url?: string | null
   price_text?: string | null
   rating_text?: string | null
