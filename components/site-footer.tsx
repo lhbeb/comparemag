@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Logo } from "@/components/logo"
-import { Github, Linkedin, Mail, Rss, Twitter } from "lucide-react"
+import { Github, Linkedin, Mail, Rss, Twitter, MapPin } from "lucide-react"
 
 export function SiteFooter() {
   return (
@@ -38,10 +38,14 @@ export function SiteFooter() {
           </div>
           <div>
             <h3 className="font-medium mb-4 text-white">Contact</h3>
-            <ul className="space-y-2 text-sm text-slate-400">
-              <li className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
+            <ul className="space-y-4 text-sm text-slate-400">
+              <li className="flex items-center gap-3">
+                <Mail className="h-4 w-4 shrink-0" />
                 <span className="break-all">contact@compareradar.com</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <MapPin className="h-4 w-4 shrink-0 mt-0.5" />
+                <span>123 Tech Avenue<br />Suite 400<br />San Francisco, CA 94105</span>
               </li>
             </ul>
           </div>

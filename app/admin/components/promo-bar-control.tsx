@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Sparkles, Search, CheckCircle, X } from 'lucide-react'
 import { setFeaturedArticle } from '@/app/actions/promo'
 import { useRouter } from 'next/navigation'
+import { toast } from '@/hooks/use-toast'
 
 export function PromoBarControl({ articles }: { articles: any[] }) {
   const [search, setSearch] = useState('')
@@ -19,8 +20,16 @@ export function PromoBarControl({ articles }: { articles: any[] }) {
       await setFeaturedArticle(slug)
       router.refresh()
       setSearch('') // clear search after updating
+      toast({
+        title: slug ? 'Featured article updated' : 'Featured article cleared',
+        description: slug ? 'The promo bar will now highlight the selected article.' : 'The promo bar will now show the default message.',
+      })
     } catch (e: any) {
-      alert(e.message)
+      toast({
+        title: 'Promo bar update failed',
+        description: e?.message || 'Could not save the featured article selection.',
+        variant: 'destructive',
+      })
     } finally {
       setIsUpdating(false)
     }

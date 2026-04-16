@@ -29,7 +29,9 @@ export async function PUT(
     const resolvedParams = await Promise.resolve(params)
     const body = await request.json()
     const {
+      slug,
       name,
+      specialty,
       bio,
       bio_html,
       avatar_url,
@@ -41,7 +43,9 @@ export async function PUT(
     } = body
 
     const updateData: WriterUpdate = {}
+    if (slug !== undefined) updateData.slug = slug
     if (name !== undefined) updateData.name = name
+    if (specialty !== undefined) updateData.specialty = specialty
     if (bio !== undefined) updateData.bio = bio
     if (bio_html !== undefined) updateData.bio_html = bio_html
     if (avatar_url !== undefined) updateData.avatar_url = avatar_url
@@ -83,4 +87,3 @@ export async function DELETE(
     )
   }
 }
-

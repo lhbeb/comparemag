@@ -34,6 +34,18 @@ export interface HealthCheckResult {
       error?: string
     }
   }
+  columns: {
+    articles: {
+      is_featured: boolean
+      article_type: boolean
+      canonical_url: boolean
+      error?: string
+    }
+    writers: {
+      specialty: boolean
+      error?: string
+    }
+  }
   timestamp: string
 }
 
@@ -46,6 +58,16 @@ export async function executeDatabaseHealthCheck(): Promise<HealthCheckResult> {
       articles: { exists: false },
       writers: { exists: false },
       product_cards: { exists: false }
+    },
+    columns: {
+      articles: {
+        is_featured: false,
+        article_type: false,
+        canonical_url: false,
+      },
+      writers: {
+        specialty: false,
+      },
     },
     timestamp: new Date().toISOString(),
   }
@@ -64,6 +86,25 @@ export async function executeDatabaseHealthCheck(): Promise<HealthCheckResult> {
       result.database.connected = true
       result.tables.articles.exists = true
       result.tables.articles.rowCount = count || 0
+
+      const articleColumnChecks = await Promise.all([
+        supabase.from('articles').select('is_featured', { head: true }).limit(1),
+        supabase.from('articles').select('article_type', { head: true }).limit(1),
+        supabase.from('articles').select('canonical_url', { head: true }).limit(1),
+      ])
+
+      result.columns.articles.is_featured = !articleColumnChecks[0].error
+      result.columns.articles.article_type = !articleColumnChecks[1].error
+      result.columns.articles.canonical_url = !articleColumnChecks[2].error
+
+      const articleColumnErrors = articleColumnChecks
+        .map((check) => check.error?.message)
+        .filter(Boolean)
+
+      if (articleColumnErrors.length > 0) {
+        result.columns.articles.error = articleColumnErrors.join(' | ')
+        result.status = 'unhealthy'
+      }
     }
 
     // Check writers table
@@ -78,6 +119,17 @@ export async function executeDatabaseHealthCheck(): Promise<HealthCheckResult> {
       } else {
         result.tables.writers.exists = true
         result.tables.writers.rowCount = writersCount || 0
+
+        const { error: specialtyError } = await supabase
+          .from('writers')
+          .select('specialty', { head: true })
+          .limit(1)
+
+        result.columns.writers.specialty = !specialtyError
+        if (specialtyError) {
+          result.columns.writers.error = specialtyError.message
+          result.status = 'unhealthy'
+        }
       }
 
       // Check product_cards table

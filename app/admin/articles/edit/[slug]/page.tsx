@@ -1,7 +1,6 @@
 import { ArticleEditor } from '@/components/admin/article-editor'
-import { getArticleBySlug } from '@/lib/supabase/articles'
 import { getAllWriters } from '@/lib/supabase/writers'
-import { getAllProductsOverview } from '@/lib/supabase/products'
+import { getAllProducts } from '@/lib/supabase/products'
 import { notFound } from 'next/navigation'
 
 async function getArticle(slug: string) {
@@ -33,7 +32,7 @@ export default async function EditArticlePage({
   const [article, writers, products] = await Promise.all([
     getArticle(resolvedParams.slug),
     getAllWriters(),
-    getAllProductsOverview(true)
+    getAllProducts(false)
   ])
 
   if (!article) {

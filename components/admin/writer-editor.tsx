@@ -84,7 +84,18 @@ export function WriterEditor({ initialData, mode }: WriterEditorProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(writerData),
       })
-      if (!response.ok) throw new Error('Failed to save writer')
+      if (!response.ok) {
+        let message = 'Failed to save writer'
+        try {
+          const errorBody = await response.json()
+          if (typeof errorBody?.message === 'string' && errorBody.message.trim()) {
+            message = errorBody.message
+          }
+        } catch {
+          // Ignore JSON parsing failures and keep fallback message
+        }
+        throw new Error(message)
+      }
       toast({ title: 'Editor saved!' })
       router.push('/admin/writers'); router.refresh()
     } catch (error: any) {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createArticle } from '@/lib/supabase/articles'
 import type { ArticleInsert } from '@/lib/supabase/types'
+import { revalidatePath } from 'next/cache'
 
 export async function POST(request: NextRequest) {
   try {
@@ -63,7 +64,9 @@ export async function POST(request: NextRequest) {
       canonical_url: canonical_url || null,
     }
 
-    const article = await createArticle(articleData)
+    const article: any = await createArticle(articleData)
+
+    revalidatePath('/', 'layout')
 
     return NextResponse.json(article, { status: 201 })
   } catch (error) {

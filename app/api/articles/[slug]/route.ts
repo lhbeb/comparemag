@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { updateArticle, deleteArticle } from '@/lib/supabase/articles'
 import type { ArticleUpdate } from '@/lib/supabase/types'
+import { revalidatePath } from 'next/cache'
 
 export async function PUT(
   request: NextRequest,
@@ -63,6 +64,8 @@ export async function PUT(
 
     const article = await updateArticle(resolvedParams.slug, updateData)
 
+    revalidatePath('/', 'layout')
+
     return NextResponse.json(article)
   } catch (error) {
     console.error('Error updating article:', error)
@@ -83,6 +86,8 @@ export async function DELETE(
   try {
     const resolvedParams = await Promise.resolve(params)
     await deleteArticle(resolvedParams.slug)
+
+    revalidatePath('/', 'layout')
 
     return NextResponse.json({ message: 'Article deleted successfully' })
   } catch (error) {

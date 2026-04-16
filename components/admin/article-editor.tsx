@@ -24,7 +24,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from '@/hooks/use-toast'
 import Link from 'next/link'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
-import { ArticleRenderer } from '@/components/article-renderer'
+import { ArticleRenderer, compileArticleSourceToHtml } from '@/components/article-renderer'
 
 interface ArticleEditorProps {
   initialData?: {
@@ -219,6 +219,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
 
   // Prevent Regex computation from blocking the main typing thread
   const deferredContent = useDeferredValue(content)
+  const compiledHtml = compileArticleSourceToHtml(deferredContent)
 
   return (
     <div className="relative pb-24">
@@ -467,8 +468,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
             {/* TAB: HTML OUTPUT */}
             <TabsContent value="html" className="mt-0 outline-none">
               <div className="bg-slate-900 rounded-xl shadow-inner p-6 min-h-[700px] font-mono text-sm text-green-400 overflow-x-auto whitespace-pre-wrap">
-                {/* Note: In a real app we might want to expose the raw compiled HTML string from `marked` here, but for simplicity we'll just show the raw markdown source or a placeholder. If you need compiled HTML, you could run `marked.parse` locally here. */}
-                {deferredContent || '<!-- No content yet -->'}
+                {compiledHtml || '<!-- No content yet -->'}
               </div>
             </TabsContent>
           </Tabs>

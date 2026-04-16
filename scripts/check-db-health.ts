@@ -74,6 +74,18 @@ async function main() {
       console.log(`  Error: ${health.tables.product_cards.error}`)
     }
 
+    console.log('\n🧩 Required Columns:')
+    console.log(`  Articles.is_featured: ${health.columns.articles.is_featured ? '✅ Present' : '❌ Missing'}`)
+    console.log(`  Articles.article_type: ${health.columns.articles.article_type ? '✅ Present' : '❌ Missing'}`)
+    console.log(`  Articles.canonical_url: ${health.columns.articles.canonical_url ? '✅ Present' : '❌ Missing'}`)
+    if (health.columns.articles.error) {
+      console.log(`  Article Column Errors: ${health.columns.articles.error}`)
+    }
+    console.log(`  Writers.specialty: ${health.columns.writers.specialty ? '✅ Present' : '❌ Missing'}`)
+    if (health.columns.writers.error) {
+      console.log(`  Writer Column Errors: ${health.columns.writers.error}`)
+    }
+
     console.log('\n' + '─'.repeat(50))
 
     if (health.status === 'healthy') {

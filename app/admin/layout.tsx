@@ -157,8 +157,9 @@ export default function AdminLayout({
                 return (
                   <div key={item.href} className="mb-0.5">
                     {/* Parent row */}
-                    <div
-                      className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-semibold"
+                    <Link
+                      href={item.href}
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-semibold transition-colors"
                       style={{
                         color: active ? 'var(--sidebar-active-text)' : 'var(--sidebar-text)',
                         background: active ? 'rgba(29,78,216,0.18)' : 'transparent',
@@ -166,7 +167,7 @@ export default function AdminLayout({
                     >
                       <Icon className="h-4 w-4 flex-shrink-0" />
                       {item.label}
-                    </div>
+                    </Link>
 
                     {/* Children */}
                     <div className="mt-0.5 space-y-0.5 pl-3">

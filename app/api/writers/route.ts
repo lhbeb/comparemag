@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
     const {
       slug,
       name,
+      specialty,
       bio,
       bio_html,
       avatar_url,
@@ -44,6 +45,7 @@ export async function POST(request: NextRequest) {
     const writerData: WriterInsert = {
       slug,
       name,
+      specialty: specialty || null,
       bio: bio || null,
       bio_html: bio_html || null,
       avatar_url: avatar_url || null,
@@ -68,4 +70,3 @@ export async function POST(request: NextRequest) {
     )
   }
 }
-
