@@ -27,7 +27,7 @@ export function compileArticleSourceToHtml(source: string) {
     return preparedSource
   }
 
-  return marked.parse(preparedSource, { async: false }) as string
+  return marked.parse(preparedSource, { async: false, breaks: true, gfm: true }) as string
 }
 
 function EmbeddedScript({ src }: { src: string }) {
