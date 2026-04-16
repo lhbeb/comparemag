@@ -1,7 +1,7 @@
 {
   "pages": {},
   "app": {
-    "[project]/Downloads/ai-blog/app/admin/page": [
+    "[project]/app/admin/page": [
       "static/media/MonumentGrotesk_Regular-s.p.d3cfc223.woff2",
       "static/media/MonumentGrotesk_Italic-s.p.0682c6f8.woff2",
       "static/media/MonumentGrotesk_Medium-s.p.3ba2d28d.woff2",

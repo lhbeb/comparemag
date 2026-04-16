@@ -75,8 +75,11 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const [title, setTitle] = useState(initialData?.title || '')
   const [slug, setSlug] = useState(initialData?.slug || '')
   const [content, setContent] = useState(initialData?.content || '')
-  const [author, setAuthor] = useState(initialData?.author || '')
-  const [category, setCategory] = useState(initialData?.category || '')
+  
+  // Default to first writer and category if creating new to prevent validation blocks
+  const [author, setAuthor] = useState(initialData?.author || (initialWriters.length > 0 ? initialWriters[0].name : ''))
+  const [category, setCategory] = useState(initialData?.category || categories[0] || '')
+  
   const [readTime, setReadTime] = useState(initialData?.read_time || '5 min read')
   const [imageUrl, setImageUrl] = useState(initialData?.image_url || '')
   const [metaDescription, setMetaDescription] = useState(initialData?.meta_description || '')

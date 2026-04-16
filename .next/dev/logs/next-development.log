@@ -1,36 +1,52 @@
-[00:00:02.083] Server  LOG     [System] Running Background Database Health Check on Startup...
-[00:00:04.462] Server  LOG     [System] Database Health Check: ✅ PASS (Connection: OK, Tables: articles, writers, product_cards checked)
-[00:00:04.466] Server  LOG      ✓ Ready in 4.3s
-[00:00:07.479] Server  LOG      ○ Compiling / ...
-[00:00:09.933] Server  WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:01.083] Server  LOG     [System] Running Background Database Health Check on Startup...
+[00:00:04.499] Server  LOG     [System] Database Health Check: ✅ PASS (Connection: OK, Tables: articles, writers, product_cards checked)
+[00:00:04.521] Server  LOG      ✓ Ready in 4.3s
+[00:00:08.255] Server  WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:10.164] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:10.297] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::ac40:95f6\",\"64:ff9b::6812:260a\"]"
-[00:00:10.315] Browser WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:08.466] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:08.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:10.316] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:00:10.316] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:08.640] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:00:08.640] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:10.316] Browser WARN    Image with src "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:08.641] Browser WARN    Image with src "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:10.316] Browser WARN    Image with src "https://images.unsplash.com/photo-1593118247619-e2d6f056869e?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:08.641] Browser WARN    Image with src "https://images.unsplash.com/photo-1593118247619-e2d6f056869e?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:10.316] Browser WARN    Image with src "https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:08.641] Browser WARN    Image with src "https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:32.185] Browser WARN    Image with src "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:08.694] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::ac40:95f6\",\"64:ff9b::6812:260a\"]"
+[00:00:11.315] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:32.185] Browser WARN    Image with src "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:11.317] Server  WARN    Image with src "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:32.893] Browser WARN    Image with src "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:11.317] Server  WARN    Image with src "https://images.unsplash.com/photo-1593118247619-e2d6f056869e?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:32.893] Browser WARN    Image with src "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:11.318] Server  WARN    Image with src "https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:26:27.565] Server  LOG      ✓ Compiled in 528ms
-[00:27:23.095] Server  LOG      ✓ Compiled in 744ms
-[03:41:50.257] Server  LOG      ✓ Compiled in 565ms
-[04:05:52.849] Server  LOG      ✓ Compiled in 442ms
-[04:08:35.676] Server  LOG      ✓ Compiled in 111ms
-[04:08:37.006] Server  LOG      ✓ Compiled in 182ms
-[04:09:27.740] Server  LOG      ✓ Compiled in 219ms
-[04:38:09.916] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[04:40:01.789] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:11.318] Server  WARN    Image with src "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:00:11.453] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::ac40:95f6\",\"64:ff9b::6812:260a\"]"
+[00:00:11.476] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:11.640] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:00:11.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:00:11.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1593118247619-e2d6f056869e?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:00:11.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:00:11.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:00:11.640] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:11.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:11.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1593118247619-e2d6f056869e?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:11.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:11.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:17.388] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:00:19.835] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::ac40:95f6\",\"64:ff9b::6812:260a\"]"
+[00:03:57.119] Server  LOG      ✓ Compiled in 452ms
+[00:03:57.124] Server  WARN     ⚠ Fast Refresh had to perform a full reload when ./node_modules/next/dist/client/image-component.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:03:57.258] Server  LOG      ✓ Compiled in 0ms
+[00:03:58.403] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:13:41.909] Server  LOG      ✓ Compiled in 373ms

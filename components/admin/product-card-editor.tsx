@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { 
   Upload, X, Save, Send, ShoppingBag, 
   Tag, ExternalLink, Star, Image as ImageIcon, 
-  Settings, Info, Code 
+  Settings, Info, Code, RefreshCw
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -52,6 +52,7 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [publishing, setPublishing] = useState(false)
+  const [fetchingMetadataImage, setFetchingMetadataImage] = useState(false)
 
   const generateSlug = (text: string) => text.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '')
 
@@ -106,6 +107,49 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
     } catch (error: any) {
       toast({ title: 'Save failed', description: error.message, variant: 'destructive' })
     } finally { setSaving(false); setPublishing(false) }
+  }
+
+  const handlePullImageFromMetadata = async () => {
+    if (!externalUrl.trim()) {
+      toast({
+        title: 'Missing product URL',
+        description: 'Add the affiliate/product link first so we can inspect its metadata.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setFetchingMetadataImage(true)
+    try {
+      const response = await fetch('/api/products/metadata', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: externalUrl.trim() }),
+      })
+
+      const payload = await response.json().catch(() => null)
+      if (!response.ok) {
+        throw new Error(payload?.message || 'Could not pull preview image from product metadata.')
+      }
+
+      if (!payload?.image_url) {
+        throw new Error('No metadata image was returned for this product URL.')
+      }
+
+      setImageUrl(payload.image_url)
+      toast({
+        title: 'Preview image imported',
+        description: 'The product card image was pulled from the product page metadata.',
+      })
+    } catch (error: any) {
+      toast({
+        title: 'Metadata fetch failed',
+        description: error.message,
+        variant: 'destructive',
+      })
+    } finally {
+      setFetchingMetadataImage(false)
+    }
   }
 
   return (
@@ -255,6 +299,16 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
                     placeholder="https://..." 
                     className="bg-slate-50 border-slate-200 text-xs" 
                 />
+                <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handlePullImageFromMetadata}
+                    disabled={fetchingMetadataImage || !externalUrl.trim()}
+                    className="w-full border-slate-200 text-xs font-semibold"
+                >
+                    <RefreshCw className={`mr-2 h-3.5 w-3.5 ${fetchingMetadataImage ? 'animate-spin' : ''}`} />
+                    {fetchingMetadataImage ? 'Pulling preview image...' : 'Pull Preview Image From Link'}
+                </Button>
              </div>
 
              <div className="space-y-1.5">

@@ -8,11 +8,24 @@ interface ArticleRendererProps {
   preloadedProducts?: Record<string, ProductCardData>
 }
 
-export function compileArticleSourceToHtml(source: string) {
-  const preparedSource = source.replace(
+function replaceProductShortcodes(source: string) {
+  return source.replace(
     /\[product-card:([^\]]+)\]/g,
     '<product-embed data-slug="$1"></product-embed>',
   )
+}
+
+function looksLikeHtmlDocument(source: string) {
+  const trimmed = source.trim()
+  return /<\/?[a-z][\s\S]*>/i.test(trimmed)
+}
+
+export function compileArticleSourceToHtml(source: string) {
+  const preparedSource = replaceProductShortcodes(source)
+
+  if (looksLikeHtmlDocument(preparedSource)) {
+    return preparedSource
+  }
 
   return marked.parse(preparedSource, { async: false }) as string
 }
