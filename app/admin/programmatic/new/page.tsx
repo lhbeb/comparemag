@@ -66,7 +66,7 @@ export default function ProgrammaticSEOGenerator() {
       }
 
       toast({ title: 'Success', description: 'Programmatic SEO draft generated successfully!' })
-      router.push(`/admin/edit/${slug}`)
+      router.push(`/admin/articles/edit/${slug}`)
       
     } catch (error) {
       toast({ title: 'Error', description: error instanceof Error ? error.message : 'Failed to generate', variant: 'destructive' })

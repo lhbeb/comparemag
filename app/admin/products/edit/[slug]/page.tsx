@@ -1,40 +1,17 @@
-'use client'
-
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
 import { ProductCardEditor } from '@/components/admin/product-card-editor'
+import { getProductBySlug } from '@/lib/supabase/products'
+import { notFound } from 'next/navigation'
 
-export default function EditProductPage() {
-  const params = useParams()
-  const [productData, setProductData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function fetchProduct() {
-      try {
-        const slug = params.slug as string
-        const res = await fetch(`/api/products/${slug}`)
-        if (res.ok) {
-          const data = await res.json()
-          setProductData(data)
-        } else {
-          console.error("Product not found")
-        }
-      } catch (error) {
-        console.error('Failed to fetch product', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchProduct()
-  }, [params.slug])
-
-  if (loading) {
-    return <div className="p-8 text-center text-gray-500">Loading editor...</div>
-  }
+export default async function EditProductPage({
+  params,
+}: {
+  params: Promise<{ slug: string }> | { slug: string }
+}) {
+  const resolvedParams = await Promise.resolve(params)
+  const productData = await getProductBySlug(resolvedParams.slug)
 
   if (!productData) {
-    return <div className="p-8 text-center text-red-500">Product not found.</div>
+    notFound()
   }
 
   return (

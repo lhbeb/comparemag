@@ -19,6 +19,7 @@ import {
   Bold, Italic, Link as LinkIcon, Heading2, Heading3, Quote, Code, List,
   Search, Upload
 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { toast } from '@/hooks/use-toast'
 import Link from 'next/link'

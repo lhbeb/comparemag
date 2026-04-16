@@ -113,7 +113,7 @@ export default async function EditorsPage() {
                     </Link>
                   </Button>
                   <Button variant="ghost" size="sm" asChild className="h-8 w-8 p-0 rounded-full hover:bg-slate-50">
-                    <Link href={`/experts/${editor.slug}`} target="_blank">
+                    <Link href={`/writers/${editor.slug}`} target="_blank">
                       <ExternalLink className="h-4 w-4" />
                     </Link>
                   </Button>

@@ -63,7 +63,6 @@ const navGroups = [
         icon: Database,
         children: [
           { label: 'Import Products', href: '/admin/imports-exports/import-products' },
-          { label: 'Import Programmatic Data', href: '/admin/imports-exports/import-programmatic' },
           { label: 'Export Data', href: '/admin/imports-exports/export-data' },
         ],
       },
