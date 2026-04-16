@@ -29,6 +29,10 @@ export function SupabaseImage({
   quality = 85,
   onLoad,
 }: SupabaseImageProps) {
+  const isSupabaseStorageImage =
+    typeof src === "string" &&
+    /https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\//i.test(src)
+
   return (
     <Image
       src={src}
@@ -40,6 +44,7 @@ export function SupabaseImage({
       sizes={sizes}
       priority={priority}
       quality={quality}
+      unoptimized={isSupabaseStorageImage}
       onLoad={onLoad}
     />
   )

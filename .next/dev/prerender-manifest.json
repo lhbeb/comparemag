@@ -1,11 +1,1 @@
-{
-  "version": 4,
-  "routes": {},
-  "dynamicRoutes": {},
-  "notFoundRoutes": [],
-  "preview": {
-    "previewModeId": "77f5671ada8090203d629ce3d8bffcab",
-    "previewModeSigningKey": "2f58df64f5ab065216511160284bbd5e5949b5a60f3f0445090d016fe9324ba4",
-    "previewModeEncryptionKey": "5aa54a0c40b70728ff3b3f4f8184a70219d579a6db64d937771c9c130cfb8488"
-  }
-}
+{"version":4,"routes":{"/blog/i-bought-five-robot-vacuums-under-300-heres-which-one-won":{},"/blog/i-used-nintendo-switch-2-every-day-for-a-month-5-things-love-2-hate":{},"/blog/google-pixel-9-pro-six-weeks-camera-honest-verdict":{},"/blog/i-owned-lg-oled-c4-for-one-year-honest-update":{},"/blog/i-tested-every-android-phone-this-year-heres-the-one-i-kept":{},"/blog/i-used-macbook-air-m3-for-six-months-before-writing-this":{},"/blog/i-switched-from-airpods-pro-to-sony-xm6-and-switched-back":{},"/blog/i-replaced-my-nest-cameras-with-35-dollar-cameras-and-heres-what-happened":{},"/blog/test-curl":{},"/blog/test-curl-2":{},"/blog/thzgegfgbzef-zvb-nzevbfbvze-ze":{}},"dynamicRoutes":{"/blog/[slug]":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/blog/[slug]","routeRegex":"^\\/blog\\/([^/]+?)(?:\\/)?$","allowHeader":[]}},"notFoundRoutes":[],"preview":{"previewModeId":"fa08f4bfbf04bcaf902e71177976db29","previewModeSigningKey":"d7af17665752ff653c4da21dc4a98e8dd32fb685b779ace4f5faa6c2c823fb01","previewModeEncryptionKey":"470640dbcbb66c744d66df24372b0749ac68a1cc2f709a61e42df1681e759262"}}

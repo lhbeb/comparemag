@@ -1,52 +1,202 @@
-[00:00:01.083] Server  LOG     [System] Running Background Database Health Check on Startup...
-[00:00:04.499] Server  LOG     [System] Database Health Check: ✅ PASS (Connection: OK, Tables: articles, writers, product_cards checked)
-[00:00:04.521] Server  LOG      ✓ Ready in 4.3s
-[00:00:08.255] Server  WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:08.466] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:08.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:08.640] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:00:08.640] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:08.641] Browser WARN    Image with src "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:08.641] Browser WARN    Image with src "https://images.unsplash.com/photo-1593118247619-e2d6f056869e?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:08.641] Browser WARN    Image with src "https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:08.694] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::ac40:95f6\",\"64:ff9b::6812:260a\"]"
-[00:00:11.315] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:11.317] Server  WARN    Image with src "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:11.317] Server  WARN    Image with src "https://images.unsplash.com/photo-1593118247619-e2d6f056869e?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:11.318] Server  WARN    Image with src "https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:11.318] Server  WARN    Image with src "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:11.453] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::ac40:95f6\",\"64:ff9b::6812:260a\"]"
-[00:00:11.476] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:11.640] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:11.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:11.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1593118247619-e2d6f056869e?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:11.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:11.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1200&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:11.640] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:11.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:11.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1593118247619-e2d6f056869e?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:11.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:11.640] Browser WARN    Image with src "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:17.388] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
-[00:00:19.835] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::ac40:95f6\",\"64:ff9b::6812:260a\"]"
-[00:03:57.119] Server  LOG      ✓ Compiled in 452ms
-[00:03:57.124] Server  WARN     ⚠ Fast Refresh had to perform a full reload when ./node_modules/next/dist/client/image-component.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-[00:03:57.258] Server  LOG      ✓ Compiled in 0ms
-[00:03:58.403] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:13:41.909] Server  LOG      ✓ Compiled in 373ms
+[00:00:00.955] Server  LOG     [System] Running Background Database Health Check on Startup...
+[00:00:03.804] Server  LOG     [System] Database Health Check: ✅ PASS (Connection: OK, Tables: articles, writers, product_cards checked)
+[00:00:03.809] Server  LOG      ✓ Ready in 3.6s
+[00:00:07.446] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:08.022] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:08.362] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:08.374] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <RedirectErrorBoundary router={{...}}>
+      <InnerLayoutRouter url="/admin/art..." tree={[...]} params={{}} cacheNode={{lazyData:null, ...}} ...>
+        <SegmentViewNode type="page" pagePath="admin/arti...">
+          <SegmentTrieNode>
+          <AdminPage>
+            <div>
+              <div>
+              <div>
+              <div>
+              <ArticleTabs articles={[...]}>
+                <Tabs defaultValue="all" className="w-full">
+                  <TabsProvider scope={undefined} baseId="radix-_R_1..." value="all" ...>
+                    <Primitive.div dir="ltr" data-orientation="horizontal" className="w-full" ref={null}>
+                      <div dir="ltr" data-orientation="horizontal" className="w-full" ref={null}>
+                        ...
+                          <div role="tablist" aria-orientation="horizontal" className="flex items..." tabIndex={-1} ...>
+                            ...
+                              <Primitive.span.Slot tabIndex={-1} data-orientation="horizontal" ...>
+                                <Primitive.span.SlotClone tabIndex={-1} data-orientation="horizontal" ...>
+                                  <Primitive.button type="button" role="tab" aria-selected={true} ...>
+                                    <button
+                                      type="button"
+                                      role="tab"
+                                      aria-selected={true}
++                                     aria-controls="radix-_R_14lritqitmlb_-content-all"
+-                                     aria-controls="radix-_R_4inebnaitmlb_-content-all"
+                                      data-state="active"
+                                      data-disabled={undefined}
+                                      disabled={false}
++                                     id="radix-_R_14lritqitmlb_-trigger-all"
+-                                     id="radix-_R_4inebnaitmlb_-trigger-all"
+                                      className="px-4 py-1.5 text-sm font-semibold text-slate-600 rounded-md data-[sta..."
+                                      onMouseDown={function}
+                                      onKeyDown={function}
+                                      onFocus={function}
+                                      tabIndex={-1}
+                                      data-orientation="horizontal"
+                                      data-radix-collection-item=""
+                                      ref={function}
+                                    >
+                            ...
+                              <Primitive.span.Slot tabIndex={-1} data-orientation="horizontal" ...>
+                                <Primitive.span.SlotClone tabIndex={-1} data-orientation="horizontal" ...>
+                                  <Primitive.button type="button" role="tab" aria-selected={false} ...>
+                                    <button
+                                      type="button"
+                                      role="tab"
+                                      aria-selected={false}
++                                     aria-controls="radix-_R_14lritqitmlb_-content-published"
+-                                     aria-controls="radix-_R_4inebnaitmlb_-content-published"
+                                      data-state="inactive"
+                                      data-disabled={undefined}
+                                      disabled={false}
++                                     id="radix-_R_14lritqitmlb_-trigger-published"
+-                                     id="radix-_R_4inebnaitmlb_-trigger-published"
+                                      className="px-4 py-1.5 text-sm font-semibold text-slate-600 rounded-md data-[sta..."
+                                      onMouseDown={function}
+                                      onKeyDown={function}
+                                      onFocus={function}
+                                      tabIndex={-1}
+                                      data-orientation="horizontal"
+                                      data-radix-collection-item=""
+                                      ref={function}
+                                    >
+                            ...
+                              <Primitive.span.Slot tabIndex={-1} data-orientation="horizontal" ...>
+                                <Primitive.span.SlotClone tabIndex={-1} data-orientation="horizontal" ...>
+                                  <Primitive.button type="button" role="tab" aria-selected={false} ...>
+                                    <button
+                                      type="button"
+                                      role="tab"
+                                      aria-selected={false}
++                                     aria-controls="radix-_R_14lritqitmlb_-content-drafts"
+-                                     aria-controls="radix-_R_4inebnaitmlb_-content-drafts"
+                                      data-state="inactive"
+                                      data-disabled={undefined}
+                                      disabled={false}
++                                     id="radix-_R_14lritqitmlb_-trigger-drafts"
+-                                     id="radix-_R_4inebnaitmlb_-trigger-drafts"
+                                      className="px-4 py-1.5 text-sm font-semibold text-slate-600 rounded-md data-[sta..."
+                                      onMouseDown={function}
+                                      onKeyDown={function}
+                                      onFocus={function}
+                                      tabIndex={-1}
+                                      data-orientation="horizontal"
+                                      data-radix-collection-item=""
+                                      ref={function}
+                                    >
+                            ...
+                              <Primitive.span.Slot tabIndex={-1} data-orientation="horizontal" ...>
+                                <Primitive.span.SlotClone tabIndex={-1} data-orientation="horizontal" ...>
+                                  <Primitive.button type="button" role="tab" aria-selected={false} ...>
+                                    <button
+                                      type="button"
+                                      role="tab"
+                                      aria-selected={false}
++                                     aria-controls="radix-_R_14lritqitmlb_-content-generated"
+-                                     aria-controls="radix-_R_4inebnaitmlb_-content-generated"
+                                      data-state="inactive"
+                                      data-disabled={undefined}
+                                      disabled={false}
++                                     id="radix-_R_14lritqitmlb_-trigger-generated"
+-                                     id="radix-_R_4inebnaitmlb_-trigger-generated"
+                                      className="px-4 py-1.5 text-sm font-semibold text-slate-600 rounded-md data-[sta..."
+                                      onMouseDown={function}
+                                      onKeyDown={function}
+                                      onFocus={function}
+                                      tabIndex={-1}
+                                      data-orientation="horizontal"
+                                      data-radix-collection-item=""
+                                      ref={function}
+                                    >
+                        <TabsContent value="all" className="mt-0">
+                          <Presence present={true}>
+                            <Primitive.div data-state="active" data-orientation="horizontal" role="tabpanel" ...>
+                              <div
+                                data-state="active"
+                                data-orientation="horizontal"
+                                role="tabpanel"
++                               aria-labelledby="radix-_R_14lritqitmlb_-trigger-all"
+-                               aria-labelledby="radix-_R_4inebnaitmlb_-trigger-all"
+                                hidden={false}
++                               id="radix-_R_14lritqitmlb_-content-all"
+-                               id="radix-_R_4inebnaitmlb_-content-all"
+                                tabIndex={0}
+                                className="mt-0"
+                                style={{animationDuration:"0s"}}
+                                ref={function}
+                              >
+                        <TabsContent value="published" className="mt-0">
+                          <Presence present={false}>
+                            <Primitive.div data-state="inactive" data-orientation="horizontal" role="tabpanel" ...>
+                              <div
+                                data-state="inactive"
+                                data-orientation="horizontal"
+                                role="tabpanel"
++                               aria-labelledby="radix-_R_14lritqitmlb_-trigger-published"
+-                               aria-labelledby="radix-_R_4inebnaitmlb_-trigger-published"
+                                hidden={true}
++                               id="radix-_R_14lritqitmlb_-content-published"
+-                               id="radix-_R_4inebnaitmlb_-content-published"
+                                tabIndex={0}
+                                className="mt-0"
+                                style={{animationDuration:undefined}}
+                                ref={function}
+                              >
+                        <TabsContent value="drafts" className="mt-0">
+                          <Presence present={false}>
+                            <Primitive.div data-state="inactive" data-orientation="horizontal" role="tabpanel" ...>
+                              <div
+                                data-state="inactive"
+                                data-orientation="horizontal"
+                                role="tabpanel"
++                               aria-labelledby="radix-_R_14lritqitmlb_-trigger-drafts"
+-                               aria-labelledby="radix-_R_4inebnaitmlb_-trigger-drafts"
+                                hidden={true}
++                               id="radix-_R_14lritqitmlb_-content-drafts"
+-                               id="radix-_R_4inebnaitmlb_-content-drafts"
+                                tabIndex={0}
+                                className="mt-0"
+                                style={{animationDuration:undefined}}
+                                ref={function}
+                              >
+                        <TabsContent value="generated" className="mt-0">
+                          <Presence present={false}>
+                            <Primitive.div data-state="inactive" data-orientation="horizontal" role="tabpanel" ...>
+                              <div
+                                data-state="inactive"
+                                data-orientation="horizontal"
+                                role="tabpanel"
++                               aria-labelledby="radix-_R_14lritqitmlb_-trigger-generated"
+-                               aria-labelledby="radix-_R_4inebnaitmlb_-trigger-generated"
+                                hidden={true}
++                               id="radix-_R_14lritqitmlb_-content-generated"
+-                               id="radix-_R_4inebnaitmlb_-content-generated"
+                                tabIndex={0}
+                                className="mt-0"
+                                style={{animationDuration:undefined}}
+                                ref={function}
+                              >
+        ...
+      ...
+
