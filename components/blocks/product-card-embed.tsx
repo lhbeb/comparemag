@@ -89,59 +89,106 @@ export function ProductCardEmbed({ slug, preloadedData }: ProductCardEmbedProps)
         </div>
       )}
 
-      <div className="flex flex-col md:flex-row p-6 md:p-8 gap-8">
+      <div className="flex flex-col md:flex-row p-6 md:p-8 gap-8 md:gap-10">
         
-        {/* Left Side: Visuals */}
-        <div className="flex-shrink-0 w-full md:w-1/3 flex flex-col items-center justify-center relative">
-          <div className="relative w-full aspect-square md:aspect-auto md:h-56 bg-slate-50 rounded-xl border border-slate-100 p-4 flex items-center justify-center group-hover:bg-slate-100/50 transition-colors">
+        {/* Left Side: Visuals (Primary Focus) */}
+        <div className="flex-shrink-0 w-full md:w-[50%] flex flex-col items-center justify-center relative">
+          <div className="relative w-full aspect-square md:aspect-auto md:h-80 bg-slate-50 rounded-xl border border-slate-100 p-5 md:p-8 flex items-center justify-center group-hover:bg-slate-100/50 transition-colors">
             {data.image_url ? (
               <img 
                 src={data.image_url} 
                 alt={data.title} 
-                className="max-h-full max-w-full object-contain mix-blend-multiply drop-shadow-sm transition-transform duration-500 group-hover:scale-105"
+                className="max-h-full max-w-full object-contain mix-blend-multiply drop-shadow-sm transition-transform duration-500 group-hover:scale-[1.08]"
               />
             ) : (
               <span className="text-slate-400 font-medium text-sm">No image</span>
             )}
           </div>
           
-          {data.price_text && (
-            <div className="mt-6 text-center w-full">
-              <p className="text-sm text-slate-500 font-medium uppercase tracking-widest mb-1">Current Price</p>
-              <div className="text-3xl font-black text-slate-900 tracking-tight">{data.price_text}</div>
-            </div>
-          )}
+          <div className="mt-6 w-full">
+            {data.price_text && (
+              <div className="text-center w-full mb-5">
+                <p className="text-[11px] text-slate-400 font-black uppercase tracking-[0.24em] mb-1.5">Current Price</p>
+                <div className="text-5xl md:text-[3rem] font-black text-slate-900 tracking-tight leading-none drop-shadow-sm">{data.price_text}</div>
+              </div>
+            )}
+
+            {(() => {
+              const url = data.external_url;
+              const validUrl = url ? (url.startsWith('http') ? url : `https://${url}`) : '#';
+
+              const getStoreNameFromUrl = (u: string) => {
+                if (u === '#') return null;
+                try {
+                  const hostname = new URL(u).hostname.replace(/^www\./, '').toLowerCase();
+                  if (hostname.includes('ebay')) return 'eBay';
+                  if (hostname.includes('amazon')) return 'Amazon';
+                  if (hostname.includes('deeldepot')) return 'Deeldepot';
+                  if (hostname.includes('aliexpress')) return 'AliExpress';
+                  if (hostname.includes('bestbuy')) return 'Best Buy';
+                  if (hostname.includes('walmart')) return 'Walmart';
+                  if (hostname.includes('target')) return 'Target';
+                  
+                  const domainParts = hostname.split('.');
+                  let longest = domainParts[0];
+                  for (let part of domainParts) {
+                    if (part.length > longest.length && !['com', 'net', 'org', 'co', 'uk'].includes(part)) {
+                      longest = part;
+                    }
+                  }
+                  return longest.charAt(0).toUpperCase() + longest.slice(1);
+                } catch (e) {
+                  return null;
+                }
+              };
+              
+              const storeName = getStoreNameFromUrl(validUrl);
+              const label = data.cta_label || (storeName ? `View on ${storeName}` : 'View Current Price');
+
+              return (
+                <a 
+                  href={validUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer nofollow"
+                  className="group/btn flex items-center justify-center gap-2 w-full bg-orange-600 hover:bg-orange-700 text-white px-6 py-4 rounded-xl text-lg font-bold transition-all shadow-[0_4px_14px_0_rgba(234,88,12,0.28)] hover:shadow-[0_8px_24px_rgba(234,88,12,0.32)] active:scale-[0.98]"
+                >
+                  <span>{label}</span>
+                  <ExternalLink className="w-5 h-5 transition-transform group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5" />
+                </a>
+              )
+            })()}
+          </div>
         </div>
 
-        {/* Right Side: Details */}
-        <div className="flex-1 flex flex-col">
+        {/* Right Side: Details (Secondary Focus) */}
+        <div className="flex-1 flex flex-col md:pt-4">
           <div className="mb-4">
             {data.brand && (
-              <p className="text-xs font-black text-blue-600 uppercase tracking-widest mb-2">{data.brand}</p>
+              <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.24em] mb-2">{data.brand}</p>
             )}
-            <h3 className="text-2xl font-bold text-slate-900 leading-tight mb-3">
+            <h3 className="text-xl md:text-2xl font-bold text-slate-800 leading-tight mb-3">
               {data.title}
             </h3>
             
             {data.rating_text && (
-              <div className="flex items-center gap-1.5 mb-4 bg-orange-50 w-max px-2.5 py-1 rounded-full border border-orange-100">
+              <div className="flex items-center gap-1.5 mb-4 bg-orange-50/80 w-max px-2.5 py-1 rounded-full border border-orange-100/50">
                 <Star className="w-4 h-4 text-orange-500 fill-orange-500" />
-                <span className="text-xs font-bold text-orange-700">{data.rating_text}</span>
+                <span className="text-[11px] font-bold text-orange-700">{data.rating_text}</span>
               </div>
             )}
             
             {data.short_description && (
-              <p className="text-slate-600 leading-relaxed text-[15px]">
+              <p className="text-slate-500 leading-relaxed text-xs md:text-sm line-clamp-2">
                 {data.short_description}
               </p>
             )}
           </div>
 
           {features.length > 0 && (
-            <div className="mt-4 mb-6 bg-slate-50 rounded-xl p-5 border border-slate-100">
-              <h4 className="text-xs font-black text-slate-500 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">Technical Specs</h4>
-              <ul className="grid gap-3">
-                {features.map(([key, value]) => (
+            <div className="mt-2 bg-slate-50 rounded-xl p-4 md:p-5 border border-slate-100">
+              <h4 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.22em] mb-3 border-b border-slate-200 pb-2">Key Specs</h4>
+              <ul className="grid gap-2.5">
+                {features.slice(0, 4).map(([key, value]) => (
                   <li key={key} className="flex items-start gap-2.5 text-[13px]">
                     <Check className="w-[14px] h-[14px] text-green-500 mt-0.5 flex-shrink-0" strokeWidth={3} />
                     <div>
@@ -151,20 +198,14 @@ export function ProductCardEmbed({ slug, preloadedData }: ProductCardEmbedProps)
                   </li>
                 ))}
               </ul>
+
+              {features.length > 4 && (
+                <p className="mt-3 text-xs font-medium text-slate-500">
+                  +{features.length - 4} more specs available
+                </p>
+              )}
             </div>
           )}
-
-          <div className="mt-auto pt-4">
-            <a 
-              href={data.external_url || '#'} 
-              target="_blank" 
-              rel="noopener noreferrer nofollow"
-              className="group/btn flex items-center justify-center gap-2 w-full bg-slate-900 hover:bg-black text-white px-6 py-4 rounded-xl font-bold transition-all shadow-[0_4px_14px_0_rgba(0,0,0,0.15)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.23)] active:scale-[0.98]"
-            >
-              <span>{data.cta_label || 'View Current Price'}</span>
-              <ExternalLink className="w-4 h-4 transition-transform group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5" />
-            </a>
-          </div>
         </div>
       </div>
     </div>

@@ -1,5 +1,9 @@
 {
   "/(public)/blog/[slug]/page": "app/(public)/blog/[slug]/page.js",
+  "/(public)/writers/[slug]/page": "app/(public)/writers/[slug]/page.js",
+  "/admin/articles/new/page": "app/admin/articles/new/page.js",
   "/admin/articles/page": "app/admin/articles/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/api/articles/route": "app/api/articles/route.js",
   "/api/track-session/route": "app/api/track-session/route.js"
 }
