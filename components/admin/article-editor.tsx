@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useDeferredValue } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -46,6 +46,8 @@ interface ArticleEditorProps {
     generation_status?: string | null
   }
   mode: 'create' | 'edit'
+  initialWriters?: any[]
+  initialProducts?: any[]
 }
 
 const categories = [
@@ -59,7 +61,7 @@ interface Editor {
   id: string; slug: string; name: string; avatar_url: string | null; specialty: string | null;
 }
 
-export function ArticleEditor({ initialData, mode }: ArticleEditorProps) {
+export function ArticleEditor({ initialData, mode, initialWriters = [], initialProducts = [] }: ArticleEditorProps) {
   const router = useRouter()
   const supabase = createClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -86,44 +88,21 @@ export function ArticleEditor({ initialData, mode }: ArticleEditorProps) {
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [publishing, setPublishing] = useState(false)
-  const [editors, setEditors] = useState<Editor[]>([])
-  const [editorsLoading, setEditorsLoading] = useState(true)
+  
+  // Use passed server-rendered data to prevent client waterfalls
+  const editors = initialWriters;
+  const products = initialProducts;
   
   const [showProductModal, setShowProductModal] = useState(false)
-  const [products, setProducts] = useState<any[]>([])
   const [modalMode, setModalMode] = useState<'product' | 'embed'>('product')
   const [embedCode, setEmbedCode] = useState('')
 
-  // Load Editors
+  // Automatically set author on mount if absent
   useEffect(() => {
-    async function fetchEditors() {
-      try {
-        const res = await fetch('/api/writers')
-        if (res.ok) {
-          const data = await res.json()
-          setEditors(data)
-          if (mode === 'edit' && initialData?.author && !author) setAuthor(initialData.author)
-        }
-      } catch (e) { console.error('Failed to load editors', e) }
-      finally { setEditorsLoading(false) }
+    if (mode === 'edit' && initialData?.author && !author) {
+      setAuthor(initialData.author)
     }
-    fetchEditors()
-  }, [])
-
-  // Load Products for Inserter
-  useEffect(() => {
-    if (showProductModal) {
-      async function fetchProducts() {
-        try {
-          const res = await fetch('/api/products')
-          if (!res.ok) throw new Error('Failed to fetch products')
-          const data = await res.json()
-          setProducts(data || [])
-        } catch (e) { console.error('Failed to load products for inserter', e) }
-      }
-      fetchProducts()
-    }
-  }, [showProductModal])
+  }, [mode, initialData?.author, author])
 
   const generateSlug = (text: string) => text.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '')
 
@@ -219,9 +198,12 @@ export function ArticleEditor({ initialData, mode }: ArticleEditorProps) {
     toast({ title: 'Embed Code Inserted' })
   }
 
+  // Prevent Regex computation from blocking the main typing thread
+  const deferredContent = useDeferredValue(content)
+
   // Preview String Replacement
   const renderPreviewHTML = () => {
-    let html = content
+    let html = deferredContent
     // Render mock product cards for [product-card:slug]
     html = html.replace(
       /\[product-card:([^\]]+)\]/g, 

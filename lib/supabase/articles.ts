@@ -30,6 +30,49 @@ async function retryWithoutMissingColumns<T extends Record<string, unknown>>(
   }
 }
 
+export async function getAllArticlesOverview(publishedOnly: boolean = false) {
+  try {
+    const supabase = await createClient()
+    
+    let query = supabase
+      .from('articles')
+      .select('id, slug, title, category, author, image_url, published, article_type, updated_at, created_at, is_featured')
+      .order('created_at', { ascending: false })
+
+    if (publishedOnly) {
+      query = query.eq('published', true)
+    }
+
+    const { data, error } = await query
+
+    if (error) {
+      console.error('Supabase error:', error)
+      throw new Error(`Failed to fetch articles overview: ${error.message}`)
+    }
+
+    return data as Partial<Article>[]
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('fetch failed')) {
+      const { createClient: createDirectClient } = await import('@supabase/supabase-js')
+      const directClient = createDirectClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://fgkvrbdpmwyfjvpubzxn.supabase.co',
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZna3ZyYmRwbXd5Zmp2cHVienhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUyNTExNjYsImV4cCI6MjA4MDgyNzE2Nn0.uc3OmHcbnzvvmsZfN8FcGWPvTbrQU9ofkyhH7Ykz0JE'
+      )
+      let query = directClient
+        .from('articles')
+        .select('id, slug, title, category, author, image_url, published, article_type, updated_at, created_at, is_featured')
+        .order('created_at', { ascending: false })
+
+      if (publishedOnly) query = query.eq('published', true)
+      
+      const { data, error: retryError } = await query
+      if (retryError) throw new Error(`Failed to fetch articles overview: ${retryError.message}`)
+      return data as Partial<Article>[]
+    }
+    throw error
+  }
+}
+
 export async function getAllArticles(publishedOnly: boolean = true) {
   try {
     const supabase = await createClient()

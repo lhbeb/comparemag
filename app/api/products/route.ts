@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createProduct, getAllProducts } from '@/lib/supabase/products'
+import { createProduct, getAllProductsOverview } from '@/lib/supabase/products'
 import type { ProductCardInsert } from '@/lib/supabase/types'
 
 export async function GET(request: Request) {
@@ -7,7 +7,8 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const publishedOnly = searchParams.get('published') === 'true'
     
-    const products = await getAllProducts(publishedOnly)
+    // Use overview to prevent downloading massive spec bodies
+    const products = await getAllProductsOverview(publishedOnly)
     return NextResponse.json(products)
   } catch (error) {
     console.error('API Error:', error)

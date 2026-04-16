@@ -1,5 +1,7 @@
 import { ArticleEditor } from '@/components/admin/article-editor'
 import { getArticleBySlug } from '@/lib/supabase/articles'
+import { getAllWriters } from '@/lib/supabase/writers'
+import { getAllProductsOverview } from '@/lib/supabase/products'
 import { notFound } from 'next/navigation'
 
 async function getArticle(slug: string) {
@@ -27,7 +29,12 @@ export default async function EditArticlePage({
   params: Promise<{ slug: string }> | { slug: string }
 }) {
   const resolvedParams = await Promise.resolve(params)
-  const article = await getArticle(resolvedParams.slug)
+  
+  const [article, writers, products] = await Promise.all([
+    getArticle(resolvedParams.slug),
+    getAllWriters(),
+    getAllProductsOverview(true)
+  ])
 
   if (!article) {
     notFound()
@@ -56,6 +63,8 @@ export default async function EditArticlePage({
           article_type: article.article_type,
           generation_status: article.generation_status,
         }}
+        initialWriters={writers}
+        initialProducts={products}
       />
     </div>
   )

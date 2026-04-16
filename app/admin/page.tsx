@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { getAllArticles } from '@/lib/supabase/articles'
-import { getAllProducts } from '@/lib/supabase/products'
+import { getAllArticlesOverview } from '@/lib/supabase/articles'
+import { getAllProductsOverview } from '@/lib/supabase/products'
 import { getAllWriters } from '@/lib/supabase/writers'
 import { FileText, Users, ShoppingBag, Wand2, Plus, ArrowRight } from 'lucide-react'
 import { format } from 'date-fns'
@@ -12,8 +12,8 @@ export const dynamic = 'force-dynamic'
 
 async function getDashboardData() {
   const [articles, products, writers] = await Promise.all([
-    getAllArticles(false),
-    getAllProducts(false),
+    getAllArticlesOverview(false),
+    getAllProductsOverview(false),
     getAllWriters()
   ])
 

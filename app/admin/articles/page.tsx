@@ -1,12 +1,12 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { getAllArticles } from '@/lib/supabase/articles'
+import { getAllArticlesOverview } from '@/lib/supabase/articles'
 import { Plus, Edit, Eye, EyeOff, FileText } from 'lucide-react'
 import { format } from 'date-fns'
 
 async function getArticles() {
   try {
-    return await getAllArticles(false)
+    return await getAllArticlesOverview(false)
   } catch (error) {
     console.error('Error fetching articles:', error)
     return []
