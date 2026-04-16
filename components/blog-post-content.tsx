@@ -8,13 +8,16 @@ import type { Article } from "@/lib/supabase/types"
 import { Breadcrumbs } from "@/components/seo/breadcrumbs"
 import { ArticleShareButtons } from "@/components/article-share-buttons"
 import { EmbedHydrator } from "@/components/embed-hydrator"
+import { ArticleRenderer } from "@/components/article-renderer"
+import type { ProductCardData } from "@/components/blocks/product-card-embed"
 
 interface BlogPostContentProps {
   post: BlogPost
   article?: Article
+  preloadedProducts?: Record<string, ProductCardData>
 }
 
-export function BlogPostContent({ post, article }: BlogPostContentProps) {
+export function BlogPostContent({ post, article, preloadedProducts }: BlogPostContentProps) {
   if (!post) return null
 
   // Generate breadcrumb items
@@ -123,8 +126,9 @@ export function BlogPostContent({ post, article }: BlogPostContentProps) {
             <div 
               className="prose prose-lg prose-slate max-w-none prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-headings:text-slate-900 prose-img:rounded-xl [&_iframe]:w-full [&_iframe]:aspect-video [&_iframe]:rounded-xl [&_iframe]:border-0 [&_iframe]:shadow-sm my-8"
               itemProp="articleBody"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+            >
+              <ArticleRenderer source={post.content} preloadedProducts={preloadedProducts} />
+            </div>
             
             {/* Embed Runtime Hydrator */}
             <EmbedHydrator />

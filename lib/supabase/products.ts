@@ -8,7 +8,7 @@ export async function getAllProductsOverview(publishedOnly: boolean = false) {
     
     let query = supabase
       .from('product_cards')
-      .select('id, slug, title, status, brand, price, currency, rating, published, created_at, updated_at')
+      .select('id, slug, title, brand, price_text, rating_text, published, created_at, updated_at')
       .order('created_at', { ascending: false })
 
     if (publishedOnly) {
@@ -32,7 +32,7 @@ export async function getAllProductsOverview(publishedOnly: boolean = false) {
       )
       let query = directClient
         .from('product_cards')
-        .select('id, slug, title, status, brand, price, currency, rating, published, created_at, updated_at')
+        .select('id, slug, title, brand, price_text, rating_text, published, created_at, updated_at')
         .order('created_at', { ascending: false })
 
       if (publishedOnly) query = query.eq('published', true)

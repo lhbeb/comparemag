@@ -4,7 +4,7 @@ import { notFound } from "next/navigation"
 import type { BlogPost } from "@/lib/data/blogPosts"
 import { generateArticleMetadata, generateArticleStructuredDataGraph } from "@/lib/seo/article-seo"
 import { StructuredData } from "@/components/seo/structured-data"
-import { parseProductShortcodes } from "@/lib/products/embed"
+import { getPreloadProducts } from "@/lib/products/embed"
 import type { Metadata } from "next"
 
 // Required for static export - generates all static paths at build time
@@ -66,8 +66,8 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
       category: a.category,
     }))
 
-  // Convert Supabase article to BlogPost format
-  const parsedContent = await parseProductShortcodes(article.content)
+  // Server-side preload for high-performance zero-waterfall embed rendering
+  const preloadedProducts = await getPreloadProducts(article.content)
   
   const post: BlogPost = {
     title: article.title,
@@ -80,7 +80,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     category: article.category,
     readTime: article.read_time,
     image: article.image_url || "/placeholder.svg",
-    content: parsedContent,
+    content: article.content,
     relatedPosts: relatedArticles,
   }
 
@@ -90,7 +90,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   return (
     <>
       <StructuredData data={articleStructuredDataGraph} />
-      <BlogPostContent post={post} article={article} />
+      <BlogPostContent post={post} article={article} preloadedProducts={preloadedProducts} />
     </>
   )
 }

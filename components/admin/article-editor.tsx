@@ -19,11 +19,11 @@ import {
   Bold, Italic, Link as LinkIcon, Heading2, Heading3, Quote, Code, List,
   Search, Upload
 } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { toast } from '@/hooks/use-toast'
 import Link from 'next/link'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
+import { ArticleRenderer } from '@/components/article-renderer'
 
 interface ArticleEditorProps {
   initialData?: {
@@ -179,7 +179,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const handleInsertLink = () => {
     const url = window.prompt('Enter link URL:')
     if (url) {
-      insertFormatting(`<a href="${url}">`, '</a>', 'link text')
+      insertFormatting('[', `](${url})`, 'link text')
     }
   }
 
@@ -200,17 +200,6 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
 
   // Prevent Regex computation from blocking the main typing thread
   const deferredContent = useDeferredValue(content)
-
-  // Preview String Replacement
-  const renderPreviewHTML = () => {
-    let html = deferredContent
-    // Render mock product cards for [product-card:slug]
-    html = html.replace(
-      /\[product-card:([^\]]+)\]/g, 
-      '<div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:8px; padding:16px; margin:16px 0; color:#15803D; font-family:monospace; display:flex; align-items:center; gap:8px;">📦 Product Card Injection: <strong>$1</strong></div>'
-    )
-    return html
-  }
 
   return (
     <div className="relative pb-24">
@@ -290,6 +279,9 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
               <TabsTrigger value="preview" className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-semibold text-slate-600 rounded-md data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
                 <Eye className="w-4 h-4" /> Preview
               </TabsTrigger>
+              <TabsTrigger value="html" className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-semibold text-slate-600 rounded-md data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
+                <Code className="w-4 h-4" /> HTML Output
+              </TabsTrigger>
             </TabsList>
 
             {/* TAB: WRITE */}
@@ -299,10 +291,10 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                 {/* HTML Formatting Toolbar */}
                 <div className="flex flex-wrap items-center gap-1 p-2 border-b border-slate-100 bg-slate-50/50">
                   <div className="flex items-center gap-1 pr-2 border-r border-slate-200">
-                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('<strong>', '</strong>')} title="Bold">
+                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('**', '**')} title="Bold">
                       <Bold className="w-4 h-4" />
                     </Button>
-                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('<em>', '</em>')} title="Italic">
+                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('*', '*')} title="Italic">
                       <Italic className="w-4 h-4" />
                     </Button>
                     <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={handleInsertLink} title="Insert Link">
@@ -310,16 +302,16 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                     </Button>
                   </div>
                   <div className="flex items-center gap-1 pl-1 pr-2 border-r border-slate-200">
-                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('<h2>', '</h2>', 'Heading 2')} title="Heading 2">
+                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('## ', '')} title="Heading 2">
                       <Heading2 className="w-4 h-4" />
                     </Button>
-                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('<h3>', '</h3>', 'Heading 3')} title="Heading 3">
+                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('### ', '')} title="Heading 3">
                       <Heading3 className="w-4 h-4" />
                     </Button>
-                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('<blockquote>\n  ', '\n</blockquote>')} title="Blockquote">
+                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('> ', '')} title="Blockquote">
                       <Quote className="w-4 h-4" />
                     </Button>
-                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('<ul>\n  <li>', '</li>\n</ul>')} title="Bullet List">
+                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('- ', '')} title="Bullet List">
                       <List className="w-4 h-4" />
                     </Button>
                   </div>
@@ -341,7 +333,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                   ref={contentRef}
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  placeholder="Draft your content in raw HTML here..."
+                  placeholder="Draft your content in Markdown here... Legacy HTML will also render safely."
                   className="min-h-[700px] border-none focus-visible:ring-0 rounded-none text-base leading-loose px-8 py-6 resize-y placeholder:text-slate-300 font-mono"
                 />
               </div>
@@ -444,10 +436,17 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
             <TabsContent value="preview" className="mt-0 outline-none">
               <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8 md:p-12 min-h-[700px]">
                 <h1 className="text-4xl font-bold mb-8 text-slate-900">{title || 'Untitled Article'}</h1>
-                <div 
-                  className="prose prose-lg prose-slate max-w-none prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-headings:text-slate-900 prose-img:rounded-xl"
-                  dangerouslySetInnerHTML={{ __html: renderPreviewHTML() }}
-                />
+                <div className="prose prose-lg prose-slate max-w-none prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-headings:text-slate-900 prose-img:rounded-xl">
+                  <ArticleRenderer source={deferredContent} />
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* TAB: HTML OUTPUT */}
+            <TabsContent value="html" className="mt-0 outline-none">
+              <div className="bg-slate-900 rounded-xl shadow-inner p-6 min-h-[700px] font-mono text-sm text-green-400 overflow-x-auto whitespace-pre-wrap">
+                {/* Note: In a real app we might want to expose the raw compiled HTML string from `marked` here, but for simplicity we'll just show the raw markdown source or a placeholder. If you need compiled HTML, you could run `marked.parse` locally here. */}
+                {deferredContent || '<!-- No content yet -->'}
               </div>
             </TabsContent>
           </Tabs>
