@@ -67,6 +67,9 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const supabase = createClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const contentRef = useRef<HTMLTextAreaElement>(null)
+  const productPreviewMap = Object.fromEntries(
+    initialProducts.map((product: any) => [product.slug, product]),
+  )
 
   // State
   const [title, setTitle] = useState(initialData?.title || '')
@@ -97,6 +100,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const [showProductModal, setShowProductModal] = useState(false)
   const [modalMode, setModalMode] = useState<'product' | 'embed'>('product')
   const [embedCode, setEmbedCode] = useState('')
+  const [activeTab, setActiveTab] = useState<'write' | 'seo' | 'preview' | 'html'>('write')
 
   // Automatically set author on mount if absent
   useEffect(() => {
@@ -138,19 +142,31 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
       const articleData = {
         slug, title, content, author, category, 
         read_time: readTime, image_url: imageUrl || null, 
-        published: publish, published_at: publish ? new Date().toISOString() : (initialData?.published ? null : null),
+        published: publish,
+        published_at: publish ? new Date().toISOString() : null,
         meta_description: metaDescription || null, meta_keywords: metaKeywords || null,
         focus_keyword: focusKeyword || null, og_title: ogTitle || null,
         og_description: ogDescription || null, og_image: ogImage || null,
         canonical_url: canonicalUrl || null, article_type: articleType,
-        generation_status: generationStatus,
+        generation_status: publish ? 'published' : generationStatus,
       }
       const response = await fetch(mode === 'create' ? '/api/articles' : `/api/articles/${initialData?.slug}`, {
         method: mode === 'create' ? 'POST' : 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(articleData),
       })
-      if (!response.ok) throw new Error('Failed to save article')
+      if (!response.ok) {
+        let message = 'Failed to save article'
+        try {
+          const errorBody = await response.json()
+          if (typeof errorBody?.message === 'string' && errorBody.message.trim()) {
+            message = errorBody.message
+          }
+        } catch {
+          // Ignore JSON parse failures and keep fallback message
+        }
+        throw new Error(message)
+      }
       toast({ title: publish ? 'Article published!' : 'Article saved' })
       router.push('/admin/articles'); router.refresh()
     } catch (error: any) {
@@ -188,7 +204,8 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     const shortcode = `\n\n[product-card:${productSlug}]\n\n`
     insertFormatting(shortcode, '')
     setShowProductModal(false)
-    toast({ title: 'Product Inserted', description: `Added ${productSlug} to content.` })
+    setActiveTab('preview')
+    toast({ title: 'Product Inserted', description: `Added ${productSlug} to content and opened preview.` })
   }
 
   const handleInsertEmbed = () => {
@@ -196,7 +213,8 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     insertFormatting(`\n\n${embedCode}\n\n`, '')
     setEmbedCode('')
     setShowProductModal(false)
-    toast({ title: 'Embed Code Inserted' })
+    setActiveTab('preview')
+    toast({ title: 'Embed Code Inserted', description: 'Opened preview so you can verify the rendered block.' })
   }
 
   // Prevent Regex computation from blocking the main typing thread
@@ -269,7 +287,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
             </div>
           </div>
 
-          <Tabs defaultValue="write" className="w-full">
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as typeof activeTab)} className="w-full">
             <TabsList className="flex items-center gap-1 p-1 bg-slate-100/80 rounded-lg w-max mb-6 border border-slate-200/50">
               <TabsTrigger value="write" className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-semibold text-slate-600 rounded-md data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
                 <Layout className="w-4 h-4" /> Write Workspace
@@ -337,6 +355,9 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                   placeholder="Draft your content in Markdown here... Legacy HTML will also render safely."
                   className="min-h-[700px] border-none focus-visible:ring-0 rounded-none text-base leading-loose px-8 py-6 resize-y placeholder:text-slate-300 font-mono"
                 />
+                <div className="border-t border-slate-100 bg-slate-50/60 px-6 py-3 text-xs text-slate-500">
+                  Product cards are inserted as shortcodes in source mode. Switch to <span className="font-semibold text-slate-700">Preview</span> to see the actual review block design.
+                </div>
               </div>
             </TabsContent>
 
@@ -438,7 +459,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
               <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8 md:p-12 min-h-[700px]">
                 <h1 className="text-4xl font-bold mb-8 text-slate-900">{title || 'Untitled Article'}</h1>
                 <div className="prose prose-lg prose-slate max-w-none prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-headings:text-slate-900 prose-img:rounded-xl">
-                  <ArticleRenderer source={deferredContent} />
+                  <ArticleRenderer source={deferredContent} preloadedProducts={productPreviewMap} />
                 </div>
               </div>
             </TabsContent>

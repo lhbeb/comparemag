@@ -10,6 +10,7 @@ export async function PUT(
     const resolvedParams = await Promise.resolve(params)
     const body = await request.json()
     const {
+      slug,
       title,
       content,
       author,
@@ -35,6 +36,7 @@ export async function PUT(
 
     const updateData: ArticleUpdate = {}
 
+    if (slug !== undefined) updateData.slug = slug
     if (title !== undefined) updateData.title = title
     if (content !== undefined) updateData.content = content
     if (author !== undefined) updateData.author = author
