@@ -218,7 +218,8 @@
 
 /* ============================================================
    Admin-specific link override (prevent navbar style bleed)
+   Using :where() drops specificity to 0 so Tailwind utilities like text-white work!
    ============================================================ */
-.admin-page main a:not([class*="btn"]):not([class*="Button"]) {
+:where(.admin-page main a:not([class*="btn"]):not([class*="Button"])) {
   color: inherit;
 }

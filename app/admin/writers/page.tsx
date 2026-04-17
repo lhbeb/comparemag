@@ -28,7 +28,7 @@ export default async function EditorsPage() {
             Manage your editorial team and their public profiles.
           </p>
         </div>
-        <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
+        <Button asChild className="bg-blue-600 hover:bg-blue-700 !text-white">
           <Link href="/admin/writers/new">
             <Plus className="mr-2 h-4 w-4" />
             Add Editor

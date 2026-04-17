@@ -68,7 +68,7 @@ export default function ProductsPage() {
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 font-sans" style={{ letterSpacing: '-0.025em' }}>Product Cards</h1>
           <p className="text-sm text-slate-500 mt-1">Manage product cards for embeddings and comparisons.</p>
         </div>
-        <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
+        <Button asChild className="bg-blue-600 hover:bg-blue-700 !text-white">
           <Link href="/admin/products/new">
             <PlusCircle className="mr-2 h-4 w-4" />
             New Product Card

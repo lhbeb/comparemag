@@ -63,6 +63,14 @@ function countryFlag(code: string): string {
   return [...code.toUpperCase()].map((c) => String.fromCodePoint(127397 + c.charCodeAt(0))).join("")
 }
 
+function escapeHtml(value: unknown): string {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+}
+
 // ─── Telegram send with retry ─────────────────────────────────────────────────
 
 async function sendTelegram(text: string, attempt = 1): Promise<void> {
@@ -75,7 +83,6 @@ async function sendTelegram(text: string, attempt = 1): Promise<void> {
         body: JSON.stringify({
           chat_id: TELEGRAM_CHAT_ID,
           text,
-          parse_mode: "HTML",
           disable_web_page_preview: true,
         }),
       }
@@ -102,15 +109,20 @@ async function sendTelegram(text: string, attempt = 1): Promise<void> {
 
 function buildMessage(ip: string, geo: ReturnType<typeof getGeoData> extends Promise<infer T> ? T : never, body: Record<string, unknown>): string {
   const flag = geo?.countryCode ? countryFlag(geo.countryCode as string) : "🏳️"
-  const ts = new Date().toISOString().replace("T", " ").slice(0, 19) + " UTC"
-  const s = body.screen as { width?: number; height?: number } | undefined
+  const now = new Date()
 
-  // Extract domain from full URL
-  let domain = "-"
-  try {
-    const parsed = new URL(String(body.url ?? ""))
-    domain = parsed.hostname
-  } catch { /* keep "-" */ }
+  const date = new Intl.DateTimeFormat("en-US", {
+    month: "numeric",
+    day: "numeric",
+    year: "numeric",
+  }).format(now)
+
+  const time = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  }).format(now)
 
   // Full OS + device type from UA
   const ua = String(body.userAgent ?? "")
@@ -132,27 +144,26 @@ function buildMessage(ip: string, geo: ReturnType<typeof getGeoData> extends Pro
   const formFactor = isMobile
     ? ua.includes("iPad") ? "Tablet" : "Phone"
     : "Desktop"
-  const device = `${formFactor} · ${os}`
-
-
-  // Referrer: always a value, never empty
-  const referrer = body.referrer && String(body.referrer).trim()
-    ? String(body.referrer)
-    : "direct"
+  const platform = String(body.platform ?? "-")
+  const device = `${formFactor} ${platform} - ${ua}`
+  const fingerprint = body.canvasHash ?? "-"
+  const url = escapeHtml(body.url ?? "-")
+  const safeIp = escapeHtml(ip)
+  const country = escapeHtml(geo?.country ?? "?")
+  const isp = escapeHtml(geo?.isp ?? "-")
+  const safeDevice = escapeHtml(device)
+  const safeFingerprint = escapeHtml(fingerprint)
 
   return [
-    `👁 <b>New Visit</b>`,
-    `📄 <a href="${body.url}">${body.url}</a>`,
-    ``,
-    `🔗 Ref: <code>${referrer}</code>`,
-    `🖥 IP: <code>${ip}</code>`,
-    `${flag} ${geo?.city ?? "?"}, ${geo?.country ?? "?"} (${geo?.countryCode ?? "?"})`,
-    `📡 ${geo?.isp ?? "-"}`,
-    ``,
-    `💻 ${device} · ${s?.width ?? "?"}×${s?.height ?? "?"} · ${body.language ?? "-"}`,
-    `🔑 Canvas: <code>${body.canvasHash ?? "-"}</code>`,
-    ``,
-    `📅 ${ts}`,
+    `👀 New Website Visit 🚀`,
+    `🔗 URL: ${url}`,
+    `🔎 IP: ${safeIp}`,
+    `🏳️ Country: ${flag} ${country}`,
+    `🌐 ISP: ${isp}`,
+    `🖥️ Device: ${safeDevice}`,
+    `🆔 Fingerprint: ${safeFingerprint}`,
+    `📅 Date: ${date}`,
+    `⏰ Time: ${time}`,
   ].join("\n").trim()
 }
 
