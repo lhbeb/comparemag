@@ -489,7 +489,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
               <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8 md:p-12 min-h-[700px]">
                 <h1 className="text-4xl font-bold mb-8 text-slate-900">{title || 'Untitled Article'}</h1>
                 <div className="prose prose-lg prose-slate max-w-none prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-headings:text-slate-900 prose-img:rounded-xl">
-                  <ArticleRenderer source={deferredContent} preloadedProducts={productPreviewMap} />
+                  <ArticleRenderer source={content} preloadedProducts={productPreviewMap} />
                 </div>
               </div>
             </TabsContent>

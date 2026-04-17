@@ -2,24 +2,30 @@ import 'server-only'
 import { createClient } from './server'
 import type { Writer, WriterInsert, WriterUpdate } from './types'
 
-export async function getAllWriters(includeDeleted = false) {
-  const supabase = await createClient()
-  
-  let query = supabase
-    .from('writers')
-    .select('*')
-  
-  if (!includeDeleted) {
-    query = query.is('deleted_at', null)
+export async function getAllWriters(includeDeleted = false): Promise<Writer[]> {
+  try {
+    const supabase = await createClient()
+    
+    let query = supabase
+      .from('writers')
+      .select('*')
+    
+    if (!includeDeleted) {
+      query = query.is('deleted_at', null)
+    }
+
+    const { data, error } = await query.order('name', { ascending: true })
+
+    if (error) {
+      console.warn('Could not fetch writers:', error?.message || error)
+      return []
+    }
+
+    return (data ?? []) as Writer[]
+  } catch (error) {
+    console.warn('getAllWriters failed, returning empty list:', error)
+    return []
   }
-
-  const { data, error } = await query.order('name', { ascending: true })
-
-  if (error) {
-    throw new Error(`Failed to fetch writers: ${error.message}`)
-  }
-
-  return data as Writer[]
 }
 
 export async function getWriterBySlug(slug: string, includeDeleted = false) {

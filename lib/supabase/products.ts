@@ -45,7 +45,7 @@ export async function getAllProductsOverview(publishedOnly: boolean = false) {
   }
 }
 
-export async function getAllProducts(publishedOnly: boolean = false) {
+export async function getAllProducts(publishedOnly: boolean = false): Promise<ProductCard[]> {
   try {
     const supabase = await createClient()
     
@@ -61,33 +61,15 @@ export async function getAllProducts(publishedOnly: boolean = false) {
     const { data, error } = await query
 
     if (error) {
-      console.error('Supabase error fetching products:', error)
-      throw new Error(`Failed to fetch products: ${error.message}`)
+      // Log but don't crash — product_cards table may not exist yet in this env
+      console.warn('Could not fetch products (table may not exist yet):', error?.message || error)
+      return []
     }
 
-    return data as ProductCard[]
+    return (data ?? []) as ProductCard[]
   } catch (error) {
-    console.error('Error in getAllProducts:', error)
-    if (error instanceof Error && error.message.includes('fetch failed')) {
-      const { createClient: createDirectClient } = await import('@supabase/supabase-js')
-      const directClient = createDirectClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://fgkvrbdpmwyfjvpubzxn.supabase.co',
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZna3ZyYmRwbXd5Zmp2cHVienhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUyNTExNjYsImV4cCI6MjA4MDgyNzE2Nn0.uc3OmHcbnzvvmsZfN8FcGWPvTbrQU9ofkyhH7Ykz0JE'
-      )
-      let query = directClient
-        .from('product_cards')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (publishedOnly) {
-        query = query.eq('published', true)
-      }
-      
-      const { data, error: retryError } = await query
-      if (retryError) throw new Error(`Failed to fetch products: ${retryError.message}`)
-      return data as ProductCard[]
-    }
-    throw error
+    console.warn('getAllProducts failed, returning empty list:', error)
+    return []
   }
 }
 
