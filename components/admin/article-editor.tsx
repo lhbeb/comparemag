@@ -107,7 +107,6 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const [modalMode, setModalMode] = useState<'product' | 'embed'>('product')
   const [embedCode, setEmbedCode] = useState('')
   const [activeTab, setActiveTab] = useState<'write' | 'seo' | 'preview' | 'html'>('write')
-  const [isEditorReady, setIsEditorReady] = useState(false)
 
   // Automatically set author on mount if absent
   useEffect(() => {
@@ -116,14 +115,20 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     }
   }, [mode, initialData?.author, author])
 
-  // Bootstrap the contenteditable editor with the initial content on mount
+  // Repopulate the contenteditable editor whenever the Write tab becomes active.
+  // This handles both initial mount AND returning from other tabs (TabsContent unmounts on tab switch).
   useEffect(() => {
-    if (editorRef.current && !isEditorReady) {
-      const html = compileArticleSourceToHtml(initialData?.content || '')
-      editorRef.current.innerHTML = html
-      setIsEditorReady(true)
+    if (activeTab !== 'write' || !editorRef.current) return
+    // If the editor div is empty (freshly mounted / remounted), fill it with current content.
+    if (!editorRef.current.childNodes.length) {
+      const sourceContent = content || initialData?.content || ''
+      editorRef.current.innerHTML = sourceContent
+        ? compileArticleSourceToHtml(sourceContent)
+        : ''
     }
-  }, [isEditorReady, initialData?.content])
+  }, [activeTab])
+  // Note: intentionally omitting content/initialData from deps — we only want this to fire
+  // when activeTab changes, not on every keystroke. The empty-check prevents overwriting live edits.
 
   const generateSlug = (text: string) => text.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '')
 
@@ -149,23 +154,85 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   }
 
   const handleSave = async (publish: boolean = false) => {
-    if (!title || !slug || !content || !author || !category) {
-      toast({ title: 'Missing fields', description: 'Title, Slug, Content, Editor, and Category are required.', variant: 'destructive' })
+    // ── Base validation (applies to both Save Draft & Publish) ──────────
+    if (!title.trim()) {
+      toast({ title: 'Missing title', description: 'Add an article title before saving.', variant: 'destructive' })
       return
     }
+    if (!slug.trim()) {
+      toast({ title: 'Missing slug', description: 'A URL slug is required.', variant: 'destructive' })
+      return
+    }
+    if (!content.trim()) {
+      toast({ title: 'No content', description: 'Write something in the workspace before saving.', variant: 'destructive' })
+      return
+    }
+
+    // ── Publish-only strict gate ─────────────────────────────────────────
+    if (publish) {
+      if (!imageUrl.trim()) {
+        toast({
+          title: '🖼 Featured image required',
+          description: 'Upload or paste a featured image URL in the sidebar before publishing.',
+          variant: 'destructive',
+        })
+        return
+      }
+      if (!author.trim()) {
+        toast({
+          title: '✍️ Byline required',
+          description: 'Choose an editor/author for this article before publishing.',
+          variant: 'destructive',
+        })
+        return
+      }
+      if (!listedBy.trim()) {
+        toast({
+          title: '🆔 Who listed this?',
+          description: 'Select your name in the "Listed By" field so we know who published this.',
+          variant: 'destructive',
+        })
+        return
+      }
+      if (!category.trim()) {
+        toast({
+          title: '📂 Category required',
+          description: 'Choose a category before publishing.',
+          variant: 'destructive',
+        })
+        return
+      }
+    }
+
     publish ? setPublishing(true) : setSaving(true)
     try {
+      // ── Auto-derive SEO fields from article content when left blank ──────
+      const plainText = content
+        .replace(/<[^>]+>/g, ' ')           // strip HTML tags
+        .replace(/\s+/g, ' ')               // collapse whitespace
+        .trim()
+
+      const derivedMetaDescription = metaDescription.trim()
+        || plainText.substring(0, 155).trimEnd() + (plainText.length > 155 ? '…' : '')
+
+      const derivedOgTitle = ogTitle.trim() || title.trim()
+
+      const derivedOgDescription = ogDescription.trim()
+        || derivedMetaDescription
+
+      const derivedOgImage = ogImage.trim() || imageUrl.trim() || ''
+
       const payload = {
         slug, title, content, author, category,
         image_url: imageUrl || null, read_time: readTime,
         published: publish, published_at: publish ? (initialData?.published_at || new Date().toISOString()) : null,
         article_type: articleType, generation_status: publish ? 'published' : generationStatus,
-        meta_description: metaDescription || null,
+        meta_description: derivedMetaDescription || null,
         meta_keywords: metaKeywords || null,
         focus_keyword: focusKeyword || null,
-        og_title: ogTitle || null,
-        og_description: ogDescription || null,
-        og_image: ogImage || null,
+        og_title: derivedOgTitle || null,
+        og_description: derivedOgDescription || null,
+        og_image: derivedOgImage || null,
         canonical_url: canonicalUrl || null,
         listed_by: listedBy || null,
       }
@@ -186,7 +253,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
         }
         throw new Error(message)
       }
-      toast({ title: publish ? 'Article published!' : 'Article saved' })
+      toast({ title: publish ? 'Article published! 🚀' : 'Draft saved ✓' })
       router.push('/admin/articles'); router.refresh()
     } catch (error: any) {
       toast({ title: 'Save failed', description: error.message, variant: 'destructive' })
