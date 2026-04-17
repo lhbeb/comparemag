@@ -107,6 +107,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const [modalMode, setModalMode] = useState<'product' | 'embed'>('product')
   const [embedCode, setEmbedCode] = useState('')
   const [activeTab, setActiveTab] = useState<'write' | 'seo' | 'preview' | 'html'>('write')
+  const [writeMode, setWriteMode] = useState<'source' | 'rendered'>('source')
 
   // Automatically set author on mount if absent
   useEffect(() => {
@@ -315,52 +316,76 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
 
             {/* TAB: WRITE */}
             <TabsContent value="write" className="mt-0 outline-none">
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              <div className="border border-slate-200 rounded-xl bg-white shadow-sm overflow-hidden flex flex-col focus-within:border-blue-400 transition-colors" style={{ height: '800px' }}>
                 
-                {/* LEFT PANE: Editor */}
-                <div className="border border-slate-200 rounded-xl bg-white shadow-sm overflow-hidden flex flex-col focus-within:border-blue-400 transition-colors h-[800px]">
-                  
-                  {/* HTML Formatting Toolbar */}
-                  <div className="flex flex-wrap items-center gap-1 p-2 border-b border-slate-100 bg-slate-50/50 flex-shrink-0">
-                    <div className="flex items-center gap-1 pr-2 border-r border-slate-200">
-                      <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('**', '**')} title="Bold">
-                        <Bold className="w-4 h-4" />
-                      </Button>
-                      <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('*', '*')} title="Italic">
-                        <Italic className="w-4 h-4" />
-                      </Button>
-                      <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={handleInsertLink} title="Insert Link">
-                        <LinkIcon className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    <div className="flex items-center gap-1 pl-1 pr-2 border-r border-slate-200">
-                      <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('## ', '')} title="Heading 2">
-                        <Heading2 className="w-4 h-4" />
-                      </Button>
-                      <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('### ', '')} title="Heading 3">
-                        <Heading3 className="w-4 h-4" />
-                      </Button>
-                      <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('> ', '')} title="Blockquote">
-                        <Quote className="w-4 h-4" />
-                      </Button>
-                      <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('- ', '')} title="Bullet List">
-                        <List className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    <div className="flex items-center pl-2">
-                      <Button 
-                        type="button" 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => setShowProductModal(true)}
-                        className="h-8 text-xs font-bold text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-                      >
-                        <PlusCircle className="h-4 w-4 mr-1.5" />
-                        Insert Product / Embed
-                      </Button>
-                    </div>
-                  </div>
+                {/* Unified Toolbar */}
+                <div className="flex flex-wrap items-center gap-1 p-2 border-b border-slate-100 bg-slate-50/50 flex-shrink-0">
+                  {/* Formatting buttons — only shown in source mode */}
+                  {writeMode === 'source' && (
+                    <>
+                      <div className="flex items-center gap-1 pr-2 border-r border-slate-200">
+                        <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('**', '**')} title="Bold">
+                          <Bold className="w-4 h-4" />
+                        </Button>
+                        <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('*', '*')} title="Italic">
+                          <Italic className="w-4 h-4" />
+                        </Button>
+                        <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={handleInsertLink} title="Insert Link">
+                          <LinkIcon className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <div className="flex items-center gap-1 pl-1 pr-2 border-r border-slate-200">
+                        <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('## ', '')} title="Heading 2">
+                          <Heading2 className="w-4 h-4" />
+                        </Button>
+                        <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('### ', '')} title="Heading 3">
+                          <Heading3 className="w-4 h-4" />
+                        </Button>
+                        <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('> ', '')} title="Blockquote">
+                          <Quote className="w-4 h-4" />
+                        </Button>
+                        <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('- ', '')} title="Bullet List">
+                          <List className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <div className="flex items-center pl-2 border-r border-slate-200 pr-2">
+                        <Button 
+                          type="button" 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => setShowProductModal(true)}
+                          className="h-8 text-xs font-bold text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                        >
+                          <PlusCircle className="h-4 w-4 mr-1.5" />
+                          Insert Product / Embed
+                        </Button>
+                      </div>
+                    </>
+                  )}
 
+                  {/* Source / Rendered toggle — always visible, pushed to the right */}
+                  <div className="flex items-center gap-0.5 ml-auto bg-slate-100 rounded-lg p-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setWriteMode('source')}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${writeMode === 'source' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                    >
+                      <Code className="w-3.5 h-3.5" />
+                      Source
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setWriteMode('rendered')}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${writeMode === 'rendered' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      Rendered
+                    </button>
+                  </div>
+                </div>
+
+                {/* Content area — swaps between textarea and live render */}
+                {writeMode === 'source' ? (
                   <Textarea
                     ref={contentRef}
                     value={content}
@@ -368,32 +393,27 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                     placeholder="Draft your content in Markdown here... Legacy HTML will also render safely."
                     className="flex-1 w-full border-none focus-visible:ring-0 rounded-none text-base leading-loose px-8 py-6 resize-none placeholder:text-slate-300 font-mono"
                   />
-                  <div className="flex-shrink-0 border-t border-slate-100 bg-slate-50/60 px-6 py-3 text-xs text-slate-500">
-                    Live formatting preview enabled on desktop. Try inserting a product card.
-                  </div>
-                </div>
-
-                {/* RIGHT PANE: Live Rendering Preview */}
-                <div className="hidden xl:flex border border-slate-200 rounded-xl bg-slate-50 shadow-sm overflow-hidden flex-col h-[800px] relative">
-                  <div className="bg-slate-100/80 backdrop-blur border-b border-slate-200 px-4 py-2 text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center justify-between shadow-sm z-10">
-                    <span>Live Render Panel</span>
-                    <span className="text-[10px] text-blue-600 font-semibold bg-blue-100 px-2 py-0.5 rounded-full">Real-time</span>
-                  </div>
-                  
-                  <div className="flex-1 overflow-y-auto px-8 py-10 bg-white">
-                    <div className="prose prose-slate max-w-full prose-headings:font-display prose-a:text-blue-600 prose-img:rounded-xl">
-                      {deferredContent ? (
+                ) : (
+                  <div className="flex-1 overflow-y-auto px-8 py-8 bg-white">
+                    {deferredContent ? (
+                      <div className="prose prose-slate max-w-full prose-headings:font-display prose-a:text-blue-600 prose-img:rounded-xl">
                         <ArticleRenderer source={deferredContent} preloadedProducts={productPreviewMap} />
-                      ) : (
-                        <div className="h-full flex flex-col items-center justify-center text-slate-400 gap-4 opacity-50 pt-20">
-                          <Eye className="w-12 h-12" />
-                          <p className="italic">Your formatted article and product embeds will magically appear here...</p>
-                        </div>
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      <div className="h-full flex flex-col items-center justify-center text-slate-300 gap-4">
+                        <Eye className="w-10 h-10" />
+                        <p className="italic text-sm">Start writing to see the live render here...</p>
+                      </div>
+                    )}
                   </div>
+                )}
+
+                <div className="flex-shrink-0 border-t border-slate-100 bg-slate-50/60 px-6 py-2.5 text-xs text-slate-400 flex items-center justify-between">
+                  <span>{writeMode === 'source' ? 'Markdown supported · Use toolbar to format' : 'Live rendered output — switch to Source to edit'}</span>
+                  <span className={`font-semibold px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wide ${writeMode === 'rendered' ? 'bg-blue-50 text-blue-600' : 'bg-slate-100 text-slate-500'}`}>
+                    {writeMode === 'rendered' ? '● Live' : 'Source'}
+                  </span>
                 </div>
-                
               </div>
             </TabsContent>
 
