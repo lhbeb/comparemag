@@ -7,7 +7,7 @@ function isMissingFeaturedColumn(message: string) {
   return message.includes('column articles.is_featured does not exist')
 }
 
-export async function setFeaturedArticle(slug: string | null) {
+export async function setFeaturedArticles(slugs: string[]) {
   const supabase = await createClient()
 
   // First, unset all articles
@@ -23,18 +23,18 @@ export async function setFeaturedArticle(slug: string | null) {
     throw new Error(`Failed to reset featured articles: ${resetError.message}`)
   }
 
-  // If a slug was provided, set it as featured
-  if (slug) {
+  // If slugs were provided, set them as featured
+  if (slugs.length > 0) {
     const { error: setError } = await supabase
       .from('articles')
       .update({ is_featured: true })
-      .eq('slug', slug)
+      .in('slug', slugs)
 
     if (setError) {
       if (isMissingFeaturedColumn(setError.message)) {
         throw new Error('Promo Bar is not enabled in Supabase yet. Run the promo-bar migration to add the is_featured column.')
       }
-      throw new Error(`Failed to set featured article: ${setError.message}`)
+      throw new Error(`Failed to set featured articles: ${setError.message}`)
     }
   }
 

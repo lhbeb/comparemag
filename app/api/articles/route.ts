@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
       og_image,
       twitter_card,
       canonical_url,
+      listed_by,
     } = body
 
     // Validate required fields
@@ -62,6 +63,7 @@ export async function POST(request: NextRequest) {
       og_image: og_image || null,
       twitter_card: twitter_card || null,
       canonical_url: canonical_url || null,
+      listed_by: listed_by || null,
     }
 
     const article: any = await createArticle(articleData)

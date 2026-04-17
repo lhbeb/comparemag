@@ -33,6 +33,7 @@ export async function PUT(
       og_image,
       twitter_card,
       canonical_url,
+      listed_by,
     } = body
 
     const updateData: ArticleUpdate = {}
@@ -61,6 +62,7 @@ export async function PUT(
     if (og_image !== undefined) updateData.og_image = og_image
     if (twitter_card !== undefined) updateData.twitter_card = twitter_card
     if (canonical_url !== undefined) updateData.canonical_url = canonical_url
+    if (listed_by !== undefined) updateData.listed_by = listed_by
 
     const article = await updateArticle(resolvedParams.slug, updateData)
 

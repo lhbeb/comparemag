@@ -15,37 +15,12 @@ function replaceProductShortcodes(source: string) {
   )
 }
 
-function looksLikeHtmlDocument(source: string) {
-  const trimmed = source.trim()
-  return /<\/?[a-z][\s\S]*>/i.test(trimmed)
-}
-
 export function compileArticleSourceToHtml(source: string) {
   const preparedSource = replaceProductShortcodes(source)
-
-  if (looksLikeHtmlDocument(preparedSource)) {
-    return preparedSource
-  }
-
   return marked.parse(preparedSource, { async: false, breaks: true, gfm: true }) as string
 }
 
-function EmbeddedScript({ src }: { src: string }) {
-  React.useEffect(() => {
-    if (!src) return
-    const existing = document.querySelector(`script[src="${src}"]`)
-    if (existing) {
-      if (src.includes('instagram')) (window as any).instgrm?.Embeds?.process()
-      if (src.includes('twitter')) (window as any).twttr?.widgets?.load()
-      return
-    }
-    const script = document.createElement('script')
-    script.src = src
-    script.async = true
-    document.body.appendChild(script)
-  }, [src])
-  return null
-}
+import { EmbeddedScript } from './embedded-script'
 
 export function ArticleRenderer({ source, preloadedProducts = {} }: ArticleRendererProps) {
   const rawHtml = compileArticleSourceToHtml(source)

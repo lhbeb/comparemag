@@ -43,8 +43,8 @@ export async function getAllArticlesOverview(publishedOnly: boolean = false) {
         .from('articles')
         .select(
           includeFeatured
-            ? 'id, slug, title, category, author, image_url, published, article_type, updated_at, created_at, is_featured'
-            : 'id, slug, title, category, author, image_url, published, article_type, updated_at, created_at',
+            ? 'id, slug, title, category, author, image_url, published, article_type, updated_at, created_at, is_featured, listed_by'
+            : 'id, slug, title, category, author, image_url, published, article_type, updated_at, created_at, listed_by',
         )
         .order('created_at', { ascending: false })
 
@@ -81,8 +81,8 @@ export async function getAllArticlesOverview(publishedOnly: boolean = false) {
           .from('articles')
           .select(
             includeFeatured
-              ? 'id, slug, title, category, author, image_url, published, article_type, updated_at, created_at, is_featured'
-              : 'id, slug, title, category, author, image_url, published, article_type, updated_at, created_at',
+              ? 'id, slug, title, category, author, image_url, published, article_type, updated_at, created_at, is_featured, listed_by'
+              : 'id, slug, title, category, author, image_url, published, article_type, updated_at, created_at, listed_by',
           )
           .order('created_at', { ascending: false })
 

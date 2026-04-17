@@ -1,163 +1,51 @@
-[00:00:01.409] Server  LOG     [System] Running Background Database Health Check on Startup...
-[00:00:04.419] Server  LOG     [System] Database Health Check: ✅ PASS (Connection: OK, Tables: articles, writers, product_cards checked)
-[00:00:04.425] Server  LOG      ✓ Ready in 4.2s
-[00:00:07.811] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:08.654] Browser WARN    Image with src "/placeholder.svg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:09.197] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:09.598] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:00:09.598] Browser WARN    Image with src "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:09.598] Browser WARN    Image with src "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=600&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:09.598] Browser WARN    Image with src "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:10.031] Browser WARN    Image with src "https://images.unsplash.com/photo-1593118247619-e2d6f056869e?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:10.031] Browser WARN    Image with src "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:10.031] Browser WARN    Image with src "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:10.031] Browser WARN    Image with src "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:10.031] Browser WARN    Image with src "https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:10.031] Browser WARN    Image with src "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:10.031] Browser WARN    Image with src "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:24.604] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::ac40:95f6\",\"64:ff9b::6812:260a\"]"
-[00:00:24.674] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
-[00:00:24.674] Browser WARN    Image with src "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:01:20.758] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:01:20.923] Browser WARN    Image with src "/placeholder.svg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:01:20.923] Browser WARN    Image with src "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:01:25.909] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
-[00:02:11.364] Browser INFO    %c[TikTok] 
+[00:00:01.523] Server  LOG     [System] Running Background Database Health Check on Startup...
+[00:00:05.684] Server  LOG     [System] Database Health Check: ✅ PASS (Connection: OK, Tables: articles, writers, product_cards checked)
+[00:00:05.688] Server  LOG      ✓ Ready in 5.4s
+[00:00:09.429] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:09.640] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:00:21.398] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:21.516] Browser WARN    Image with src "/placeholder.svg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:01:37.127] Server  LOG      ✓ Compiled in 220ms
+[00:03:22.096] Server  LOG      ✓ Compiled in 186ms
+[00:06:21.159] Server  LOG      ✓ Compiled in 219ms
+[00:06:21.575] Browser ERROR   ./app/admin/components/promo-bar-control.tsx:5:1
+Export setFeaturedArticle doesn't exist in target module
+  3 | import { useState } from 'react'
+  4 | import { Sparkles, Search, CheckCircle, X } from 'lucide-react'
+> 5 | import { setFeaturedArticle } from '@/app/actions/promo'
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { useRouter } from 'next/navigation'
+  7 | import { toast } from '@/hooks/use-toast'
+  8 |
 
-We're hiring!
-Are you ready to make a change?
-Check out some of our available positions at https://careers.tiktok.com/ color: #fe2c55
-[00:02:20.753] Browser WARN    Image with src "https://images.unsplash.com/photo-1593118247619-e2d6f056869e?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:02:20.753] Browser WARN    Image with src "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:02:20.753] Browser WARN    Image with src "https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:02:20.753] Browser WARN    Image with src "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:02:20.753] Browser WARN    Image with src "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:02:20.753] Browser WARN    Image with src "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:02:24.318] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:02:24.523] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:02:24.523] Browser INFO    %c[TikTok] 
-
-We're hiring!
-Are you ready to make a change?
-Check out some of our available positions at https://careers.tiktok.com/ color: #fe2c55
-[00:05:07.796] Server  LOG      ✓ Compiled in 218ms
-[00:07:02.312] Server  LOG      ✓ Compiled in 170ms
-[00:07:02.421] Browser ERROR   ./components/blocks/product-card-embed.tsx:173:12
-Parsing ecmascript source code failed
-  171 |               )}
-  172 |             </div>
-> 173 |           </div>
-      |            ^^^^^
-  174 |         </div>
-  175 |       </div>
-  176 |     </div>
-
-Unterminated regexp literal
+The export setFeaturedArticle was not found in module [project]/app/actions/promo.ts [app-client] (ecmascript).
+Did you mean to import setFeaturedArticles?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
 
 Import trace:
   Server Component:
-    ./components/blocks/product-card-embed.tsx
-    ./components/article-renderer.tsx
-    ./components/blog-post-content.tsx
-    ./app/(public)/blog/[slug]/page.tsx
-[00:07:03.037] Browser ERROR   ./components/blocks/product-card-embed.tsx:173:12
-Parsing ecmascript source code failed
-  171 |               )}
-  172 |             </div>
-> 173 |           </div>
-      |            ^^^^^
-  174 |         </div>
-  175 |       </div>
-  176 |     </div>
+    ./app/admin/components/promo-bar-control.tsx
+    ./app/admin/page.tsx
+[00:06:21.575] Browser ERROR   ./app/admin/components/promo-bar-control.tsx:5:1
+Export setFeaturedArticle doesn't exist in target module
+  3 | import { useState } from 'react'
+  4 | import { Sparkles, Search, CheckCircle, X } from 'lucide-react'
+> 5 | import { setFeaturedArticle } from '@/app/actions/promo'
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { useRouter } from 'next/navigation'
+  7 | import { toast } from '@/hooks/use-toast'
+  8 |
 
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./components/blocks/product-card-embed.tsx
-    ./components/article-renderer.tsx
-    ./components/blog-post-content.tsx
-    ./app/(public)/blog/[slug]/page.tsx
-[00:07:03.037] Browser ERROR   ./components/blocks/product-card-embed.tsx:173:12
-Parsing ecmascript source code failed
-  171 |               )}
-  172 |             </div>
-> 173 |           </div>
-      |            ^^^^^
-  174 |         </div>
-  175 |       </div>
-  176 |     </div>
-
-Unterminated regexp literal
+The export setFeaturedArticle was not found in module [project]/app/actions/promo.ts [app-ssr] (ecmascript).
+Did you mean to import setFeaturedArticles?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
 
 Import trace:
   Server Component:
-    ./components/blocks/product-card-embed.tsx
-    ./components/article-renderer.tsx
-    ./components/blog-post-content.tsx
-    ./app/(public)/blog/[slug]/page.tsx
-[00:08:22.918] Server  LOG      ✓ Compiled in 238ms
-[00:08:23.029] Browser ERROR   ./components/blocks/product-card-embed.tsx:173:12
-Parsing ecmascript source code failed
-  171 |               )}
-  172 |             </div>
-> 173 |           </div>
-      |            ^^^^^
-  174 |         </div>
-  175 |       </div>
-  176 |     </div>
-
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./components/blocks/product-card-embed.tsx
-    ./components/article-renderer.tsx
-    ./components/blog-post-content.tsx
-    ./app/(public)/blog/[slug]/page.tsx
-[00:08:23.029] Browser ERROR   ./components/blocks/product-card-embed.tsx:173:12
-Parsing ecmascript source code failed
-  171 |               )}
-  172 |             </div>
-> 173 |           </div>
-      |            ^^^^^
-  174 |         </div>
-  175 |       </div>
-  176 |     </div>
-
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./components/blocks/product-card-embed.tsx
-    ./components/article-renderer.tsx
-    ./components/blog-post-content.tsx
-    ./app/(public)/blog/[slug]/page.tsx
-[00:08:23.050] Browser ERROR   ./components/blocks/product-card-embed.tsx:173:12
-Parsing ecmascript source code failed
-  171 |               )}
-  172 |             </div>
-> 173 |           </div>
-      |            ^^^^^
-  174 |         </div>
-  175 |       </div>
-  176 |     </div>
-
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./components/blocks/product-card-embed.tsx
-    ./components/article-renderer.tsx
-    ./components/blog-post-content.tsx
-    ./app/(public)/blog/[slug]/page.tsx
-[00:08:50.533] Server  LOG      ✓ Compiled in 214ms
-[00:08:58.454] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:08:58.686] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:08:58.686] Browser INFO    %c[TikTok] 
-
-We're hiring!
-Are you ready to make a change?
-Check out some of our available positions at https://careers.tiktok.com/ color: #fe2c55
-[00:13:32.887] Server  LOG      ✓ Compiled in 153ms
-[00:13:58.840] Server  LOG      ✓ Compiled in 154ms
+    ./app/admin/components/promo-bar-control.tsx
+    ./app/admin/page.tsx
+[00:06:42.944] Server  LOG      ✓ Compiled in 247ms
+[00:06:58.483] Server  LOG      ✓ Compiled in 339ms
+[00:07:07.224] Server  LOG      ✓ Compiled in 389ms
+[00:08:14.027] Server  LOG      ✓ Compiled in 181ms
+[00:11:06.109] Server  LOG      ✓ Compiled in 283ms

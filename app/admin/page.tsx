@@ -189,7 +189,7 @@ export default async function AdminDashboardOverview() {
         <div className="space-y-4">
           <h2 className="text-lg font-bold text-slate-900">Quick Actions</h2>
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col gap-3">
-            <Button asChild className="w-full justify-start bg-blue-600 hover:bg-blue-700">
+            <Button asChild className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white">
               <Link href="/admin/articles/new">
                 <Plus className="w-4 h-4 mr-2" />
                 Write New Article

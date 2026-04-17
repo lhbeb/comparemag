@@ -1,1 +1,11 @@
-{"version":4,"routes":{"/writers/alison-denisco-rayome":{},"/writers/charlie-osborne":{},"/writers/jason-howell":{},"/blog/i-bought-five-robot-vacuums-under-300-heres-which-one-won":{},"/blog/i-used-nintendo-switch-2-every-day-for-a-month-5-things-love-2-hate":{},"/blog/google-pixel-9-pro-six-weeks-camera-honest-verdict":{},"/blog/i-owned-lg-oled-c4-for-one-year-honest-update":{},"/blog/i-tested-every-android-phone-this-year-heres-the-one-i-kept":{},"/blog/i-used-macbook-air-m3-for-six-months-before-writing-this":{},"/blog/i-switched-from-airpods-pro-to-sony-xm6-and-switched-back":{},"/blog/i-replaced-my-nest-cameras-with-35-dollar-cameras-and-heres-what-happened":{},"/blog/test-curl":{},"/blog/test-curl-2":{},"/blog/thzgegfgbzef-zvb-nzevbfbvze-ze":{},"/blog/the-internets-favorite-pocket-camera-for-a-reason-canon-powershot-g7-x-mark-iii-201mp-4k":{}},"dynamicRoutes":{"/writers/[slug]":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/writers/[slug]","routeRegex":"^\\/writers\\/([^/]+?)(?:\\/)?$","allowHeader":[]},"/blog/[slug]":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/blog/[slug]","routeRegex":"^\\/blog\\/([^/]+?)(?:\\/)?$","allowHeader":[]}},"notFoundRoutes":[],"preview":{"previewModeId":"ca45e55d1ee062b58b9577631f870431","previewModeSigningKey":"5cae03d8665cecbd07e40bd96695b98d8605d7435a7f9d3f06a85baa9234bd44","previewModeEncryptionKey":"75b5cffccff7e9ed982fb7f7701c0ea199c8fd41d47b0b785b82a8582a0d1833"}}
+{
+  "version": 4,
+  "routes": {},
+  "dynamicRoutes": {},
+  "notFoundRoutes": [],
+  "preview": {
+    "previewModeId": "c94e7a603a3584f1f323d7cfd5a44bec",
+    "previewModeSigningKey": "7f910515ea5d3f9a0785ff01245b302a6218c8f15d211db38ad0717853f95aef",
+    "previewModeEncryptionKey": "fbfaef2d1bfbb76dd467b37e323789d9cc5004793d58e5053fc74ae2cf66c731"
+  }
+}

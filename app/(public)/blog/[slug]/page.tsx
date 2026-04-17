@@ -57,8 +57,13 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   }
 
   const allArticles = await getAllArticles(true)
-  const relatedArticles = allArticles
-    .filter(a => a.category === article.category && a.slug !== article.slug)
+  // Advanced algorithm: Prioritize same category, backfill with others to ensure engagement
+  const otherAvailableArticles = allArticles.filter(a => a.slug !== article.slug)
+  const categoryMatches = otherAvailableArticles.filter(a => a.category === article.category)
+  const backfillArticles = otherAvailableArticles.filter(a => a.category !== article.category)
+  
+  const relatedArticles = [...categoryMatches, ...backfillArticles]
+    .slice(0, 7)
     .map(a => ({
       title: a.title,
       slug: a.slug,

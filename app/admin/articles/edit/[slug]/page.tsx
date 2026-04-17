@@ -61,6 +61,7 @@ export default async function EditArticlePage({
           canonical_url: article.canonical_url,
           article_type: article.article_type,
           generation_status: article.generation_status,
+          listed_by: article.listed_by,
         }}
         initialWriters={writers}
         initialProducts={products}

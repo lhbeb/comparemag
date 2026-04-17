@@ -45,6 +45,8 @@ interface ArticleEditorProps {
     canonical_url?: string | null
     article_type?: string | null
     generation_status?: string | null
+    listed_by?: string | null
+    published_at?: string | null
   }
   mode: 'create' | 'edit'
   initialWriters?: any[]
@@ -79,6 +81,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   // Default to first writer and category if creating new to prevent validation blocks
   const [author, setAuthor] = useState(initialData?.author || (initialWriters.length > 0 ? initialWriters[0].name : ''))
   const [category, setCategory] = useState(initialData?.category || categories[0] || '')
+  const [listedBy, setListedBy] = useState(initialData?.listed_by || '')
   
   const [readTime, setReadTime] = useState(initialData?.read_time || '5 min read')
   const [imageUrl, setImageUrl] = useState(initialData?.image_url || '')
@@ -142,21 +145,24 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     }
     publish ? setPublishing(true) : setSaving(true)
     try {
-      const articleData = {
-        slug, title, content, author, category, 
-        read_time: readTime, image_url: imageUrl || null, 
-        published: publish,
-        published_at: publish ? new Date().toISOString() : null,
-        meta_description: metaDescription || null, meta_keywords: metaKeywords || null,
-        focus_keyword: focusKeyword || null, og_title: ogTitle || null,
-        og_description: ogDescription || null, og_image: ogImage || null,
-        canonical_url: canonicalUrl || null, article_type: articleType,
-        generation_status: publish ? 'published' : generationStatus,
+      const payload = {
+        slug, title, content, author, category,
+        image_url: imageUrl || null, read_time: readTime,
+        published: publish, published_at: publish ? (initialData?.published_at || new Date().toISOString()) : null,
+        article_type: articleType, generation_status: publish ? 'published' : generationStatus,
+        meta_description: metaDescription || null,
+        meta_keywords: metaKeywords || null,
+        focus_keyword: focusKeyword || null,
+        og_title: ogTitle || null,
+        og_description: ogDescription || null,
+        og_image: ogImage || null,
+        canonical_url: canonicalUrl || null,
+        listed_by: listedBy || null,
       }
       const response = await fetch(mode === 'create' ? '/api/articles' : `/api/articles/${initialData?.slug}`, {
         method: mode === 'create' ? 'POST' : 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(articleData),
+        body: JSON.stringify(payload),
       })
       if (!response.ok) {
         let message = 'Failed to save article'
@@ -248,7 +254,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
           <Button 
             onClick={() => handleSave(true)} 
             disabled={saving || publishing}
-            className="bg-blue-600 hover:bg-blue-700 font-bold min-w-[140px] shadow-md shadow-blue-500/20"
+            className="bg-blue-600 hover:bg-blue-700 font-bold min-w-[140px] shadow-md shadow-blue-500/20 text-white"
           >
             <Send className="mr-2 h-4 w-4" />
             {publishing ? 'Publishing...' : initialData?.published ? 'Update Live' : 'Publish'}
@@ -543,6 +549,29 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                 </Select>
               </div>
 
+              <div className="space-y-2 relative pb-2 mb-2 border-b border-indigo-50 border-dashed">
+                <Label className="text-xs font-bold text-indigo-700 flex items-center justify-between">
+                  <span>Internal Tracking</span>
+                  <span className="text-[9px] uppercase tracking-widest text-indigo-400 bg-indigo-50 px-1.5 py-0.5 rounded">Admin Only</span>
+                </Label>
+                <Select value={listedBy} onValueChange={setListedBy}>
+                  <SelectTrigger className="bg-indigo-50/30 border-indigo-100 text-indigo-900 h-9">
+                    <SelectValue placeholder="Listed By..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="walid">Walid</SelectItem>
+                    <SelectItem value="yassine">Yassine</SelectItem>
+                    <SelectItem value="jebbar">Jebbar</SelectItem>
+                    <SelectItem value="janah">Janah</SelectItem>
+                    <SelectItem value="amine">Amine</SelectItem>
+                    <SelectItem value="abdo">Abdo</SelectItem>
+                    <SelectItem value="mehdi">Mehdi</SelectItem>
+                    <SelectItem value="othmane">Othmane</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-[10px] text-slate-400">Used for staff payout and tracking metrics. Does not appear on live site.</p>
+              </div>
+
               <div className="space-y-2">
                 <Label className="text-xs font-bold text-slate-700">Primary Category</Label>
                 <Select value={category} onValueChange={setCategory}>
@@ -633,7 +662,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                 <Button 
                   onClick={handleInsertEmbed}
                   disabled={!embedCode.trim()}
-                  className="w-full bg-blue-600 font-bold h-10"
+                  className="w-full bg-blue-600 font-bold h-10 text-white"
                 >
                   Confirm Insert
                 </Button>

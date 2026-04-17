@@ -80,6 +80,7 @@ export interface Database {
           seo_score: number | null
           twitter_card: string | null
           is_featured: boolean | null
+          listed_by: string | null
         }
         Insert: {
           article_type?: string | null
@@ -109,6 +110,7 @@ export interface Database {
           twitter_card?: string | null
           updated_at?: string
           is_featured?: boolean | null
+          listed_by?: string | null
         }
         Update: {
           article_type?: string | null
@@ -138,6 +140,7 @@ export interface Database {
           twitter_card?: string | null
           updated_at?: string
           is_featured?: boolean | null
+          listed_by?: string | null
         }
       }
       product_cards: {

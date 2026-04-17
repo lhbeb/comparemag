@@ -242,7 +242,7 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
                 <Button 
                     onClick={() => handleSave(true)} 
                     disabled={saving || publishing}
-                    className="w-full bg-blue-600 hover:bg-blue-700 h-10 font-bold"
+                    className="w-full bg-blue-600 hover:bg-blue-700 h-10 font-bold text-white"
                 >
                     <Send className="mr-2 h-4 w-4" />
                     {publishing ? 'Updating...' : 'Publish Product'}

@@ -15,19 +15,19 @@
       "exportedName": "logoutAction",
       "filename": "app/actions/auth.ts"
     },
-    "40a3198cd2aad637c4ed5a85f076769b1c8c13da01": {
+    "40272764c36d60f4b811ced8350c99373ed8d703fb": {
       "workers": {
         "app/admin/page": {
           "moduleId": "[project]/.next-internal/server/app/admin/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/auth.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/app/actions/promo.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
-          "exportedName": "setFeaturedArticle",
+          "exportedName": "setFeaturedArticles",
           "filename": "app/actions/promo.ts"
         }
       },
       "layer": {
         "app/admin/page": "action-browser"
       },
-      "exportedName": "setFeaturedArticle",
+      "exportedName": "setFeaturedArticles",
       "filename": "app/actions/promo.ts"
     }
   },

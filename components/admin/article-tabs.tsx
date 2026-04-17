@@ -1,8 +1,10 @@
 'use client'
 
+import React from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Edit, Eye, EyeOff, FileText, Wand2 } from 'lucide-react'
+import { Edit, Eye, EyeOff, FileText, Wand2, Trash2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { SupabaseImage } from '@/components/supabase-image'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
@@ -118,6 +120,11 @@ function ArticleList({ articles }: { articles: any[] }) {
                     {article.category}
                   </span>
                   <span>By <strong className="text-slate-900">{article.author}</strong></span>
+                  {article.listed_by && (
+                    <span className="px-1.5 py-0.5 rounded-sm bg-indigo-50 text-indigo-700 text-[10px] font-bold uppercase tracking-wider border border-indigo-100 flex items-center gap-1" title="Listed By">
+                      [L] {article.listed_by}
+                    </span>
+                  )}
                   <span className="text-slate-300">·</span>
                   <span>{format(new Date(article.created_at), 'MMM d, yyyy')}</span>
                   <span className="text-slate-300">·</span>
@@ -139,10 +146,47 @@ function ArticleList({ articles }: { articles: any[] }) {
                   View
                 </Link>
               </Button>
+              <DeleteArticleButton slug={article.slug} title={article.title} />
             </div>
           </div>
         </div>
       ))}
     </div>
+  )
+}
+
+function DeleteArticleButton({ slug, title }: { slug: string, title: string }) {
+  const [isDeleting, setIsDeleting] = React.useState(false)
+  const router = useRouter()
+
+  const handleDelete = async () => {
+    if (!window.confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
+      return
+    }
+
+    setIsDeleting(true)
+    try {
+      const res = await fetch(`/api/articles/${slug}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete')
+      
+      router.refresh()
+    } catch (e) {
+      alert('Error deleting article. Please try again.')
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
+  return (
+    <Button 
+      variant="outline" 
+      size="sm" 
+      onClick={handleDelete}
+      disabled={isDeleting}
+      className="h-8 px-3 text-xs font-medium border-slate-200 text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-200"
+    >
+      <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+      {isDeleting ? '...' : 'Delete'}
+    </Button>
   )
 }

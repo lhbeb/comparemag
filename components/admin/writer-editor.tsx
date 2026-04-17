@@ -174,10 +174,10 @@ export function WriterEditor({ initialData, mode }: WriterEditorProps) {
             <Settings className="w-3.5 h-3.5 text-slate-400" />
           </div>
           <div className="cms-sidebar-card-body space-y-3">
-             <Button 
+              <Button 
                 onClick={handleSave} 
                 disabled={saving}
-                className="w-full bg-blue-600 hover:bg-blue-700 h-10 font-bold"
+                className="w-full bg-blue-600 hover:bg-blue-700 h-10 font-bold text-white"
               >
                 <Save className="mr-2 h-4 w-4" />
                 {saving ? 'Saving...' : 'Save Profile'}
