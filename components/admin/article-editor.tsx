@@ -315,59 +315,85 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
 
             {/* TAB: WRITE */}
             <TabsContent value="write" className="mt-0 outline-none">
-              <div className="border border-slate-200 rounded-xl bg-white shadow-sm overflow-hidden flex flex-col focus-within:border-blue-400 transition-colors">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 
-                {/* HTML Formatting Toolbar */}
-                <div className="flex flex-wrap items-center gap-1 p-2 border-b border-slate-100 bg-slate-50/50">
-                  <div className="flex items-center gap-1 pr-2 border-r border-slate-200">
-                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('**', '**')} title="Bold">
-                      <Bold className="w-4 h-4" />
-                    </Button>
-                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('*', '*')} title="Italic">
-                      <Italic className="w-4 h-4" />
-                    </Button>
-                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={handleInsertLink} title="Insert Link">
-                      <LinkIcon className="w-4 h-4" />
-                    </Button>
+                {/* LEFT PANE: Editor */}
+                <div className="border border-slate-200 rounded-xl bg-white shadow-sm overflow-hidden flex flex-col focus-within:border-blue-400 transition-colors h-[800px]">
+                  
+                  {/* HTML Formatting Toolbar */}
+                  <div className="flex flex-wrap items-center gap-1 p-2 border-b border-slate-100 bg-slate-50/50 flex-shrink-0">
+                    <div className="flex items-center gap-1 pr-2 border-r border-slate-200">
+                      <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('**', '**')} title="Bold">
+                        <Bold className="w-4 h-4" />
+                      </Button>
+                      <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('*', '*')} title="Italic">
+                        <Italic className="w-4 h-4" />
+                      </Button>
+                      <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={handleInsertLink} title="Insert Link">
+                        <LinkIcon className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <div className="flex items-center gap-1 pl-1 pr-2 border-r border-slate-200">
+                      <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('## ', '')} title="Heading 2">
+                        <Heading2 className="w-4 h-4" />
+                      </Button>
+                      <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('### ', '')} title="Heading 3">
+                        <Heading3 className="w-4 h-4" />
+                      </Button>
+                      <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('> ', '')} title="Blockquote">
+                        <Quote className="w-4 h-4" />
+                      </Button>
+                      <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('- ', '')} title="Bullet List">
+                        <List className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <div className="flex items-center pl-2">
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => setShowProductModal(true)}
+                        className="h-8 text-xs font-bold text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                      >
+                        <PlusCircle className="h-4 w-4 mr-1.5" />
+                        Insert Product / Embed
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1 pl-1 pr-2 border-r border-slate-200">
-                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('## ', '')} title="Heading 2">
-                      <Heading2 className="w-4 h-4" />
-                    </Button>
-                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('### ', '')} title="Heading 3">
-                      <Heading3 className="w-4 h-4" />
-                    </Button>
-                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('> ', '')} title="Blockquote">
-                      <Quote className="w-4 h-4" />
-                    </Button>
-                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:text-slate-900" onClick={() => insertFormatting('- ', '')} title="Bullet List">
-                      <List className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <div className="flex items-center pl-2">
-                    <Button 
-                      type="button" 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => setShowProductModal(true)}
-                      className="h-8 text-xs font-bold text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-                    >
-                      <PlusCircle className="h-4 w-4 mr-1.5" />
-                      Insert Product / Embed
-                    </Button>
+
+                  <Textarea
+                    ref={contentRef}
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    placeholder="Draft your content in Markdown here... Legacy HTML will also render safely."
+                    className="flex-1 w-full border-none focus-visible:ring-0 rounded-none text-base leading-loose px-8 py-6 resize-none placeholder:text-slate-300 font-mono"
+                  />
+                  <div className="flex-shrink-0 border-t border-slate-100 bg-slate-50/60 px-6 py-3 text-xs text-slate-500">
+                    Live formatting preview enabled on desktop. Try inserting a product card.
                   </div>
                 </div>
 
-                <Textarea
-                  ref={contentRef}
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="Draft your content in Markdown here... Legacy HTML will also render safely."
-                  className="min-h-[700px] border-none focus-visible:ring-0 rounded-none text-base leading-loose px-8 py-6 resize-y placeholder:text-slate-300 font-mono"
-                />
-                <div className="border-t border-slate-100 bg-slate-50/60 px-6 py-3 text-xs text-slate-500">
-                  Product cards are inserted as shortcodes in source mode. Switch to <span className="font-semibold text-slate-700">Preview</span> to see the actual review block design.
+                {/* RIGHT PANE: Live Rendering Preview */}
+                <div className="hidden xl:flex border border-slate-200 rounded-xl bg-slate-50 shadow-sm overflow-hidden flex-col h-[800px] relative">
+                  <div className="bg-slate-100/80 backdrop-blur border-b border-slate-200 px-4 py-2 text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center justify-between shadow-sm z-10">
+                    <span>Live Render Panel</span>
+                    <span className="text-[10px] text-blue-600 font-semibold bg-blue-100 px-2 py-0.5 rounded-full">Real-time</span>
+                  </div>
+                  
+                  <div className="flex-1 overflow-y-auto px-8 py-10 bg-white">
+                    <div className="prose prose-slate max-w-full prose-headings:font-display prose-a:text-blue-600 prose-img:rounded-xl">
+                      {deferredContent ? (
+                        <ArticleRenderer source={deferredContent} preloadedProducts={productPreviewMap} />
+                      ) : (
+                        <div className="h-full flex flex-col items-center justify-center text-slate-400 gap-4 opacity-50 pt-20">
+                          <Eye className="w-12 h-12" />
+                          <p className="italic">Your formatted article and product embeds will magically appear here...</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
+                
               </div>
             </TabsContent>
 
