@@ -30,8 +30,16 @@ export default async function WriterPage({
   let articles: Article[]
 
   try {
+    // We pass includeDeleted: true here so we can explicitly handle it if we want, 
+    // but the task says "not accessible to client side". 
+    // The current getWriterBySlug(slug) will throw if it's deleted.
     writer = await getWriterBySlug(resolvedParams.slug)
     
+    // Safety check just in case
+    if (writer.deleted_at) {
+      notFound()
+    }
+
     // Get all articles and filter by author name 
     const allArticles = await getAllArticles(true)
     articles = allArticles.filter((article) => article.author === writer.name)

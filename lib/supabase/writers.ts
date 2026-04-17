@@ -2,13 +2,18 @@ import 'server-only'
 import { createClient } from './server'
 import type { Writer, WriterInsert, WriterUpdate } from './types'
 
-export async function getAllWriters() {
+export async function getAllWriters(includeDeleted = false) {
   const supabase = await createClient()
   
-  const { data, error } = await supabase
+  let query = supabase
     .from('writers')
     .select('*')
-    .order('name', { ascending: true })
+  
+  if (!includeDeleted) {
+    query = query.is('deleted_at', null)
+  }
+
+  const { data, error } = await query.order('name', { ascending: true })
 
   if (error) {
     throw new Error(`Failed to fetch writers: ${error.message}`)
@@ -17,14 +22,19 @@ export async function getAllWriters() {
   return data as Writer[]
 }
 
-export async function getWriterBySlug(slug: string) {
+export async function getWriterBySlug(slug: string, includeDeleted = false) {
   const supabase = await createClient()
   
-  const { data, error } = await supabase
+  let query = supabase
     .from('writers')
     .select('*')
     .eq('slug', slug)
-    .single()
+  
+  if (!includeDeleted) {
+    query = query.is('deleted_at', null)
+  }
+
+  const { data, error } = await query.single()
 
   if (error) {
     throw new Error(`Failed to fetch writer: ${error.message}`)
@@ -71,11 +81,24 @@ export async function deleteWriter(slug: string) {
   
   const { error } = await supabase
     .from('writers')
-    .delete()
+    .update({ deleted_at: new Date().toISOString() })
     .eq('slug', slug)
 
   if (error) {
-    throw new Error(`Failed to delete writer: ${error.message}`)
+    throw new Error(`Failed to soft delete writer: ${error.message}`)
+  }
+}
+
+export async function restoreWriter(slug: string) {
+  const supabase = await createClient()
+  
+  const { error } = await supabase
+    .from('writers')
+    .update({ deleted_at: null })
+    .eq('slug', slug)
+
+  if (error) {
+    throw new Error(`Failed to restore writer: ${error.message}`)
   }
 }
 

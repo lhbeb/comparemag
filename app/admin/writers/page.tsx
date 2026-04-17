@@ -1,12 +1,13 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { getAllWriters } from '@/lib/supabase/writers'
-import { Plus, Edit, User, Award, ExternalLink } from 'lucide-react'
+import { Plus, Edit, User, Award, ExternalLink, ShieldAlert } from 'lucide-react'
 import { format } from 'date-fns'
+import { WriterActions } from '@/components/admin/writer-actions'
 
 async function getEditors() {
   try {
-    return await getAllWriters()
+    return await getAllWriters(true) // Include deleted writers
   } catch (error) {
     console.error('Error fetching editors:', error)
     return []
@@ -14,7 +15,9 @@ async function getEditors() {
 }
 
 export default async function EditorsPage() {
-  const editors = await getEditors()
+  const allEditors = await getEditors()
+  const activeEditors = allEditors.filter(e => !e.deleted_at)
+  const deletedEditors = allEditors.filter(e => e.deleted_at)
 
   return (
     <div className="space-y-8">
@@ -39,8 +42,8 @@ export default async function EditorsPage() {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {[
-          { label: 'Total Editors', value: editors.length, color: 'var(--admin-primary)', bg: 'var(--admin-primary-light)' },
-          { label: 'Active Contributors', value: editors.length, color: 'var(--admin-success)', bg: 'var(--admin-success-bg)' },
+          { label: 'Total Database Profiles', value: allEditors.length, color: 'var(--admin-primary)', bg: 'var(--admin-primary-light)' },
+          { label: 'Publicly Active', value: activeEditors.length, color: 'var(--admin-success)', bg: 'var(--admin-success-bg)' },
         ].map((stat) => (
           <div
             key={stat.label}
@@ -57,7 +60,7 @@ export default async function EditorsPage() {
         ))}
       </div>
 
-      {editors.length === 0 ? (
+      {allEditors.length === 0 ? (
         <div className="text-center py-20 rounded-2xl flex flex-col items-center gap-4 bg-white border border-dashed border-slate-200">
           <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-slate-50">
             <User className="h-7 w-7 text-slate-400" />
@@ -69,10 +72,10 @@ export default async function EditorsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {editors.map((editor) => (
+          {allEditors.map((editor) => (
             <div
               key={editor.id}
-              className="admin-card bg-white p-6 flex flex-col transition-all group"
+              className={`admin-card bg-white p-6 flex flex-col transition-all group ${editor.deleted_at ? 'opacity-60 grayscale-[0.5] border-dashed bg-slate-50' : ''}`}
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4">
@@ -88,7 +91,15 @@ export default async function EditorsPage() {
                     </div>
                   )}
                   <div className="min-w-0">
-                    <h3 className="font-bold text-slate-900 truncate leading-tight">{editor.name}</h3>
+                    <div className="flex items-center gap-2">
+                       <h3 className="font-bold text-slate-900 truncate leading-tight">{editor.name}</h3>
+                       {editor.deleted_at && (
+                         <span className="flex items-center gap-0.5 text-[9px] font-bold bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded uppercase tracking-tighter shadow-sm">
+                           <ShieldAlert className="w-2.5 h-2.5" />
+                           Deactivated
+                         </span>
+                       )}
+                    </div>
                     {editor.specialty && (
                       <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-600 border border-blue-100">
                         {editor.specialty}
@@ -107,16 +118,21 @@ export default async function EditorsPage() {
               <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                 <span className="text-[10px] font-mono text-slate-400">{editor.slug}</span>
                 <div className="flex gap-2">
-                  <Button variant="ghost" size="sm" asChild className="h-8 w-8 p-0 rounded-full hover:bg-blue-50 hover:text-blue-600">
-                    <Link href={`/admin/writers/edit/${editor.slug}`}>
-                      <Edit className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                  <Button variant="ghost" size="sm" asChild className="h-8 w-8 p-0 rounded-full hover:bg-slate-50">
-                    <Link href={`/writers/${editor.slug}`} target="_blank">
-                      <ExternalLink className="h-4 w-4" />
-                    </Link>
-                  </Button>
+                  {!editor.deleted_at && (
+                    <>
+                      <Button variant="ghost" size="sm" asChild className="h-8 w-8 p-0 rounded-full hover:bg-blue-50 hover:text-blue-600">
+                        <Link href={`/admin/writers/edit/${editor.slug}`}>
+                          <Edit className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" size="sm" asChild className="h-8 w-8 p-0 rounded-full hover:bg-slate-50">
+                        <Link href={`/writers/${editor.slug}`} target="_blank">
+                          <ExternalLink className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </>
+                  )}
+                  <WriterActions slug={editor.slug} isDeleted={!!editor.deleted_at} />
                 </div>
               </div>
             </div>

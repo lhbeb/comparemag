@@ -87,3 +87,30 @@ export async function DELETE(
     )
   }
 }
+
+import { restoreWriter } from '@/lib/supabase/writers'
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ slug: string }> | { slug: string } }
+) {
+  try {
+    const resolvedParams = await Promise.resolve(params)
+    const body = await request.json()
+    
+    if (body.action === 'restore') {
+      await restoreWriter(resolvedParams.slug)
+      return NextResponse.json({ message: 'Writer restored successfully' }, { status: 200 })
+    }
+    
+    return NextResponse.json({ message: 'Invalid action' }, { status: 400 })
+  } catch (error) {
+    console.error('Error restoring writer:', error)
+    return NextResponse.json(
+      {
+        message: error instanceof Error ? error.message : 'Failed to restore writer',
+      },
+      { status: 500 }
+    )
+  }
+}
