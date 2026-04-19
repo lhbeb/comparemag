@@ -47,7 +47,19 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
   const [ratingText, setRatingText] = useState(initialData?.rating_text || '')
   const [badgeText, setBadgeText] = useState(initialData?.badge_text || '')
   const [imageUrl, setImageUrl] = useState(initialData?.image_url || '')
-  const [specs, setSpecs] = useState(initialData?.specs ? JSON.stringify(initialData.specs, null, 2) : '')
+  
+  // Extract condition from specs if it exists
+  const initialCondition = initialData?.specs?.condition || ''
+  const [itemCondition, setItemCondition] = useState(initialCondition)
+  
+  // Exclude condition from the raw specs text editor
+  const buildInitialSpecs = () => {
+    if (!initialData?.specs) return ''
+    const { condition, ...restSpecs } = initialData.specs
+    if (Object.keys(restSpecs).length === 0) return ''
+    return JSON.stringify(restSpecs, null, 2)
+  }
+  const [specs, setSpecs] = useState(buildInitialSpecs())
   
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -82,11 +94,25 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
       toast({ title: 'Missing fields', description: 'Title, Slug, Description, and Link are required.', variant: 'destructive' })
       return
     }
-    let parsedSpecs = null
+    let parsedSpecs: any = null
     if (specs) {
       try { parsedSpecs = JSON.parse(specs) } 
       catch (err) { toast({ title: 'Invalid specs JSON', variant: 'destructive' }); return }
+    } else {
+      parsedSpecs = {}
     }
+    
+    // Inject item condition into the specs JSONB
+    if (itemCondition.trim()) {
+      if (!parsedSpecs) parsedSpecs = {}
+      parsedSpecs.condition = itemCondition.trim()
+    }
+    
+    // If empty after stripping, set to null
+    if (parsedSpecs && Object.keys(parsedSpecs).length === 0) {
+      parsedSpecs = null
+    }
+
     publish ? setPublishing(true) : setSaving(true)
     try {
       const payload = {
@@ -193,12 +219,22 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
           </div>
           <div className="cms-sidebar-card-body p-6 space-y-6">
             <div className="space-y-2">
-              <Label className="text-xs text-slate-500 font-bold uppercase tracking-wider">Product Summary</Label>
+              <Label className="text-xs text-slate-500 font-bold uppercase tracking-wider">Writer's Note</Label>
               <Textarea
                 value={shortDesc}
                 onChange={(e) => setShortDesc(e.target.value)}
-                placeholder="Write a concise overview of this product's key selling points..."
-                className="min-h-[120px] bg-white border-slate-200 text-sm leading-relaxed text-slate-700"
+                placeholder="Write a personal note or mini-review about why you recommend this specific product..."
+                className="min-h-[120px] bg-white border-slate-200 text-sm leading-relaxed text-slate-700 italic"
+              />
+            </div>
+            
+            <div className="space-y-2 pt-2 border-t border-slate-100">
+              <Label className="text-xs text-slate-500 font-bold uppercase tracking-wider">Item Condition</Label>
+              <Input
+                value={itemCondition}
+                onChange={(e) => setItemCondition(e.target.value)}
+                placeholder="e.g. New, Used, Refurbished, Open Box"
+                className="bg-white border-slate-200 w-full max-w-sm text-sm"
               />
             </div>
             

@@ -97,14 +97,15 @@
 }
 
 /* ============================================================
-   Inline text alignment inside flex icon+text pairs
-   Only targets spans/labels that sit alongside SVG icons in
-   flex rows — prevents body line-height from expanding the text
-   node's invisible box beyond the glyph, causing optical drift.
+   Inline text alignment inside NAV PILLS only
+   Scoped to .nav-pill children to prevent body line-height from
+   expanding the text node's invisible box beyond the glyph,
+   causing optical drift in the header navigation.
+   NOTE: Do NOT apply this to .inline-flex globally — it breaks
+   button vertical centering on mobile.
    ============================================================ */
-.inline-flex > span,
-.inline-flex > label,
-a.inline-flex > span {
+.nav-pill > span,
+.nav-pill > label {
   line-height: 1;
 }
 

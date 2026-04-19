@@ -9,9 +9,14 @@ interface ArticleRendererProps {
 }
 
 function replaceProductShortcodes(source: string) {
+  // Wrap in <div> so that marked.js (which runs with breaks:true) treats it as
+  // a block-level element and does NOT wrap it inside a <p> tag.
+  // A <product-embed> inside a <p> creates invalid HTML; browsers auto-correct
+  // by splitting the <p>, which breaks the DOM and makes <a> links inside the
+  // product card unclickable.
   return source.replace(
     /\[product-card:([^\]]+)\]/g,
-    '<product-embed data-slug="$1"></product-embed>',
+    '<div><product-embed data-slug="$1"></product-embed></div>',
   )
 }
 

@@ -65,12 +65,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="overflow-x-hidden">
       <head>
         <link rel="dns-prefetch" href="https://fgkvrbdpmwyfjvpubzxn.supabase.co" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
       </head>
-      <body className={`${monument.variable} font-sans flex flex-col min-h-screen`}>
+      <body className={`${monument.variable} font-sans flex flex-col min-h-screen overflow-x-hidden`}>
         {children}
         <Toaster />
         <SessionTracker />

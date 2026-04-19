@@ -107,6 +107,8 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const [modalMode, setModalMode] = useState<'product' | 'embed'>('product')
   const [embedCode, setEmbedCode] = useState('')
   const [activeTab, setActiveTab] = useState<'write' | 'seo' | 'preview' | 'html'>('write')
+  const [productSearch, setProductSearch] = useState('')
+  const [productDomainFilter, setProductDomainFilter] = useState<string | null>(null)
 
   // Automatically set author on mount if absent
   useEffect(() => {
@@ -222,14 +224,20 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
 
       const derivedOgImage = ogImage.trim() || imageUrl.trim() || ''
 
+      // Extract sensible keywords from title and category instead of random content words
+      const derivedFocusKeyword = focusKeyword.trim() || category.trim()
+      const titleWords = title.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 3)
+      const derivedMetaKeywords = metaKeywords.trim() || 
+        [category.toLowerCase(), ...titleWords].slice(0, 8).join(', ')
+
       const payload = {
         slug, title, content, author, category,
         image_url: imageUrl || null, read_time: readTime,
         published: publish, published_at: publish ? (initialData?.published_at || new Date().toISOString()) : null,
         article_type: articleType, generation_status: publish ? 'published' : generationStatus,
         meta_description: derivedMetaDescription || null,
-        meta_keywords: metaKeywords || null,
-        focus_keyword: focusKeyword || null,
+        meta_keywords: derivedMetaKeywords || null,
+        focus_keyword: derivedFocusKeyword || null,
         og_title: derivedOgTitle || null,
         og_description: derivedOgDescription || null,
         og_image: derivedOgImage || null,
@@ -419,7 +427,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                       type="button" 
                       variant="ghost" 
                       size="sm" 
-                      onClick={() => setShowProductModal(true)}
+                      onClick={() => { setProductSearch(''); setShowProductModal(true) }}
                       className="h-8 text-xs font-bold text-blue-600 hover:text-blue-800 hover:bg-blue-50"
                     >
                       <PlusCircle className="h-4 w-4 mr-1.5" />
@@ -689,13 +697,26 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
       </div>
 
       {/* ── Product Selection Modal ───────────────────────────────── */}
-      {showProductModal && (
+      {showProductModal && (() => {
+        // Derive unique domains from all products' external_url
+        const extractDomain = (url: string | null | undefined): string | null => {
+          if (!url) return null
+          try {
+            const full = url.startsWith('http') ? url : `https://${url}`
+            return new URL(full).hostname.replace(/^www\./, '').toLowerCase()
+          } catch { return null }
+        }
+        const allDomains = Array.from(
+          new Set(products.map(p => extractDomain(p.external_url)).filter(Boolean))
+        ).sort() as string[]
+
+        return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                <div className="flex gap-6">
                  <button 
-                  onClick={() => setModalMode('product')}
+                   onClick={() => { setModalMode('product'); setProductSearch(''); setProductDomainFilter(null) }}
                   className={`text-sm font-bold pb-1 border-b-2 transition-all ${modalMode === 'product' ? 'text-blue-600 border-blue-600' : 'text-slate-400 border-transparent hover:text-slate-600'}`}
                  >
                    Insert Product Block
@@ -707,32 +728,136 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                    Raw Embed Code
                  </button>
                </div>
-               <Button variant="ghost" size="icon" onClick={() => setShowProductModal(false)} className="rounded-full h-8 w-8 hover:bg-slate-200">
+               <Button variant="ghost" size="icon" onClick={() => { setShowProductModal(false); setProductSearch(''); setProductDomainFilter(null) }} className="rounded-full h-8 w-8 hover:bg-slate-200">
                  <X className="w-4 h-4 text-slate-500" />
                </Button>
             </div>
             
             {modalMode === 'product' ? (
-              <div className="p-6 max-h-[450px] overflow-y-auto bg-white space-y-2">
-                {products.length === 0 ? (
-                  <div className="text-center py-10 text-slate-400 text-sm">Loading database...</div>
-                ) : (
-                  products.map(p => (
-                    <div key={p.id} className="flex items-center justify-between p-3 rounded-lg border border-slate-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all group">
-                      <div className="min-w-0 pr-4">
-                        <h4 className="text-sm font-bold text-slate-800 truncate">{p.title}</h4>
-                        <p className="text-[11px] text-slate-400 font-mono mt-0.5">{p.slug}</p>
-                      </div>
-                      <Button 
-                        size="sm" 
-                        onClick={() => insertProductCode(p.slug)}
-                        className="bg-white text-slate-700 font-semibold border border-slate-200 shadow-sm hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-colors"
+              <div className="flex flex-col bg-white">
+                {/* ── Search bar ── */}
+                <div className="px-6 pt-4 pb-3 border-b border-slate-100 space-y-3">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                    <input
+                      type="text"
+                      autoFocus
+                      value={productSearch}
+                      onChange={(e) => setProductSearch(e.target.value)}
+                      placeholder="Search by name or slug…"
+                      className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"
+                    />
+                    {productSearch && (
+                      <button
+                        onClick={() => setProductSearch('')}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                       >
-                        Insert
-                      </Button>
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* ── Domain filter pills ── */}
+                  {allDomains.length > 0 && (
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <button
+                        onClick={() => setProductDomainFilter(null)}
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold transition-all border ${
+                          productDomainFilter === null
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                            : 'bg-white text-slate-500 border-slate-200 hover:border-blue-300 hover:text-blue-600'
+                        }`}
+                      >
+                        All
+                      </button>
+                      {allDomains.map(domain => (
+                        <button
+                          key={domain}
+                          onClick={() => setProductDomainFilter(productDomainFilter === domain ? null : domain)}
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold transition-all border ${
+                            productDomainFilter === domain
+                              ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                              : 'bg-white text-slate-500 border-slate-200 hover:border-blue-300 hover:text-blue-600'
+                          }`}
+                        >
+                          {domain}
+                        </button>
+                      ))}
                     </div>
-                  ))
-                )}
+                  )}
+                </div>
+
+                {/* ── Filtered list ── */}
+                <div className="overflow-y-auto max-h-[340px] p-4 space-y-1.5">
+                  {(() => {
+                    const query = productSearch.toLowerCase().trim()
+                    let filtered = products
+
+                    // Apply domain filter
+                    if (productDomainFilter) {
+                      filtered = filtered.filter(p => extractDomain(p.external_url) === productDomainFilter)
+                    }
+
+                    // Apply text search
+                    if (query) {
+                      filtered = filtered.filter(p =>
+                        p.title?.toLowerCase().includes(query) ||
+                        p.slug?.toLowerCase().includes(query)
+                      )
+                    }
+
+                    if (products.length === 0) {
+                      return <div className="text-center py-10 text-slate-400 text-sm">No products in database yet.</div>
+                    }
+                    if (filtered.length === 0) {
+                      return (
+                        <div className="text-center py-10">
+                          <Search className="w-8 h-8 text-slate-200 mx-auto mb-3" />
+                          <p className="text-sm font-semibold text-slate-500">
+                            {productDomainFilter && !query
+                              ? <>No products from <span className="font-mono">{productDomainFilter}</span></>
+                              : <>No products match &ldquo;{productSearch}&rdquo;{productDomainFilter ? <> on <span className="font-mono">{productDomainFilter}</span></> : null}</>}
+                          </p>
+                          <p className="text-xs text-slate-400 mt-1">Try a different search or clear the domain filter</p>
+                        </div>
+                      )
+                    }
+                    return (
+                      <>
+                        {(query || productDomainFilter) && (
+                          <p className="text-[11px] text-slate-400 px-1 pb-1">
+                            {filtered.length} result{filtered.length !== 1 ? 's' : ''}
+                            {productDomainFilter ? <> · <span className="font-mono">{productDomainFilter}</span></> : null}
+                            {query ? <> · &ldquo;{productSearch}&rdquo;</> : null}
+                          </p>
+                        )}
+                        {filtered.map(p => {
+                          const domain = extractDomain(p.external_url)
+                          return (
+                            <div key={p.id} className="flex items-center justify-between p-3 rounded-lg border border-slate-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all group">
+                              <div className="min-w-0 pr-4">
+                                <h4 className="text-sm font-bold text-slate-800 truncate">{p.title}</h4>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                  <p className="text-[11px] text-slate-400 font-mono">{p.slug}</p>
+                                  {domain && (
+                                    <span className="text-[10px] font-semibold bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-full">{domain}</span>
+                                  )}
+                                </div>
+                              </div>
+                              <Button
+                                size="sm"
+                                onClick={() => insertProductCode(p.slug)}
+                                className="flex-shrink-0 bg-white text-slate-700 font-semibold border border-slate-200 shadow-sm hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-colors"
+                              >
+                                Insert
+                              </Button>
+                            </div>
+                          )
+                        })}
+                      </>
+                    )
+                  })()}
+                </div>
               </div>
             ) : (
               <div className="p-6 space-y-4 bg-white">
@@ -757,7 +882,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
             )}
           </div>
         </div>
-      )}
+      })()} 
     </div>
   )
 }
