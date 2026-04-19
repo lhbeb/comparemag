@@ -17,7 +17,7 @@ import {
   PlusCircle, Layout, Settings,
   Eye, Image as ImageIcon, Globe, Info, Wand2,
   Bold, Italic, Link as LinkIcon, Heading2, Heading3, Quote, Code, List,
-  Search, Upload
+  Search, Upload, Package
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -87,6 +87,14 @@ function extractCleanDomain(url: string | null | undefined): string | null {
   }
 }
 
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
 export function ArticleEditor({ initialData, mode, initialWriters = [], initialProducts = [] }: ArticleEditorProps) {
   const router = useRouter()
   const supabase = createClient()
@@ -136,6 +144,49 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const [productDomainFilter, setProductDomainFilter] = useState<string | null>(null)
   const [loadedProductImages, setLoadedProductImages] = useState<Record<string, boolean>>({})
 
+  const buildProductPlaceholderHtml = (slug: string) => {
+    const product = productPreviewMap[slug]
+    const title = product?.title || slug
+    const brand = product?.brand || 'Product card'
+    const imageUrl = product?.image_url
+
+    return `
+      <div contenteditable="false" data-product-shortcode="${escapeHtml(slug)}" class="not-prose my-6 rounded-2xl border border-orange-200 bg-gradient-to-br from-orange-50 to-white shadow-sm overflow-hidden">
+        <div class="flex items-center gap-4 p-4">
+          <div class="w-16 h-16 rounded-xl overflow-hidden border border-orange-100 bg-white flex items-center justify-center flex-shrink-0">
+            ${imageUrl
+              ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(title)}" class="w-full h-full object-cover" />`
+              : `<span class="text-[10px] font-bold uppercase tracking-wider text-orange-400">Product</span>`}
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="text-[10px] font-black uppercase tracking-[0.22em] text-orange-600 mb-1">Embedded Product Card</div>
+            <div class="text-sm font-bold text-slate-900 leading-snug line-clamp-2">${escapeHtml(title)}</div>
+            <div class="mt-1 text-xs text-slate-500">${escapeHtml(brand)}</div>
+          </div>
+          <div class="hidden sm:flex items-center rounded-full bg-orange-600 text-white px-3 py-1.5 text-[11px] font-bold whitespace-nowrap">
+            Live Product Block
+          </div>
+        </div>
+      </div>
+    `.trim()
+  }
+
+  const decorateEditorContent = (rawContent: string) => {
+    if (!rawContent) return ''
+    return rawContent.replace(/\[product-card:([^\]]+)\]/g, (_, slug: string) => buildProductPlaceholderHtml(slug))
+  }
+
+  const serializeEditorContent = (rawHtml: string) => {
+    const container = document.createElement('div')
+    container.innerHTML = rawHtml
+    container.querySelectorAll<HTMLElement>('[data-product-shortcode]').forEach((node) => {
+      const slug = node.getAttribute('data-product-shortcode')
+      if (!slug) return
+      node.replaceWith(document.createTextNode(`[product-card:${slug}]`))
+    })
+    return container.innerHTML
+  }
+
   // Automatically set author on mount if absent
   useEffect(() => {
     if (mode === 'edit' && initialData?.author && !author) {
@@ -144,18 +195,15 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   }, [mode, initialData?.author, author])
 
   useEffect(() => {
-    if (activeTab !== 'write' || !editorRef.current) return
-    if (editorRef.current.innerHTML !== editorHtmlRef.current) {
-      editorRef.current.innerHTML = editorHtmlRef.current
-    }
-  }, [activeTab])
-
-  useEffect(() => {
     editorHtmlRef.current = content
-    if (editorRef.current && activeTab === 'write' && editorRef.current.innerHTML !== content) {
-      editorRef.current.innerHTML = content
+
+    if (activeTab !== 'write' || !editorRef.current) return
+
+    const currentSerialized = serializeEditorContent(editorRef.current.innerHTML)
+    if (currentSerialized !== content) {
+      editorRef.current.innerHTML = decorateEditorContent(content)
     }
-  }, [content, activeTab])
+  }, [activeTab, content])
 
   useEffect(() => {
     if (!titleInputRef.current) return
@@ -190,6 +238,16 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   }
 
   const handleSave = async (publish: boolean = false) => {
+    let contentToSave = content
+
+    if (activeTab === 'write' && editorRef.current) {
+      contentToSave = serializeEditorContent(editorRef.current.innerHTML)
+      editorHtmlRef.current = contentToSave
+      if (contentToSave !== content) {
+        setContent(contentToSave)
+      }
+    }
+
     // ── Base validation (applies to both Save Draft & Publish) ──────────
     if (!title.trim()) {
       toast({ title: 'Missing title', description: 'Add an article title before saving.', variant: 'destructive' })
@@ -199,7 +257,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
       toast({ title: 'Missing slug', description: 'A URL slug is required.', variant: 'destructive' })
       return
     }
-    if (!content.trim()) {
+    if (!contentToSave.trim()) {
       toast({ title: 'No content', description: 'Write something in the workspace before saving.', variant: 'destructive' })
       return
     }
@@ -243,7 +301,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     publish ? setPublishing(true) : setSaving(true)
     try {
       // ── Auto-derive SEO fields from article content when left blank ──────
-      const plainText = content
+      const plainText = contentToSave
         .replace(/<[^>]+>/g, ' ')           // strip HTML tags
         .replace(/\s+/g, ' ')               // collapse whitespace
         .trim()
@@ -265,7 +323,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
         [category.toLowerCase(), ...titleWords].slice(0, 8).join(', ')
 
       const payload = {
-        slug, title, content, author, category,
+        slug, title, content: contentToSave, author, category,
         image_url: imageUrl || null, read_time: readTime,
         published: publish, published_at: publish ? (initialData?.published_at || new Date().toISOString()) : null,
         article_type: articleType, generation_status: publish ? 'published' : generationStatus,
@@ -295,7 +353,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
         }
         throw new Error(message)
       }
-      toast({ title: publish ? 'Article published! 🚀' : 'Draft saved ✓' })
+      toast({ title: publish ? (initialData?.published ? 'Article saved ✓' : 'Article published! 🚀') : 'Draft saved ✓' })
       router.push('/admin/articles'); router.refresh()
     } catch (error: any) {
       toast({ title: 'Save failed', description: error.message, variant: 'destructive' })
@@ -311,7 +369,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
 
   const syncEditorContent = () => {
     if (editorRef.current) {
-      const nextContent = editorRef.current.innerHTML
+      const nextContent = serializeEditorContent(editorRef.current.innerHTML)
       editorHtmlRef.current = nextContent
       setContent(nextContent)
     }
@@ -332,12 +390,10 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const insertProductCode = (productSlug: string) => {
     if (!editorRef.current) return
     editorRef.current.focus()
-    const shortcode = `[product-card:${productSlug}]`
-    document.execCommand('insertHTML', false, `<p>${shortcode}</p>`)
+    document.execCommand('insertHTML', false, `<p></p>${buildProductPlaceholderHtml(productSlug)}<p></p>`)
     syncEditorContent()
     setShowProductModal(false)
-    setActiveTab('preview')
-    toast({ title: 'Product Inserted', description: `Shortcode embedded in article.` })
+    toast({ title: 'Product Inserted', description: `Product block inserted into the workspace.` })
   }
 
   const handleInsertEmbed = () => {
@@ -378,8 +434,12 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
             disabled={saving || publishing}
             className="bg-blue-600 hover:bg-blue-700 font-bold min-w-[140px] shadow-md shadow-blue-500/20 text-white"
           >
-            <Send className="mr-2 h-4 w-4" />
-            {publishing ? 'Publishing...' : initialData?.published ? 'Update Live' : 'Publish'}
+            {initialData?.published ? (
+              <Save className="mr-2 h-4 w-4" />
+            ) : (
+              <Send className="mr-2 h-4 w-4" />
+            )}
+            {publishing ? (initialData?.published ? 'Saving...' : 'Publishing...') : initialData?.published ? 'Save' : 'Publish'}
           </Button>
         </div>
       </div>
@@ -468,16 +528,33 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                       <List className="w-4 h-4" />
                     </Button>
                   </div>
-                  <div className="flex items-center pl-2">
+                  <div className="flex items-center pl-2 gap-1">
                     <Button 
                       type="button" 
                       variant="ghost" 
                       size="sm" 
-                      onClick={() => { setProductSearch(''); setShowProductModal(true) }}
+                      onClick={() => {
+                        setModalMode('product')
+                        setProductSearch('')
+                        setShowProductModal(true)
+                      }}
                       className="h-8 text-xs font-bold text-blue-600 hover:text-blue-800 hover:bg-blue-50"
                     >
-                      <PlusCircle className="h-4 w-4 mr-1.5" />
-                      Insert Product / Embed
+                      <Package className="h-4 w-4 mr-1.5" />
+                      Insert Product
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => {
+                        setModalMode('embed')
+                        setShowProductModal(true)
+                      }}
+                      className="h-8 text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                    >
+                      <Code className="h-4 w-4 mr-1.5" />
+                      Embed Code
                     </Button>
                   </div>
                 </div>

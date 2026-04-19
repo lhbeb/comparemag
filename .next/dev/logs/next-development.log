@@ -1,5 +1,201 @@
-[00:00:01.588] Server  LOG     [System] Running Background Database Health Check on Startup...
-[00:00:05.993] Server  LOG     [System] Database Health Check: ✅ PASS (Connection: OK, Tables: articles, writers, product_cards checked)
-[00:00:05.998] Server  LOG      ✓ Ready in 5.7s
-[00:00:10.012] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:10.207] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:00:01.489] Server  LOG     [System] Running Background Database Health Check on Startup...
+[00:00:05.366] Server  LOG     [System] Database Health Check: ✅ PASS (Connection: OK, Tables: articles, writers, product_cards checked)
+[00:00:05.370] Server  LOG      ✓ Ready in 5.1s
+[00:00:08.421] Server  LOG      ○ Compiling / ...
+[00:00:09.228] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:09.415] Browser WARN    Image with src "/placeholder.svg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:09.415] Browser WARN    Image with src "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:02:41.673] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:04:15.268] Server  LOG      ✓ Compiled in 489ms
+[00:05:33.483] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:33.663] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:05:35.351] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:35.515] Browser WARN    Image with src "/placeholder.svg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:05:35.515] Browser WARN    Image with src "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:05:37.392] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:08:04.221] Server  LOG      ✓ Compiled in 391ms
+[00:08:04.746] Browser ERROR   The final argument passed to %s changed size between renders. The order and size of this array must remain constant.
+
+Previous: %s
+Incoming: %s useEffect [<p data-start="290" data-end="705"><span style="font-size: 1.0625rem;"><br></span></p><p data-start="290" data-end="705"><span style="font-size: 1.0625rem;"><br></span></p><p data-start="290" data-end="705"><span style="font-size: 1.0625rem;"><br></span></p><p data-start="290" data-end="705"><span style="font-size: 1.0625rem;"><br></span></p><p data-start="290" data-end="705"><span style="font-size: 1.0625rem;"><br></span></p><p data-start="290" data-end="705"><span style="font-size: 1.0625rem;"><br></span></p><p data-start="290" data-end="705"><span style="font-size: 1.0625rem;">The </span><strong data-start="294" data-end="314" style="font-size: 1.0625rem;">Canon G7X series</strong><span style="font-size: 1.0625rem;"> wasn’t supposed to become a cult object. When Canon released the original G7X back in 2014, it was simply a response to Sony’s RX100 line—a premium compact with a larger sensor and a bright lens. On paper, it made sense. In reality, it ended up doing something unexpected: it became </span><em data-start="598" data-end="603" style="font-size: 1.0625rem;">the</em><span style="font-size: 1.0625rem;"> camera people kept coming back to, even as smartphones got better and mirrorless cameras got cheaper.</span></p>
+<p data-start="707" data-end="896">Fast forward to now, and the G7X—especially the Mark II and Mark III—exists in a strange space. It’s outdated in specs, overhyped on social media, hard to find, and still… weirdly relevant.</p>
+<div><br></div><br><hr data-start="898" data-end="901">
+<h2 data-section-id="w90tzn" data-start="903" data-end="946">The hardware: small body, serious intent</h2>
+<p data-start="948" data-end="1070">Strip away the hype and the G7X is still built around a very specific idea: portability without sacrificing image quality.</p>
+<p data-start="1072" data-end="1100">At its core, you’re getting:</p>
+<ul data-start="1101" data-end="1385">
+<li data-section-id="1rzjuif" data-start="1101" data-end="1196">
+A <strong data-start="1105" data-end="1122">1-inch sensor</strong> (much larger than a phone sensor) <span class="" data-state="closed"></span>
+</li>
+<li data-section-id="1o2d3ae" data-start="1197" data-end="1277">
+Around <strong data-start="1206" data-end="1237">20 megapixels of resolution</strong> <span class="" data-state="closed"></span>
+</li>
+<li data-section-id="1dfeksi" data-start="1278" data-end="1385">
+A <strong data-start="1282" data-end="1310">24–100mm equivalent lens</strong> with a fast <strong data-start="1323" data-end="1345">f/1.8–2.8 aperture</strong> <span class="" data-state="closed"></span>
+</li><li data-section-id="1dfeksi" data-start="1278" data-end="1385"><strong data-start="1323" data-end="1345"><br></strong></li>
+</ul>
+<p data-start="1387" data-end="1623">That lens is the real story. It’s bright enough for low light, flexible enough for everyday shooting, and paired with built-in stabilization that makes handheld shooting forgiving. You don’t think about settings too much—you just shoot.</p>
+<p data-start="1625" data-end="1897">The Mark II added Canon’s DIGIC 7 processor, improving autofocus, noise handling, and general responsiveness <span class="" data-state="closed"></span>. It also introduced small but meaningful usability upgrades: a better grip, a tilting touchscreen, and faster burst shooting.</p>
+<p data-start="1899" data-end="2029">None of this is groundbreaking today. But the balance still feels right in your hands—something many newer cameras overcomplicate.</p>
+<p></p>[product-card:canon-powershot-g7-x-mark-iii-digital-camera-201mp-4k-point-and-shoot-camera-black]<p></p><hr data-start="2031" data-end="2034">
+<h2 data-section-id="e9mwpz" data-start="2036" data-end="2094">Why people still want it (and sometimes overpay for it)</h2>
+<p data-start="2096" data-end="2132">Here’s where things get interesting.</p>
+<p data-start="2134" data-end="2240">The G7X didn’t stay relevant because of specs. It stayed relevant because of <em data-start="2211" data-end="2222">aesthetic</em> and <em data-start="2227" data-end="2239">experience</em>.</p>
+<p data-start="2242" data-end="2320">On platforms like TikTok, the camera has become shorthand for a specific look:</p>
+<ul data-start="2321" data-end="2451">
+<li data-section-id="1crlzje" data-start="2321" data-end="2344">
+direct flash photos
+</li>
+<li data-section-id="1cy70bg" data-start="2345" data-end="2371">
+slightly soft contrast
+</li><li data-section-id="1cy70bg" data-start="2345" data-end="2371"><br></li>
+<li data-section-id="12tv9eh" data-start="2372" data-end="2402">
+“early 2000s digital” vibe
+</li>
+<li data-section-id="g3k5ww" data-start="2403" data-end="2451">
+flattering skin tones straight out of camera
+</li>
+</ul>
+<p data-start="2453" data-end="2618">That last point matters more than people admit. Canon’s color science has always leaned warm and pleasing, and the G7X delivers images that often don’t need editing.</p>
+<p data-start="2620" data-end="2664">One Reddit user summed it up pretty bluntly:</p><p data-start="2620" data-end="2664"><br></p>
+<blockquote data-start="2666" data-end="2766">
+<p data-start="2668" data-end="2766">“People want that airbrushed flash look… and portability.” <span class="" data-state="closed"></span></p>
+</blockquote>
+<p data-start="2768" data-end="2823">It’s not about technical perfection. It’s about <em data-start="2816" data-end="2822">feel</em>.</p>, write] [<p data-start="290" data-end="705"><span style="font-size: 1.0625rem;"><br></span></p><p data-start="290" data-end="705"><span style="font-size: 1.0625rem;"><br></span></p><p data-start="290" data-end="705"><span style="font-size: 1.0625rem;"><br></span></p><p data-start="290" data-end="705"><span style="font-size: 1.0625rem;"><br></span></p><p data-start="290" data-end="705"><span style="font-size: 1.0625rem;"><br></span></p><p data-start="290" data-end="705"><span style="font-size: 1.0625rem;"><br></span></p><p data-start="290" data-end="705"><span style="font-size: 1.0625rem;">The </span><strong data-start="294" data-end="314" style="font-size: 1.0625rem;">Canon G7X series</strong><span style="font-size: 1.0625rem;"> wasn’t supposed to become a cult object. When Canon released the original G7X back in 2014, it was simply a response to Sony’s RX100 line—a premium compact with a larger sensor and a bright lens. On paper, it made sense. In reality, it ended up doing something unexpected: it became </span><em data-start="598" data-end="603" style="font-size: 1.0625rem;">the</em><span style="font-size: 1.0625rem;"> camera people kept coming back to, even as smartphones got better and mirrorless cameras got cheaper.</span></p>
+<p data-start="707" data-end="896">Fast forward to now, and the G7X—especially the Mark II and Mark III—exists in a strange space. It’s outdated in specs, overhyped on social media, hard to find, and still… weirdly relevant.</p>
+<div><br></div><br><hr data-start="898" data-end="901">
+<h2 data-section-id="w90tzn" data-start="903" data-end="946">The hardware: small body, serious intent</h2>
+<p data-start="948" data-end="1070">Strip away the hype and the G7X is still built around a very specific idea: portability without sacrificing image quality.</p>
+<p data-start="1072" data-end="1100">At its core, you’re getting:</p>
+<ul data-start="1101" data-end="1385">
+<li data-section-id="1rzjuif" data-start="1101" data-end="1196">
+A <strong data-start="1105" data-end="1122">1-inch sensor</strong> (much larger than a phone sensor) <span class="" data-state="closed"></span>
+</li>
+<li data-section-id="1o2d3ae" data-start="1197" data-end="1277">
+Around <strong data-start="1206" data-end="1237">20 megapixels of resolution</strong> <span class="" data-state="closed"></span>
+</li>
+<li data-section-id="1dfeksi" data-start="1278" data-end="1385">
+A <strong data-start="1282" data-end="1310">24–100mm equivalent lens</strong> with a fast <strong data-start="1323" data-end="1345">f/1.8–2.8 aperture</strong> <span class="" data-state="closed"></span>
+</li><li data-section-id="1dfeksi" data-start="1278" data-end="1385"><strong data-start="1323" data-end="1345"><br></strong></li>
+</ul>
+<p data-start="1387" data-end="1623">That lens is the real story. It’s bright enough for low light, flexible enough for everyday shooting, and paired with built-in stabilization that makes handheld shooting forgiving. You don’t think about settings too much—you just shoot.</p>
+<p data-start="1625" data-end="1897">The Mark II added Canon’s DIGIC 7 processor, improving autofocus, noise handling, and general responsiveness <span class="" data-state="closed"></span>. It also introduced small but meaningful usability upgrades: a better grip, a tilting touchscreen, and faster burst shooting.</p>
+<p data-start="1899" data-end="2029">None of this is groundbreaking today. But the balance still feels right in your hands—something many newer cameras overcomplicate.</p>
+<p></p>[product-card:canon-powershot-g7-x-mark-iii-digital-camera-201mp-4k-point-and-shoot-camera-black]<p></p><hr data-start="2031" data-end="2034">
+<h2 data-section-id="e9mwpz" data-start="2036" data-end="2094">Why people still want it (and sometimes overpay for it)</h2>
+<p data-start="2096" data-end="2132">Here’s where things get interesting.</p>
+<p data-start="2134" data-end="2240">The G7X didn’t stay relevant because of specs. It stayed relevant because of <em data-start="2211" data-end="2222">aesthetic</em> and <em data-start="2227" data-end="2239">experience</em>.</p>
+<p data-start="2242" data-end="2320">On platforms like TikTok, the camera has become shorthand for a specific look:</p>
+<ul data-start="2321" data-end="2451">
+<li data-section-id="1crlzje" data-start="2321" data-end="2344">
+direct flash photos
+</li>
+<li data-section-id="1cy70bg" data-start="2345" data-end="2371">
+slightly soft contrast
+</li><li data-section-id="1cy70bg" data-start="2345" data-end="2371"><br></li>
+<li data-section-id="12tv9eh" data-start="2372" data-end="2402">
+“early 2000s digital” vibe
+</li>
+<li data-section-id="g3k5ww" data-start="2403" data-end="2451">
+flattering skin tones straight out of camera
+</li>
+</ul>
+<p data-start="2453" data-end="2618">That last point matters more than people admit. Canon’s color science has always leaned warm and pleasing, and the G7X delivers images that often don’t need editing.</p>
+<p data-start="2620" data-end="2664">One Reddit user summed it up pretty bluntly:</p><p data-start="2620" data-end="2664"><br></p>
+<blockquote data-start="2666" data-end="2766">
+<p data-start="2668" data-end="2766">“People want that airbrushed flash look… and portability.” <span class="" data-state="closed"></span></p>
+</blockquote>
+<p data-start="2768" data-end="2823">It’s not about technical perfection. It’s about <em data-start="2816" data-end="2822">feel</em>.</p>]
+[00:08:04.747] Browser ERROR   The final argument passed to %s changed size between renders. The order and size of this array must remain constant.
+
+Previous: %s
+Incoming: %s useEffect [<p data-start="290" data-end="705">The <strong data-start="294" data-end="314">Canon G7X series</strong> wasn’t supposed to become a cult object. When Canon released the original G7X back in 2014, it was simply a response to Sony’s RX100 line—a premium compact with a larger sensor and a bright lens. On paper, it made sense. In reality, it ended up doing something unexpected: it became <em data-start="598" data-end="603">the</em> camera people kept coming back to, even as smartphones got better and mirrorless cameras got cheaper.</p>
+<p data-start="707" data-end="896">Fast forward to now, and the G7X—especially the Mark II and Mark III—exists in a strange space. It’s outdated in specs, overhyped on social media, hard to find, and still… weirdly relevant.</p>
+<hr data-start="898" data-end="901">
+<h2 data-section-id="w90tzn" data-start="903" data-end="946">The hardware: small body, serious intent</h2>
+<p data-start="948" data-end="1070">Strip away the hype and the G7X is still built around a very specific idea: portability without sacrificing image quality.</p>
+<p data-start="1072" data-end="1100">At its core, you’re getting:</p>
+<ul data-start="1101" data-end="1385">
+<li data-section-id="1rzjuif" data-start="1101" data-end="1196">
+A <strong data-start="1105" data-end="1122">1-inch sensor</strong> (much larger than a phone sensor) <span class="" data-state="closed"></span>
+</li>
+<li data-section-id="1o2d3ae" data-start="1197" data-end="1277">
+Around <strong data-start="1206" data-end="1237">20 megapixels of resolution</strong> <span class="" data-state="closed"></span>
+</li>
+<li data-section-id="1dfeksi" data-start="1278" data-end="1385">
+A <strong data-start="1282" data-end="1310">24–100mm equivalent lens</strong> with a fast <strong data-start="1323" data-end="1345">f/1.8–2.8 aperture</strong> <span class="" data-state="closed"></span>
+</li>
+</ul>
+<p data-start="1387" data-end="1623">That lens is the real story. It’s bright enough for low light, flexible enough for everyday shooting, and paired with built-in stabilization that makes handheld shooting forgiving. You don’t think about settings too much—you just shoot.</p>
+<p data-start="1625" data-end="1897">The Mark II added Canon’s DIGIC 7 processor, improving autofocus, noise handling, and general responsiveness <span class="" data-state="closed"></span>. It also introduced small but meaningful usability upgrades: a better grip, a tilting touchscreen, and faster burst shooting.</p>
+<p data-start="1899" data-end="2029">None of this is groundbreaking today. But the balance still feels right in your hands—something many newer cameras overcomplicate.</p>
+<p>[product-card:canon-powershot-g7-x-mark-iii-digital-camera-201mp-4k-point-and-shoot-camera-black]</p><hr data-start="2031" data-end="2034">
+<h2 data-section-id="e9mwpz" data-start="2036" data-end="2094">Why people still want it (and sometimes overpay for it)</h2>
+<p data-start="2096" data-end="2132">Here’s where things get interesting.</p>
+<p data-start="2134" data-end="2240">The G7X didn’t stay relevant because of specs. It stayed relevant because of <em data-start="2211" data-end="2222">aesthetic</em> and <em data-start="2227" data-end="2239">experience</em>.</p>
+<p data-start="2242" data-end="2320">On platforms like TikTok, the camera has become shorthand for a specific look:</p>
+<ul data-start="2321" data-end="2451">
+<li data-section-id="1crlzje" data-start="2321" data-end="2344">
+direct flash photos
+</li>
+<li data-section-id="1cy70bg" data-start="2345" data-end="2371">
+slightly soft contrast
+</li>
+<li data-section-id="12tv9eh" data-start="2372" data-end="2402">
+“early 2000s digital” vibe
+</li>
+<li data-section-id="g3k5ww" data-start="2403" data-end="2451">
+flattering skin tones straight out of camera
+</li>
+</ul>
+<p data-start="2453" data-end="2618">That last point matters more than people admit. Canon’s color science has always leaned warm and pleasing, and the G7X delivers images that often don’t need editing.</p>
+<p data-start="2620" data-end="2664">One Reddit user summed it up pretty bluntly:</p>
+<blockquote data-start="2666" data-end="2766">
+<p data-start="2668" data-end="2766">“People want that airbrushed flash look… and portability.” <span class="" data-state="closed"></span></p>
+</blockquote>
+<p data-start="2768" data-end="2823">It’s not about technical perfection. It’s about <em data-start="2816" data-end="2822">feel</em>.</p>, preview] [<p data-start="290" data-end="705">The <strong data-start="294" data-end="314">Canon G7X series</strong> wasn’t supposed to become a cult object. When Canon released the original G7X back in 2014, it was simply a response to Sony’s RX100 line—a premium compact with a larger sensor and a bright lens. On paper, it made sense. In reality, it ended up doing something unexpected: it became <em data-start="598" data-end="603">the</em> camera people kept coming back to, even as smartphones got better and mirrorless cameras got cheaper.</p>
+<p data-start="707" data-end="896">Fast forward to now, and the G7X—especially the Mark II and Mark III—exists in a strange space. It’s outdated in specs, overhyped on social media, hard to find, and still… weirdly relevant.</p>
+<hr data-start="898" data-end="901">
+<h2 data-section-id="w90tzn" data-start="903" data-end="946">The hardware: small body, serious intent</h2>
+<p data-start="948" data-end="1070">Strip away the hype and the G7X is still built around a very specific idea: portability without sacrificing image quality.</p>
+<p data-start="1072" data-end="1100">At its core, you’re getting:</p>
+<ul data-start="1101" data-end="1385">
+<li data-section-id="1rzjuif" data-start="1101" data-end="1196">
+A <strong data-start="1105" data-end="1122">1-inch sensor</strong> (much larger than a phone sensor) <span class="" data-state="closed"></span>
+</li>
+<li data-section-id="1o2d3ae" data-start="1197" data-end="1277">
+Around <strong data-start="1206" data-end="1237">20 megapixels of resolution</strong> <span class="" data-state="closed"></span>
+</li>
+<li data-section-id="1dfeksi" data-start="1278" data-end="1385">
+A <strong data-start="1282" data-end="1310">24–100mm equivalent lens</strong> with a fast <strong data-start="1323" data-end="1345">f/1.8–2.8 aperture</strong> <span class="" data-state="closed"></span>
+</li>
+</ul>
+<p data-start="1387" data-end="1623">That lens is the real story. It’s bright enough for low light, flexible enough for everyday shooting, and paired with built-in stabilization that makes handheld shooting forgiving. You don’t think about settings too much—you just shoot.</p>
+<p data-start="1625" data-end="1897">The Mark II added Canon’s DIGIC 7 processor, improving autofocus, noise handling, and general responsiveness <span class="" data-state="closed"></span>. It also introduced small but meaningful usability upgrades: a better grip, a tilting touchscreen, and faster burst shooting.</p>
+<p data-start="1899" data-end="2029">None of this is groundbreaking today. But the balance still feels right in your hands—something many newer cameras overcomplicate.</p>
+<p>[product-card:canon-powershot-g7-x-mark-iii-digital-camera-201mp-4k-point-and-shoot-camera-black]</p><hr data-start="2031" data-end="2034">
+<h2 data-section-id="e9mwpz" data-start="2036" data-end="2094">Why people still want it (and sometimes overpay for it)</h2>
+<p data-start="2096" data-end="2132">Here’s where things get interesting.</p>
+<p data-start="2134" data-end="2240">The G7X didn’t stay relevant because of specs. It stayed relevant because of <em data-start="2211" data-end="2222">aesthetic</em> and <em data-start="2227" data-end="2239">experience</em>.</p>
+<p data-start="2242" data-end="2320">On platforms like TikTok, the camera has become shorthand for a specific look:</p>
+<ul data-start="2321" data-end="2451">
+<li data-section-id="1crlzje" data-start="2321" data-end="2344">
+direct flash photos
+</li>
+<li data-section-id="1cy70bg" data-start="2345" data-end="2371">
+slightly soft contrast
+</li>
+<li data-section-id="12tv9eh" data-start="2372" data-end="2402">
+“early 2000s digital” vibe
+</li>
+<li data-section-id="g3k5ww" data-start="2403" data-end="2451">
+flattering skin tones straight out of camera
+</li>
+</ul>
+<p data-start="2453" data-end="2618">That last point matters more than people admit. Canon’s color science has always leaned warm and pleasing, and the G7X delivers images that often don’t need editing.</p>
+<p data-start="2620" data-end="2664">One Reddit user summed it up pretty bluntly:</p>
+<blockquote data-start="2666" data-end="2766">
+<p data-start="2668" data-end="2766">“People want that airbrushed flash look… and portability.” <span class="" data-state="closed"></span></p>
+</blockquote>
+<p data-start="2768" data-end="2823">It’s not about technical perfection. It’s about <em data-start="2816" data-end="2822">feel</em>.</p>]
+[00:44:40.970] Server  LOG      ✓ Compiled in 428ms
