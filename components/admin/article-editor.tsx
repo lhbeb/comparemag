@@ -249,22 +249,22 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     }
 
     // ── Base validation (applies to both Save Draft & Publish) ──────────
-    if (!title.trim()) {
+    if (!(title || '').trim()) {
       toast({ title: 'Missing title', description: 'Add an article title before saving.', variant: 'destructive' })
       return
     }
-    if (!slug.trim()) {
+    if (!(slug || '').trim()) {
       toast({ title: 'Missing slug', description: 'A URL slug is required.', variant: 'destructive' })
       return
     }
-    if (!contentToSave.trim()) {
+    if (!(contentToSave || '').trim()) {
       toast({ title: 'No content', description: 'Write something in the workspace before saving.', variant: 'destructive' })
       return
     }
 
     // ── Publish-only strict gate ─────────────────────────────────────────
     if (publish) {
-      if (!imageUrl.trim()) {
+      if (!(imageUrl || '').trim()) {
         toast({
           title: '🖼 Featured image required',
           description: 'Upload or paste a featured image URL in the sidebar before publishing.',
@@ -272,7 +272,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
         })
         return
       }
-      if (!author.trim()) {
+      if (!(author || '').trim()) {
         toast({
           title: '✍️ Byline required',
           description: 'Choose an editor/author for this article before publishing.',
@@ -280,7 +280,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
         })
         return
       }
-      if (!listedBy.trim()) {
+      if (!(listedBy || '').trim()) {
         toast({
           title: '🆔 Who listed this?',
           description: 'Select your name in the "Listed By" field so we know who published this.',
@@ -288,7 +288,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
         })
         return
       }
-      if (!category.trim()) {
+      if (!(category || '').trim()) {
         toast({
           title: '📂 Category required',
           description: 'Choose a category before publishing.',
@@ -301,26 +301,26 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     publish ? setPublishing(true) : setSaving(true)
     try {
       // ── Auto-derive SEO fields from article content when left blank ──────
-      const plainText = contentToSave
+      const plainText = (contentToSave || '')
         .replace(/<[^>]+>/g, ' ')           // strip HTML tags
         .replace(/\s+/g, ' ')               // collapse whitespace
         .trim()
 
-      const derivedMetaDescription = metaDescription.trim()
+      const derivedMetaDescription = (metaDescription || '').trim()
         || plainText.substring(0, 155).trimEnd() + (plainText.length > 155 ? '…' : '')
 
-      const derivedOgTitle = ogTitle.trim() || title.trim()
+      const derivedOgTitle = (ogTitle || '').trim() || (title || '').trim()
 
-      const derivedOgDescription = ogDescription.trim()
+      const derivedOgDescription = (ogDescription || '').trim()
         || derivedMetaDescription
 
-      const derivedOgImage = ogImage.trim() || imageUrl.trim() || ''
+      const derivedOgImage = (ogImage || '').trim() || (imageUrl || '').trim() || ''
 
       // Extract sensible keywords from title and category instead of random content words
-      const derivedFocusKeyword = focusKeyword.trim() || category.trim()
-      const titleWords = title.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 3)
-      const derivedMetaKeywords = metaKeywords.trim() || 
-        [category.toLowerCase(), ...titleWords].slice(0, 8).join(', ')
+      const derivedFocusKeyword = (focusKeyword || '').trim() || (category || '').trim()
+      const titleWords = (title || '').toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 3)
+      const derivedMetaKeywords = (metaKeywords || '').trim() || 
+        [(category || '').toLowerCase(), ...titleWords].slice(0, 8).join(', ')
 
       const payload = {
         slug, title, content: contentToSave, author, category,
@@ -422,6 +422,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
         </div>
         <div className="flex items-center gap-3">
           <Button
+            type="button"
             variant="outline"
             className="border-slate-200 font-semibold text-slate-700 hover:bg-slate-50 min-w-[120px]"
             onClick={() => handleSave(false)}
@@ -430,16 +431,13 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
             {saving ? 'Saving...' : 'Save Draft'}
           </Button>
           <Button 
+            type="button"
             onClick={() => handleSave(true)} 
             disabled={saving || publishing}
             className="bg-blue-600 hover:bg-blue-700 font-bold min-w-[140px] shadow-md shadow-blue-500/20 text-white"
           >
-            {initialData?.published ? (
-              <Save className="mr-2 h-4 w-4" />
-            ) : (
-              <Send className="mr-2 h-4 w-4" />
-            )}
-            {publishing ? (initialData?.published ? 'Saving...' : 'Publishing...') : initialData?.published ? 'Save' : 'Publish'}
+            <Send className="mr-2 h-4 w-4" />
+            {publishing ? 'Publishing...' : 'Publish'}
           </Button>
         </div>
       </div>
