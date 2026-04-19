@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Check, Star, ExternalLink, Activity, ShoppingCart } from 'lucide-react'
+import { Check, Star, ExternalLink, Activity, ShoppingCart, Tag } from 'lucide-react'
 
 export interface ProductCardData {
   id?: string
