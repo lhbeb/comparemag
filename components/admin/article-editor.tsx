@@ -17,7 +17,7 @@ import {
   PlusCircle, Layout, Settings,
   Eye, Image as ImageIcon, Globe, Info, Wand2,
   Bold, Italic, Link as LinkIcon, Heading2, Heading3, Quote, Code, List,
-  Search, Upload, ArrowUpRight
+  Search, Upload
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -93,6 +93,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const fileInputRef = useRef<HTMLInputElement>(null)
   const editorRef = useRef<HTMLDivElement>(null)
   const editorHtmlRef = useRef(initialData?.content || '')
+  const titleInputRef = useRef<HTMLTextAreaElement>(null)
   const productPreviewMap = Object.fromEntries(
     initialProducts.map((product: any) => [product.slug, product]),
   )
@@ -155,6 +156,12 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
       editorRef.current.innerHTML = content
     }
   }, [content, activeTab])
+
+  useEffect(() => {
+    if (!titleInputRef.current) return
+    titleInputRef.current.style.height = '0px'
+    titleInputRef.current.style.height = `${titleInputRef.current.scrollHeight}px`
+  }, [title])
 
   const generateSlug = (text: string) => text.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '')
 
@@ -393,11 +400,13 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
               </div>
             )}
             
-            <Input
+            <Textarea
+              ref={titleInputRef}
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
               placeholder="Article Title..."
-              className="text-4xl lg:text-5xl font-black tracking-tight h-auto py-2 border-none bg-transparent focus-visible:ring-0 px-0 shadow-none placeholder:text-slate-200 text-slate-900"
+              rows={1}
+              className="w-full resize-none overflow-hidden text-3xl lg:text-4xl font-black leading-[1.05] tracking-tight min-h-0 py-2 border-none bg-transparent focus-visible:ring-0 px-0 shadow-none placeholder:text-slate-300 text-slate-900"
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: '-0.03em' }}
             />
             <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-md py-1.5 px-3 w-max max-w-full overflow-hidden">
@@ -409,23 +418,6 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                 className="text-sm font-bold text-blue-600 bg-transparent border-none p-0 focus:ring-0 w-full sm:min-w-[200px]"
                 placeholder="article-slug"
               />
-            </div>
-            <div className="flex items-center gap-3">
-              {mode === 'edit' && slug ? (
-                <Link
-                  href={`/blog/${slug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-blue-700 transition-colors"
-                >
-                  View Article
-                  <ArrowUpRight className="h-3.5 w-3.5" />
-                </Link>
-              ) : (
-                <div className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-400">
-                  Save article to enable live link
-                </div>
-              )}
             </div>
           </div>
 

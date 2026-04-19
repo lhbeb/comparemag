@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   FileText, Users, Home, LayoutDashboard,
-  PlusCircle, ChevronRight, ArrowUpRight, Newspaper, ShoppingBag, Wand2, LogOut, Database
+  PlusCircle, ChevronRight, ArrowUpRight, Newspaper, ShoppingBag, Wand2, LogOut, Database, Eye
 } from 'lucide-react'
 import { logoutAction } from '@/app/actions/auth'
 import './admin.css'
@@ -297,8 +297,8 @@ export default function AdminLayout({
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-sm font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:text-blue-700 transition-colors"
               >
+                <Eye className="h-3.5 w-3.5" />
                 View Article
-                <ArrowUpRight className="h-3.5 w-3.5" />
               </Link>
             ) : pathname === '/admin/articles/new' ? (
               <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-sm font-medium text-slate-400 bg-slate-100 border border-slate-200">
