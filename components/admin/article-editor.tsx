@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -12,12 +12,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { 
-  X, Save, Send, ChevronDown, 
-  ChevronUp, User, PlusCircle, Layout, Settings, 
+import {
+  X, Save, Send,
+  PlusCircle, Layout, Settings,
   Eye, Image as ImageIcon, Globe, Info, Wand2,
   Bold, Italic, Link as LinkIcon, Heading2, Heading3, Quote, Code, List,
-  Search, Upload
+  Search, Upload, ArrowUpRight
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -64,11 +64,19 @@ interface Editor {
   id: string; slug: string; name: string; avatar_url: string | null; specialty: string | null;
 }
 
+function truncateMiddle(value: string, max = 30) {
+  if (!value || value.length <= max) return value
+  const start = Math.ceil((max - 1) / 2)
+  const end = Math.floor((max - 1) / 2)
+  return `${value.slice(0, start)}…${value.slice(-end)}`
+}
+
 export function ArticleEditor({ initialData, mode, initialWriters = [], initialProducts = [] }: ArticleEditorProps) {
   const router = useRouter()
   const supabase = createClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const editorRef = useRef<HTMLDivElement>(null)
+  const editorHtmlRef = useRef(initialData?.content || '')
   const productPreviewMap = Object.fromEntries(
     initialProducts.map((product: any) => [product.slug, product]),
   )
@@ -109,6 +117,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const [activeTab, setActiveTab] = useState<'write' | 'seo' | 'preview' | 'html'>('write')
   const [productSearch, setProductSearch] = useState('')
   const [productDomainFilter, setProductDomainFilter] = useState<string | null>(null)
+  const [loadedProductImages, setLoadedProductImages] = useState<Record<string, boolean>>({})
 
   // Automatically set author on mount if absent
   useEffect(() => {
@@ -117,20 +126,19 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     }
   }, [mode, initialData?.author, author])
 
-  // Repopulate the contenteditable editor whenever the Write tab becomes active.
-  // This handles both initial mount AND returning from other tabs (TabsContent unmounts on tab switch).
   useEffect(() => {
     if (activeTab !== 'write' || !editorRef.current) return
-    // If the editor div is empty (freshly mounted / remounted), fill it with current content.
-    if (!editorRef.current.childNodes.length) {
-      const sourceContent = content || initialData?.content || ''
-      editorRef.current.innerHTML = sourceContent
-        ? compileArticleSourceToHtml(sourceContent)
-        : ''
+    if (editorRef.current.innerHTML !== editorHtmlRef.current) {
+      editorRef.current.innerHTML = editorHtmlRef.current
     }
   }, [activeTab])
-  // Note: intentionally omitting content/initialData from deps — we only want this to fire
-  // when activeTab changes, not on every keystroke. The empty-check prevents overwriting live edits.
+
+  useEffect(() => {
+    editorHtmlRef.current = content
+    if (editorRef.current && activeTab === 'write' && editorRef.current.innerHTML !== content) {
+      editorRef.current.innerHTML = content
+    }
+  }, [content, activeTab])
 
   const generateSlug = (text: string) => text.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '')
 
@@ -277,8 +285,17 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
 
   const syncEditorContent = () => {
     if (editorRef.current) {
-      setContent(editorRef.current.innerHTML)
+      const nextContent = editorRef.current.innerHTML
+      editorHtmlRef.current = nextContent
+      setContent(nextContent)
     }
+  }
+
+  const handleTabChange = (value: string) => {
+    if (activeTab === 'write') {
+      syncEditorContent()
+    }
+    setActiveTab(value as typeof activeTab)
   }
 
   const handleInsertLink = () => {
@@ -293,6 +310,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     document.execCommand('insertHTML', false, `<p>${shortcode}</p>`)
     syncEditorContent()
     setShowProductModal(false)
+    setActiveTab('preview')
     toast({ title: 'Product Inserted', description: `Shortcode embedded in article.` })
   }
 
@@ -373,9 +391,26 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                 placeholder="article-slug"
               />
             </div>
+            <div className="flex items-center gap-3">
+              {mode === 'edit' && slug ? (
+                <Link
+                  href={`/blog/${slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-blue-700 transition-colors"
+                >
+                  View Article
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </Link>
+              ) : (
+                <div className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-400">
+                  Save article to enable live link
+                </div>
+              )}
+            </div>
           </div>
 
-          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as typeof activeTab)} className="w-full">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
             <TabsList className="flex items-center gap-1 p-1 bg-slate-100/80 rounded-lg w-max mb-6 border border-slate-200/50">
               <TabsTrigger value="write" className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-semibold text-slate-600 rounded-md data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
                 <Layout className="w-4 h-4" /> Write Workspace
@@ -392,7 +427,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
             </TabsList>
 
             {/* TAB: WRITE */}
-            <TabsContent value="write" className="mt-0 outline-none">
+            <TabsContent value="write" forceMount className="mt-0 outline-none data-[state=inactive]:hidden">
               <div className="border border-slate-200 rounded-xl bg-white shadow-sm overflow-hidden flex flex-col transition-colors focus-within:border-blue-300" style={{ minHeight: '800px' }}>
                 
                 {/* WYSIWYG Toolbar */}
@@ -442,6 +477,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                   contentEditable
                   suppressContentEditableWarning
                   onInput={syncEditorContent}
+                  onBlur={syncEditorContent}
                   data-placeholder="Start writing your article here..."
                   className="flex-1 w-full px-10 py-8 text-base leading-relaxed text-slate-800 outline-none overflow-y-auto
                     prose prose-slate max-w-full
@@ -467,7 +503,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
             </TabsContent>
 
             {/* TAB: SEO & SEARCH */}
-            <TabsContent value="seo" className="mt-0 outline-none space-y-8">
+            <TabsContent value="seo" forceMount className="mt-0 outline-none space-y-8 data-[state=inactive]:hidden">
               <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8">
                 <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
                   <Search className="w-5 h-5 text-blue-600" /> Standard SEO
@@ -560,7 +596,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
             </TabsContent>
 
             {/* TAB: PREVIEW */}
-            <TabsContent value="preview" className="mt-0 outline-none">
+            <TabsContent value="preview" forceMount className="mt-0 outline-none data-[state=inactive]:hidden">
               <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8 md:p-12 min-h-[700px]">
                 <h1 className="text-4xl font-bold mb-8 text-slate-900">{title || 'Untitled Article'}</h1>
                 <div className="prose prose-lg prose-slate max-w-none prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-headings:text-slate-900 prose-img:rounded-xl">
@@ -570,7 +606,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
             </TabsContent>
 
             {/* TAB: HTML OUTPUT */}
-            <TabsContent value="html" className="mt-0 outline-none">
+            <TabsContent value="html" forceMount className="mt-0 outline-none data-[state=inactive]:hidden">
               <div className="bg-slate-900 rounded-xl shadow-inner p-6 min-h-[700px] font-mono text-sm text-green-400 overflow-x-auto whitespace-pre-wrap">
                 {compiledHtml || '<!-- No content yet -->'}
               </div>
@@ -744,7 +780,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                       autoFocus
                       value={productSearch}
                       onChange={(e) => setProductSearch(e.target.value)}
-                      placeholder="Search by name or slug…"
+                      placeholder="Search by title, brand, slug, or store…"
                       className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"
                     />
                     {productSearch && (
@@ -800,10 +836,15 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
 
                     // Apply text search
                     if (query) {
-                      filtered = filtered.filter(p =>
-                        p.title?.toLowerCase().includes(query) ||
-                        p.slug?.toLowerCase().includes(query)
-                      )
+                      filtered = filtered.filter(p => {
+                        const domain = extractDomain(p.external_url)
+                        return (
+                          p.title?.toLowerCase().includes(query) ||
+                          p.slug?.toLowerCase().includes(query) ||
+                          p.brand?.toLowerCase().includes(query) ||
+                          domain?.toLowerCase().includes(query)
+                        )
+                      })
                     }
 
                     if (products.length === 0) {
@@ -834,16 +875,44 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                         {filtered.map(p => {
                           const domain = extractDomain(p.external_url)
                           return (
-                            <div key={p.id} className="flex items-center justify-between p-3 rounded-lg border border-slate-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all group">
-                              <div className="min-w-0 pr-4">
-                                <h4 className="text-sm font-bold text-slate-800 truncate">{p.title}</h4>
-                                <div className="flex items-center gap-2 mt-0.5">
-                                  <p className="text-[11px] text-slate-400 font-mono">{p.slug}</p>
+                            <div key={p.id} className="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all group">
+                              {/* Thumbnail */}
+                              <div className="relative w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center">
+                                {!loadedProductImages[p.slug] && p.image_url ? (
+                                  <div className="absolute inset-0 animate-pulse bg-slate-200" />
+                                ) : null}
+                                {p.image_url ? (
+                                  <img
+                                    src={p.image_url}
+                                    alt={p.title}
+                                    loading="lazy"
+                                    onLoad={() => setLoadedProductImages((prev) => ({ ...prev, [p.slug]: true }))}
+                                    onError={() => setLoadedProductImages((prev) => ({ ...prev, [p.slug]: true }))}
+                                    className={`w-full h-full object-cover transition-opacity duration-300 ${loadedProductImages[p.slug] ? 'opacity-100' : 'opacity-0'}`}
+                                  />
+                                ) : (
+                                  <ImageIcon className="w-5 h-5 text-slate-300" />
+                                )}
+                              </div>
+
+                              {/* Title & Organization */}
+                              <div className="min-w-0 flex-1 pr-4">
+                                <h4 className="text-sm font-bold text-slate-800 line-clamp-2 leading-snug" title={p.title}>{p.title}</h4>
+                                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                                  {p.brand ? (
+                                    <span className="text-[10px] font-semibold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200" title={p.brand}>
+                                      {p.brand}
+                                    </span>
+                                  ) : null}
                                   {domain && (
-                                    <span className="text-[10px] font-semibold bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-full">{domain}</span>
+                                    <span className="text-[10px] font-semibold text-blue-600 bg-blue-50/50 px-1.5 py-0.5 rounded border border-blue-100/50 truncate max-w-[100px]" title={domain}>{domain}</span>
                                   )}
+                                  <p className="text-[10px] text-slate-500 font-mono truncate max-w-[150px] sm:max-w-[220px] bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100" title={p.slug}>
+                                    {truncateMiddle(p.slug)}
+                                  </p>
                                 </div>
                               </div>
+                              
                               <Button
                                 size="sm"
                                 onClick={() => insertProductCode(p.slug)}

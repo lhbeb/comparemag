@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Check, Star, ExternalLink, Activity, ShoppingCart, Tag } from 'lucide-react'
+import { Check, Star, ExternalLink, ShoppingCart, Tag } from 'lucide-react'
 
 export interface ProductCardData {
   id?: string
@@ -116,6 +116,11 @@ export function ProductCardEmbed({ slug, preloadedData }: ProductCardEmbedProps)
 
   const storeName = getStoreNameFromUrl(validUrl)
   const ctaLabel = data.cta_label || (storeName ? `Check Price on ${storeName}` : 'Check Price')
+  const shortNote = data.short_description
+    ? data.short_description.length > 70
+      ? `${data.short_description.slice(0, 70).trimEnd()}…`
+      : data.short_description
+    : null
 
   return (
     <div className="product-card-embed not-prose w-full max-w-2xl my-10 mx-auto bg-white rounded-2xl border border-slate-200 shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 group">
@@ -185,15 +190,11 @@ export function ProductCardEmbed({ slug, preloadedData }: ProductCardEmbedProps)
           </div>
         )}
 
-        {/* Writer's Note */}
-        {data.short_description && (
-          <div className="bg-slate-50 border-l-4 border-blue-500 p-4 md:p-5 rounded-r-xl my-2 shadow-sm">
-            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
-              <Activity className="w-3.5 h-3.5" />
-              Writer's Note
-            </p>
-            <p className="text-slate-700 text-sm md:text-[15px] italic leading-relaxed font-medium">
-              "{data.short_description}"
+        {/* Subtle note */}
+        {shortNote && (
+          <div className="my-1 border-l-2 border-slate-200 pl-3">
+            <p className="text-sm text-slate-500 italic leading-relaxed">
+              {shortNote}
             </p>
           </div>
         )}
@@ -229,7 +230,7 @@ export function ProductCardEmbed({ slug, preloadedData }: ProductCardEmbedProps)
             href={validUrl}
             target="_blank"
             rel="noopener noreferrer nofollow"
-            className="group/btn flex items-center justify-center gap-2 w-full sm:w-auto sm:min-w-[220px] bg-orange-600 hover:bg-orange-700 active:scale-[0.98] text-white font-bold px-6 py-3.5 rounded-xl transition-all shadow-md hover:shadow-orange-500/30"
+            className="group/btn flex items-center justify-center gap-2 w-full sm:w-auto sm:min-w-[220px] bg-orange-600 hover:bg-orange-700 active:scale-[0.98] text-white visited:text-white hover:text-white visited:hover:text-white no-underline font-bold px-6 py-3.5 rounded-xl transition-all shadow-md hover:shadow-orange-500/30"
           >
             <span>{ctaLabel}</span>
             <ExternalLink className="w-4 h-4 transition-transform group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5" />

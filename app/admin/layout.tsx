@@ -90,6 +90,9 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const currentArticleSlug = pathname.startsWith('/admin/articles/edit/')
+    ? pathname.split('/').pop()
+    : null
 
   const isGroupActive = (href: string) => {
     if (href === '/admin') return pathname === '/admin' 
@@ -287,6 +290,21 @@ export default function AdminLayout({
 
           {/* Quick actions */}
           <div className="flex items-center gap-2">
+            {pathname.startsWith('/admin/articles/edit/') && currentArticleSlug ? (
+              <Link
+                href={`/blog/${currentArticleSlug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-sm font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:text-blue-700 transition-colors"
+              >
+                View Article
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </Link>
+            ) : pathname === '/admin/articles/new' ? (
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-sm font-medium text-slate-400 bg-slate-100 border border-slate-200">
+                Save article to view it
+              </span>
+            ) : null}
             <Link
               href="/admin/products/new"
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors mr-2"

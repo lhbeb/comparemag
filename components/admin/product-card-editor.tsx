@@ -219,13 +219,14 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
           </div>
           <div className="cms-sidebar-card-body p-6 space-y-6">
             <div className="space-y-2">
-              <Label className="text-xs text-slate-500 font-bold uppercase tracking-wider">Writer's Note</Label>
+              <Label className="text-xs text-slate-500 font-bold uppercase tracking-wider">Short Note</Label>
               <Textarea
                 value={shortDesc}
                 onChange={(e) => setShortDesc(e.target.value)}
-                placeholder="Write a personal note or mini-review about why you recommend this specific product..."
+                placeholder="A subtle note or short editorial aside that appears under the title..."
                 className="min-h-[120px] bg-white border-slate-200 text-sm leading-relaxed text-slate-700 italic"
               />
+              <p className="text-[10px] text-slate-400">Shown quietly on the product card and trimmed after 70 characters.</p>
             </div>
             
             <div className="space-y-2 pt-2 border-t border-slate-100">
