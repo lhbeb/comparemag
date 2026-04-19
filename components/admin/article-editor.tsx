@@ -71,6 +71,22 @@ function truncateMiddle(value: string, max = 30) {
   return `${value.slice(0, start)}…${value.slice(-end)}`
 }
 
+function extractCleanDomain(url: string | null | undefined): string | null {
+  if (!url) return null
+
+  const trimmed = url.trim()
+  if (!trimmed || /\s/.test(trimmed)) return null
+
+  try {
+    const full = trimmed.startsWith('http') ? trimmed : `https://${trimmed}`
+    const hostname = new URL(full).hostname.replace(/^www\./, '').toLowerCase()
+    if (!hostname || !hostname.includes('.')) return null
+    return hostname
+  } catch {
+    return null
+  }
+}
+
 export function ArticleEditor({ initialData, mode, initialWriters = [], initialProducts = [] }: ArticleEditorProps) {
   const router = useRouter()
   const supabase = createClient()
@@ -738,15 +754,8 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
       {/* ── Product Selection Modal ───────────────────────────────── */}
       {showProductModal && (() => {
         // Derive unique domains from all products' external_url
-        const extractDomain = (url: string | null | undefined): string | null => {
-          if (!url) return null
-          try {
-            const full = url.startsWith('http') ? url : `https://${url}`
-            return new URL(full).hostname.replace(/^www\./, '').toLowerCase()
-          } catch { return null }
-        }
         const allDomains = Array.from(
-          new Set(products.map(p => extractDomain(p.external_url)).filter(Boolean))
+          new Set(products.map(p => extractCleanDomain(p.external_url)).filter(Boolean))
         ).sort() as string[]
 
         return (
@@ -834,13 +843,13 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
 
                     // Apply domain filter
                     if (productDomainFilter) {
-                      filtered = filtered.filter(p => extractDomain(p.external_url) === productDomainFilter)
+                      filtered = filtered.filter(p => extractCleanDomain(p.external_url) === productDomainFilter)
                     }
 
                     // Apply text search
                     if (query) {
                       filtered = filtered.filter(p => {
-                        const domain = extractDomain(p.external_url)
+                        const domain = extractCleanDomain(p.external_url)
                         return (
                           p.title?.toLowerCase().includes(query) ||
                           p.slug?.toLowerCase().includes(query) ||
@@ -876,7 +885,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                           </p>
                         )}
                         {filtered.map(p => {
-                          const domain = extractDomain(p.external_url)
+                          const domain = extractCleanDomain(p.external_url)
                           return (
                             <div key={p.id} className="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all group">
                               {/* Thumbnail */}

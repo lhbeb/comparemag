@@ -93,7 +93,9 @@ export function ProductCardEmbed({ slug, preloadedData }: ProductCardEmbedProps)
   const getStoreNameFromUrl = (u: string) => {
     if (u === '#') return null
     try {
+      if (/\s/.test(u)) return null
       const hostname = new URL(u).hostname.replace(/^www\./, '').toLowerCase()
+      if (!hostname || !hostname.includes('.')) return null
       if (hostname.includes('ebay')) return 'eBay'
       if (hostname.includes('amazon')) return 'Amazon'
       if (hostname.includes('deeldepot')) return 'Deeldepot'

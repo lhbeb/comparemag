@@ -10,7 +10,14 @@ import { Breadcrumbs } from "@/components/seo/breadcrumbs"
 import { StructuredData } from "@/components/seo/structured-data"
 import type { Metadata } from "next"
 
-const topicsData = {
+type TopicConfig = {
+  title: string
+  description: string
+  matchCategories: readonly string[]
+  mode?: "all"
+}
+
+const topicsData: Record<string, TopicConfig> = {
   "smartphones": {
     title: "Smartphones",
     description: "In-depth reviews, comparisons, and news on the latest iOS and Android smartphones.",
@@ -72,7 +79,7 @@ const topicsData = {
     description: "Practical buying guides, recommendations, and hands-on advice for better tech purchases.",
     matchCategories: ["buying guide", "price comparison", "deals"],
   },
-} as const
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> | { slug: string } }): Promise<Metadata> {
   const resolvedParams = await Promise.resolve(params)

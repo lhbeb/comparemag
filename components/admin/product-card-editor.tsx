@@ -32,6 +32,30 @@ interface ProductCardEditorProps {
   mode: 'create' | 'edit'
 }
 
+function normalizeExternalUrl(raw: string) {
+  const trimmed = raw.trim()
+  if (!trimmed) {
+    throw new Error('Product link is required.')
+  }
+  if (/\s/.test(trimmed)) {
+    throw new Error('Product link looks invalid. URLs cannot contain spaces.')
+  }
+
+  const candidate = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+  let parsed: URL
+  try {
+    parsed = new URL(candidate)
+  } catch {
+    throw new Error('Please enter a valid product URL.')
+  }
+
+  if (!parsed.hostname || !parsed.hostname.includes('.')) {
+    throw new Error('Please enter a valid product URL.')
+  }
+
+  return parsed.toString()
+}
+
 export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps) {
   const router = useRouter()
   const supabase = createClient()
@@ -94,6 +118,15 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
       toast({ title: 'Missing fields', description: 'Title, Slug, Description, and Link are required.', variant: 'destructive' })
       return
     }
+
+    let normalizedExternalUrl = ''
+    try {
+      normalizedExternalUrl = normalizeExternalUrl(externalUrl)
+    } catch (error: any) {
+      toast({ title: 'Invalid product link', description: error.message, variant: 'destructive' })
+      return
+    }
+
     let parsedSpecs: any = null
     if (specs) {
       try { parsedSpecs = JSON.parse(specs) } 
@@ -117,7 +150,7 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
     try {
       const payload = {
         slug, title, brand: brand || null, short_description: shortDesc,
-        cta_label: ctaLabel || 'Check Price', external_url: externalUrl,
+        cta_label: ctaLabel || 'Check Price', external_url: normalizedExternalUrl,
         price_text: priceText || null, rating_text: ratingText || null,
         badge_text: badgeText || null, image_url: imageUrl || null,
         specs: parsedSpecs, published: publish,
@@ -128,6 +161,7 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
         body: JSON.stringify(payload),
       })
       if (!response.ok) throw new Error('Failed to save product')
+      setExternalUrl(normalizedExternalUrl)
       toast({ title: publish ? 'Product published!' : 'Product saved' })
       router.push('/admin/products'); router.refresh()
     } catch (error: any) {
@@ -147,10 +181,11 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
 
     setFetchingMetadataImage(true)
     try {
+      const normalizedExternalUrl = normalizeExternalUrl(externalUrl)
       const response = await fetch('/api/products/metadata', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: externalUrl.trim() }),
+        body: JSON.stringify({ url: normalizedExternalUrl }),
       })
 
       const payload = await response.json().catch(() => null)
