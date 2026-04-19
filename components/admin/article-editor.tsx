@@ -882,6 +882,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
             )}
           </div>
         </div>
+        )
       })()} 
     </div>
   )
