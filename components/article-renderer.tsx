@@ -2,6 +2,7 @@ import React from 'react'
 import parse, { Element } from 'html-react-parser'
 import { marked } from 'marked'
 import { ProductCardEmbed, type ProductCardData } from './blocks/product-card-embed'
+import { LazyTikTokEmbed } from './lazy-tiktok-embed'
 
 interface ArticleRendererProps {
   source: string
@@ -51,19 +52,7 @@ export function ArticleRenderer({ source, preloadedProducts = {} }: ArticleRende
         }
         
         if (finalId) {
-          return (
-            <div className="flex justify-center w-full my-10">
-              <iframe 
-                src={`https://www.tiktok.com/embed/v2/${finalId}?lang=en-US`} 
-                className="w-full max-w-[325px] sm:max-w-[400px] border-none shadow-[0_4px_20px_rgba(0,0,0,0.08)] bg-white rounded-xl"
-                style={{ height: '730px', minWidth: '325px' }}
-                allowFullScreen
-                scrolling="no"
-                allow="encrypted-media"
-                title="TikTok video player"
-              />
-            </div>
-          )
+          return <LazyTikTokEmbed videoId={finalId} />
         }
       }
 

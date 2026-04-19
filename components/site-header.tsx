@@ -90,7 +90,7 @@ export function SiteHeader() {
             {/* Subscribe / Newsletter button */}
             <Button
               asChild
-              className="bg-orange-600 hover:bg-orange-700 text-white h-11 px-5 sm:px-6 font-bold shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 rounded-full text-sm flex-shrink-0"
+              className="bg-orange-700 hover:bg-orange-800 text-white h-11 px-5 sm:px-6 font-bold shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 rounded-full text-sm flex-shrink-0"
             >
               <Link href="/#newsletter">
                 <span className="hidden sm:inline">Subscribe</span>

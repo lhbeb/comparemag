@@ -153,7 +153,10 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     setUploading(true)
     try {
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${file.name.split('.').pop()}`
-      const { error: uploadError } = await supabase.storage.from('article_images').upload(`articles/${fileName}`, file)
+      const { error: uploadError } = await supabase.storage.from('article_images').upload(`articles/${fileName}`, file, {
+        cacheControl: '31536000',
+        upsert: false,
+      })
       if (uploadError) throw uploadError
       const { data } = supabase.storage.from('article_images').getPublicUrl(`articles/${fileName}`)
       setImageUrl(data.publicUrl)

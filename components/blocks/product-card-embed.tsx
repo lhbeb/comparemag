@@ -230,10 +230,11 @@ export function ProductCardEmbed({ slug, preloadedData }: ProductCardEmbedProps)
             href={validUrl}
             target="_blank"
             rel="noopener noreferrer nofollow"
-            className="group/btn flex items-center justify-center gap-2 w-full sm:w-auto sm:min-w-[220px] bg-orange-600 hover:bg-orange-700 active:scale-[0.98] text-white visited:text-white hover:text-white visited:hover:text-white no-underline font-bold px-6 py-3.5 rounded-xl transition-all shadow-md hover:shadow-orange-500/30"
+            style={{ color: '#ffffff' }}
+            className="group/btn flex items-center justify-center gap-2 w-full sm:w-auto sm:min-w-[220px] bg-orange-700 hover:bg-orange-800 active:scale-[0.98] !text-white visited:!text-white hover:!text-white visited:hover:!text-white no-underline font-bold px-6 py-3.5 rounded-xl transition-all shadow-md hover:shadow-orange-700/30"
           >
-            <span>{ctaLabel}</span>
-            <ExternalLink className="w-4 h-4 transition-transform group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5" />
+            <span className="!text-white">{ctaLabel}</span>
+            <ExternalLink className="w-4 h-4 !text-white transition-transform group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5" />
           </a>
         </div>
 

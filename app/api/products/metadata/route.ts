@@ -18,6 +18,22 @@ function resolveUrl(candidate: string, baseUrl: string) {
   }
 }
 
+function normalizeMerchantImageUrl(url: string) {
+  try {
+    const parsed = new URL(url)
+    const wrapped = parsed.searchParams.get('url')
+    if (
+      wrapped &&
+      parsed.pathname.includes('/_next/image')
+    ) {
+      return new URL(wrapped, `${parsed.protocol}//${parsed.host}`).toString()
+    }
+    return parsed.toString()
+  } catch {
+    return url
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -77,7 +93,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    return NextResponse.json({ image_url: resolvedImage }, { status: 200 })
+    return NextResponse.json({ image_url: normalizeMerchantImageUrl(resolvedImage) }, { status: 200 })
   } catch (error) {
     return NextResponse.json(
       {

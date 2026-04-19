@@ -40,7 +40,7 @@ export function CookieConsent() {
           <div className="flex flex-shrink-0 gap-3 w-full sm:w-auto">
             <Button 
               onClick={handleAccept} 
-              className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl shadow-md hover:shadow-orange-600/25 px-8"
+              className="w-full sm:w-auto bg-orange-700 hover:bg-orange-800 text-white font-bold rounded-xl shadow-md hover:shadow-orange-700/25 px-8"
             >
               Accept
             </Button>
