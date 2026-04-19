@@ -14,29 +14,11 @@ interface SupabaseImageProps {
 }
 
 /**
- * Custom Image component for Supabase images
- * Uses Supabase image transformations for better LCP when Next optimization
- * is disabled for storage URLs.
+ * Custom Image component for Supabase images.
+ * We keep storage URLs direct here because Next optimization is disabled for
+ * Supabase storage hosts in this app, and not every Supabase project enables
+ * the render/image endpoint consistently.
  */
-
-function getTransformedSupabaseImageUrl(src: string, widthHint: number, quality: number) {
-  if (
-    !/https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\//i.test(src)
-  ) {
-    return src
-  }
-
-  try {
-    const url = new URL(src)
-    url.pathname = url.pathname.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/')
-    url.searchParams.set('width', String(widthHint))
-    url.searchParams.set('quality', String(quality))
-    url.searchParams.set('format', 'webp')
-    return url.toString()
-  } catch {
-    return src
-  }
-}
 
 export function SupabaseImage({
   src,
@@ -54,15 +36,9 @@ export function SupabaseImage({
     typeof src === "string" &&
     /https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\//i.test(src)
 
-  const widthHint = width || (fill ? 1600 : 1200)
-  const finalSrc =
-    typeof src === "string"
-      ? getTransformedSupabaseImageUrl(src, widthHint, quality)
-      : src
-
   return (
     <Image
-      src={finalSrc}
+      src={src}
       alt={alt}
       fill={fill}
       width={width}

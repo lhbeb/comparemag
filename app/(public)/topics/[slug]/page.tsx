@@ -11,13 +11,68 @@ import { StructuredData } from "@/components/seo/structured-data"
 import type { Metadata } from "next"
 
 const topicsData = {
-  "smartphones": { title: "Smartphones", description: "In-depth reviews, comparisons, and news on the latest iOS and Android smartphones." },
-  "laptops": { title: "Laptops & PCs", description: "Find the best laptops for work, gaming, and everyday use with our bench-tested reviews." },
-  "audio": { title: "Audio & Headphones", description: "Clear sound matters. We test the latest wireless earbuds, headsets, and speakers." },
-  "home-appliances": { title: "Home Appliances", description: "Smart home devices, vacuums, and kitchen tech compared and reviewed." },
-  "gaming": { title: "Gaming", description: "Consoles, accessories, and gaming monitors put to the test." },
-  "cameras": { title: "Cameras", description: "From beginner mirrorless to professional gear, we review the top photography tech." },
-}
+  "smartphones": {
+    title: "Smartphones",
+    description: "In-depth reviews, comparisons, and news on the latest iOS and Android smartphones.",
+    matchCategories: ["smartphones"],
+  },
+  "laptops": {
+    title: "Laptops & PCs",
+    description: "Find the best laptops for work, gaming, and everyday use with our bench-tested reviews.",
+    matchCategories: ["laptops", "pcs"],
+  },
+  "audio": {
+    title: "Audio & Headphones",
+    description: "Clear sound matters. We test the latest wireless earbuds, headsets, and speakers.",
+    matchCategories: ["audio", "headphones"],
+  },
+  "home-appliances": {
+    title: "Home Appliances",
+    description: "Smart home devices, vacuums, and kitchen tech compared and reviewed.",
+    matchCategories: ["home appliances", "home"],
+  },
+  "gaming": {
+    title: "Gaming",
+    description: "Consoles, accessories, and gaming monitors put to the test.",
+    matchCategories: ["gaming"],
+  },
+  "cameras": {
+    title: "Cameras",
+    description: "From beginner mirrorless to professional gear, we review the top photography tech.",
+    matchCategories: ["cameras", "camera"],
+  },
+  "trending": {
+    title: "Trending",
+    description: "What readers are watching most right now across reviews, buying guides, and price-driven stories.",
+    matchCategories: ["smartphones", "laptops", "audio", "gaming", "cameras", "news", "deals", "price comparison", "buying guide"],
+    mode: "all",
+  },
+  "tech": {
+    title: "Tech",
+    description: "Broad coverage across gadgets, consumer tech, reviews, and product news.",
+    matchCategories: ["smartphones", "laptops", "audio", "gaming", "cameras", "wearables", "tvs", "displays", "news"],
+  },
+  "innovation": {
+    title: "Innovation",
+    description: "Future-facing product news, launches, and emerging consumer technology.",
+    matchCategories: ["news", "wearables", "smartphones", "cameras", "gaming"],
+  },
+  "business": {
+    title: "Business",
+    description: "Price shifts, value analysis, comparisons, and buying decisions that affect real shoppers.",
+    matchCategories: ["price comparison", "deals", "buying guide", "laptops", "smartphones"],
+  },
+  "security": {
+    title: "Security",
+    description: "Coverage of privacy, product safety, trust signals, and smarter device decisions.",
+    matchCategories: ["news", "buying guide", "smartphones", "home appliances"],
+  },
+  "advice": {
+    title: "Advice",
+    description: "Practical buying guides, recommendations, and hands-on advice for better tech purchases.",
+    matchCategories: ["buying guide", "price comparison", "deals"],
+  },
+} as const
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> | { slug: string } }): Promise<Metadata> {
   const resolvedParams = await Promise.resolve(params)
@@ -50,13 +105,13 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
   }
 
   const allArticles = await getAllArticles(true)
-  
-  // Fuzzy match category names since older categories might be slightly misspelled or capitalized
-  const categoryArticles = allArticles.filter(a => {
-    const isExact = a.category.toLowerCase() === topic.title.toLowerCase()
-    const isFuzzy = a.category.toLowerCase().includes(topic.title.split(' ')[0].toLowerCase())
-    return isExact || isFuzzy
-  })
+
+  const categoryArticles = topic.mode === "all"
+    ? allArticles
+    : allArticles.filter((a) => {
+        const normalized = a.category.toLowerCase()
+        return topic.matchCategories.some((match) => normalized.includes(match))
+      })
 
   const heroArticle = categoryArticles[0]
   const recentArticles = categoryArticles.slice(1)
