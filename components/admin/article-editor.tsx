@@ -287,12 +287,12 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     let current: Node | null = node
 
     while (current && current !== root) {
-      const parent = current.parentNode
-      if (!parent) return null
-      const index = Array.prototype.indexOf.call(parent.childNodes, current)
+      const parentNode: Node | null = current.parentNode
+      if (!parentNode) return null
+      const index = Array.prototype.indexOf.call(parentNode.childNodes, current)
       if (index < 0) return null
       path.unshift(index)
-      current = parent
+      current = parentNode
     }
 
     return current === root ? path : null
