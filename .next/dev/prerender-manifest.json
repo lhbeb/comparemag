@@ -1,1 +1,11 @@
-{"version":4,"routes":{"/writers/andrew-sullivan":{},"/blog/google-pixel-9-pro-six-weeks-camera-honest-verdict":{},"/blog/i-used-nintendo-switch-2-every-day-for-a-month-5-things-love-2-hate":{},"/blog/i-bought-five-robot-vacuums-under-300-heres-which-one-won":{},"/blog/i-owned-lg-oled-c4-for-one-year-honest-update":{},"/blog/is-canon-g7x-discontinued":{},"/blog/is-canon-g7x-a-digicam":{},"/blog/is-canon-g7x-a-dslr":{},"/blog/is-canon-g7x-a-good-camera":{},"/blog/the-internets-favorite-pocket-camera-for-a-reason-canon-powershot-g7-x-mark-iii-201mp-4k":{},"/blog/canon-g7x-the-compact-camera-that-outlived-its-era":{},"/blog/i-replaced-my-nest-cameras-with-35-dollar-cameras-and-heres-what-happened":{},"/blog/is-canon-g7x-mirrorless":{},"/blog/is-canon-g7x-mark-iii-good-for-photography":{},"/blog/is-canon-g7x-mark-iii-discontinued":{},"/blog/is-canon-g7x-mark-iii-worth-it":{},"/blog/is-canon-g7x-worth-it":{},"/blog/is-canon-g7x-good-for-vlogging":{},"/writers/jonah-peretti":{}},"dynamicRoutes":{"/writers/[slug]":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/writers/[slug]","routeRegex":"^\\/writers\\/([^/]+?)(?:\\/)?$","allowHeader":[]},"/blog/[slug]":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/blog/[slug]","routeRegex":"^\\/blog\\/([^/]+?)(?:\\/)?$","allowHeader":[]}},"notFoundRoutes":[],"preview":{"previewModeId":"2cddba347b567d688eff3425283f2aeb","previewModeSigningKey":"44754cfed5eb1a2bcc18577c20100d407df5c929000776dbdabc7febc96b5389","previewModeEncryptionKey":"4bfb96e180e32d907922e01b5bb53cc6002d51bdecf902b55a89bdfdfcc01e73"}}
+{
+  "version": 4,
+  "routes": {},
+  "dynamicRoutes": {},
+  "notFoundRoutes": [],
+  "preview": {
+    "previewModeId": "767e28e2064cbbc4e0f7376e80269bf1",
+    "previewModeSigningKey": "6b087c76d071c94fb10940a3a25731c7a746c9e5f6a7b4ca2dbb24118c5bc042",
+    "previewModeEncryptionKey": "979cd7860ee944f442a1a02c931a9279c9b0bc6326a8637c6d56d9eafa743166"
+  }
+}
