@@ -2,6 +2,18 @@
   "node": {
     "00f90ba426e0e7f822fd64029809b3b31a611f6204": {
       "workers": {
+        "app/admin/articles/edit/[slug]/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/articles/edit/[slug]/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "logoutAction",
+          "filename": "app/actions/auth.ts"
+        },
+        "app/admin/articles/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/articles/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "logoutAction",
+          "filename": "app/actions/auth.ts"
+        },
         "app/admin/page": {
           "moduleId": "[project]/.next-internal/server/app/admin/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/auth.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/app/actions/promo.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
@@ -22,6 +34,8 @@
         }
       },
       "layer": {
+        "app/admin/articles/edit/[slug]/page": "action-browser",
+        "app/admin/articles/page": "action-browser",
         "app/admin/page": "action-browser",
         "app/admin/writers/new/page": "action-browser",
         "app/admin/writers/page": "action-browser"

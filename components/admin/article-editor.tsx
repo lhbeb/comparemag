@@ -169,16 +169,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   // Use passed server-rendered data to prevent client waterfalls
   const editors = initialWriters;
   const products = initialProducts;
-  const listedByOptions = useMemo(
-    () =>
-      Array.from(
-        new Set([
-          ...internalTrackingStaff,
-          ...(listedBy ? [listedBy] : []),
-        ]),
-      ),
-    [listedBy],
-  )
+  const listedByOptions = useMemo(() => internalTrackingStaff, [])
   
   const [showProductModal, setShowProductModal] = useState(false)
   const [modalMode, setModalMode] = useState<'product' | 'embed'>('product')
@@ -610,6 +601,12 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
       setAuthor(initialData.author)
     }
   }, [mode, initialData?.author, author])
+
+  useEffect(() => {
+    if (listedBy && !internalTrackingStaff.includes(listedBy.toLowerCase())) {
+      setListedBy('')
+    }
+  }, [listedBy])
 
   useEffect(() => {
     setHasMounted(true)

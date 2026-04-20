@@ -33,7 +33,12 @@ function formatInternalOwner(value: string) {
 }
 
 export function ArticleTabs({ articles }: ArticleTabsProps) {
+  const [hasMounted, setHasMounted] = React.useState(false)
   const [localArticles, setLocalArticles] = React.useState(articles)
+
+  React.useEffect(() => {
+    setHasMounted(true)
+  }, [])
 
   React.useEffect(() => {
     setLocalArticles(articles)
@@ -46,6 +51,37 @@ export function ArticleTabs({ articles }: ArticleTabsProps) {
   const handleDeleted = React.useCallback((slug: string) => {
     setLocalArticles((current) => current.filter((article) => article.slug !== slug))
   }, [])
+
+  if (!hasMounted) {
+    return (
+      <div className="space-y-4">
+        <div className="h-11 w-[420px] max-w-full rounded-lg bg-slate-100 animate-pulse" />
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={index}
+              className="rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-sm"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4 flex-1 min-w-0">
+                  <div className="hidden sm:block h-14 w-14 rounded-md bg-slate-100 animate-pulse" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-5 w-2/3 rounded bg-slate-100 animate-pulse" />
+                    <div className="h-4 w-1/2 rounded bg-slate-100 animate-pulse" />
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-16 rounded-md bg-slate-100 animate-pulse" />
+                  <div className="h-8 w-16 rounded-md bg-slate-100 animate-pulse" />
+                  <div className="h-8 w-20 rounded-md bg-slate-100 animate-pulse" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <Tabs defaultValue="all" className="w-full">
