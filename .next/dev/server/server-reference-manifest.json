@@ -8,8 +8,20 @@
           "exportedName": "logoutAction",
           "filename": "app/actions/auth.ts"
         },
-        "app/admin/articles/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/articles/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/admin/writers/edit/[slug]/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/writers/edit/[slug]/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "logoutAction",
+          "filename": "app/actions/auth.ts"
+        },
+        "app/admin/writers/new/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/writers/new/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "logoutAction",
+          "filename": "app/actions/auth.ts"
+        },
+        "app/admin/writers/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/writers/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
           "exportedName": "logoutAction",
           "filename": "app/actions/auth.ts"
@@ -17,7 +29,9 @@
       },
       "layer": {
         "app/admin/articles/edit/[slug]/page": "action-browser",
-        "app/admin/articles/page": "action-browser"
+        "app/admin/writers/edit/[slug]/page": "action-browser",
+        "app/admin/writers/new/page": "action-browser",
+        "app/admin/writers/page": "action-browser"
       },
       "filename": "app/actions/auth.ts",
       "exportedName": "logoutAction"

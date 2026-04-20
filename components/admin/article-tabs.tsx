@@ -24,6 +24,14 @@ interface ArticleTabsProps {
   articles: any[] // Using any here to bypass exact match, since Supabase Row types differ slightly
 }
 
+function formatInternalOwner(value: string) {
+  return value
+    .split(/[\s_-]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
+}
+
 export function ArticleTabs({ articles }: ArticleTabsProps) {
   const [localArticles, setLocalArticles] = React.useState(articles)
 
@@ -139,10 +147,17 @@ function ArticleList({ articles, onDeleted }: { articles: any[], onDeleted: (slu
                   <span className="px-2 py-0.5 rounded-md font-medium bg-blue-50 text-blue-700">
                     {article.category}
                   </span>
-                  <span>By <strong className="text-slate-900">{article.author}</strong></span>
+                  <span className="inline-flex items-center gap-1.5 rounded-md bg-slate-100 px-2 py-0.5">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Public</span>
+                    <strong className="text-slate-900">{article.author}</strong>
+                  </span>
                   {article.listed_by && (
-                    <span className="px-1.5 py-0.5 rounded-sm bg-indigo-50 text-indigo-700 text-[10px] font-bold uppercase tracking-wider border border-indigo-100 flex items-center gap-1" title="Listed By">
-                      [L] {article.listed_by}
+                    <span
+                      className="inline-flex items-center gap-1.5 rounded-md bg-amber-50 px-2 py-0.5 border border-amber-100"
+                      title="Internal listed by owner"
+                    >
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700">Internal</span>
+                      <strong className="text-amber-900">{formatInternalOwner(article.listed_by)}</strong>
                     </span>
                   )}
                   <span className="text-slate-300">·</span>

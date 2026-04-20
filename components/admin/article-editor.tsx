@@ -364,21 +364,21 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
 
     selection.removeAllRanges()
 
-    if (savedRangeRef.current) {
-      try {
-        selection.addRange(savedRangeRef.current)
-        return savedRangeRef.current
-      } catch {
-        savedRangeRef.current = null
-      }
-    }
-
     if (savedSelectionRef.current) {
       const restoredRange = deserializeRange(savedSelectionRef.current, editorRef.current)
       if (restoredRange) {
         selection.addRange(restoredRange)
         savedRangeRef.current = restoredRange.cloneRange()
         return restoredRange
+      }
+    }
+
+    if (savedRangeRef.current) {
+      try {
+        selection.addRange(savedRangeRef.current)
+        return savedRangeRef.current
+      } catch {
+        savedRangeRef.current = null
       }
     }
 
@@ -989,6 +989,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                       onMouseDown={(e) => {
                         e.preventDefault()
                         saveSelectionRange()
+                        savedRangeRef.current = null
                       }}
                       onClick={() => {
                         setModalMode('product')
@@ -1007,6 +1008,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                       onMouseDown={(e) => {
                         e.preventDefault()
                         saveSelectionRange()
+                        savedRangeRef.current = null
                       }}
                       onClick={() => {
                         setModalMode('embed')
