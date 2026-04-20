@@ -1,32 +1,49 @@
-[00:00:01.607] Server  LOG     [System] Running Background Database Health Check on Startup...
-[00:00:07.341] Server  LOG     [System] Database Health Check: ✅ PASS (Connection: OK, Tables: articles, writers, product_cards checked)
-[00:00:07.347] Server  LOG      ✓ Ready in 7.1s
-[00:00:10.892] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:11.063] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:00:30.003] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:30.159] Browser WARN    Image with src "/placeholder.svg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:30.159] Browser WARN    Image with src "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:00:32.864] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
-[00:00:46.836] Browser LOG     [handleSave] called, publish= true
-[00:00:46.836] Browser LOG     [handleSave] title: zrtgzae'tgaertg | slug: zrtgzaetgaertg | content length: 21
-[00:00:46.836] Browser LOG     [handleSave] basic validation passed
-[00:01:48.957] Browser LOG     [handleSave] called, publish= true
-[00:01:48.958] Browser LOG     [handleSave] title: zrtgzae'tgaertg | slug: zrtgzaetgaertg | content length: 21
-[00:01:48.958] Browser LOG     [handleSave] basic validation passed
-[00:02:56.122] Server  LOG      ✓ Compiled in 516ms
-[00:03:54.821] Browser LOG     [handleSave] called, publish= true
-[00:03:54.842] Browser LOG     [handleSave] title: zrtgzae'tgaertg | slug: zrtgzaetgaertg | content length: 21
-[00:03:54.842] Browser LOG     [handleSave] basic validation passed
-[00:04:01.635] Browser LOG     [handleSave] called, publish= true
-[00:04:01.636] Browser LOG     [handleSave] title: zrtgzae'tgaertg | slug: zrtgzaetgaertg | content length: 21
-[00:04:01.636] Browser LOG     [handleSave] basic validation passed
-[00:04:01.636] Browser LOG     [handleSave] publish validation passed, sending to API...
-[00:04:01.636] Browser LOG     [handleSave] fetching POST /api/articles
-[00:04:03.225] Browser LOG     [handleSave] response status: 201
-[00:04:04.948] Browser WARN    Image with src "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:04:04.948] Browser WARN    Image with src "https://images.unsplash.com/photo-1593118247619-e2d6f056869e?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:04:04.948] Browser WARN    Image with src "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:04:05.257] Browser WARN    Image with src "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:04:05.257] Browser WARN    Image with src "https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:04:05.257] Browser WARN    Image with src "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
-[00:04:58.009] Server  LOG      ✓ Compiled in 345ms
+[00:00:01.822] Server  LOG     [System] Running Background Database Health Check on Startup...
+[00:00:04.549] Server  LOG     [System] Database Health Check: ✅ PASS (Connection: OK, Tables: articles, writers, product_cards checked)
+[00:00:04.561] Server  LOG      ✓ Ready in 4.3s
+[00:00:04.789] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:04.793] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776637503996-oit89.png" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:04.795] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776318148991-170hn.jpg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:04.795] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776317709733-iil2uao.jpeg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:07.906] Server  LOG      ○ Compiling /blog/[slug] ...
+[00:00:08.318] Browser ERROR   Failed to fetch RSC payload for http://localhost:3002/. Falling back to browser navigation. {}
+[00:00:08.318] Browser ERROR   Failed to fetch RSC payload for http://localhost:3002/topics/trending. Falling back to browser navigation. {}
+[00:00:09.764] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:10.580] Browser WARN    Image with src "/placeholder.svg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:10.774] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776318148991-170hn.jpg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:10.776] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776637503996-oit89.png" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:10.808] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776317709733-iil2uao.jpeg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:10.809] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:10.824] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:11.013] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776318148991-170hn.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:11.013] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776637503996-oit89.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:11.013] Browser WARN    Image with src "/placeholder.svg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:11.013] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776317709733-iil2uao.jpeg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:11.013] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:11.013] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:00:11.013] Browser WARN    Image with src "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:11.013] Browser WARN    Image with src "https://images.unsplash.com/photo-1593118247619-e2d6f056869e?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:15.426] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776644328821-ayapxs.png" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:15.460] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776318148991-170hn.jpg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:15.460] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776317709733-iil2uao.jpeg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:15.461] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:15.515] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:00:17.613] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776637503996-oit89.png" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:17.614] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776644328821-ayapxs.png" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:18.723] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776317709733-iil2uao.jpeg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:18.724] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776318148991-170hn.jpg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:18.730] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:21.456] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776318148991-170hn.jpg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:21.466] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776317709733-iil2uao.jpeg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:21.467] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:21.639] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776637503996-oit89.png" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:21.660] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776644328821-ayapxs.png" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:36.508] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776317709733-iil2uao.jpeg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:36.509] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:36.628] Browser WARN    Image with src "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?q=80&w=1200&auto=format&fit=crop" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:39.020] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776317709733-iil2uao.jpeg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:39.021] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:39.291] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776317709733-iil2uao.jpeg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:39.295] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:42.950] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776317709733-iil2uao.jpeg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
+[00:00:42.952] Server  ERROR    ⨯ "upstream image" "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1775717861625-io3nbp.jpg" "resolved to private ip" "[\"64:ff9b::6812:260a\",\"64:ff9b::ac40:95f6\"]"
