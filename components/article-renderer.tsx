@@ -3,6 +3,7 @@ import parse, { Element } from 'html-react-parser'
 import { marked } from 'marked'
 import { ProductCardEmbed, type ProductCardData } from './blocks/product-card-embed'
 import { LazyTikTokEmbed } from './lazy-tiktok-embed'
+import { LazyTwitterEmbed } from './lazy-twitter-embed'
 
 interface ArticleRendererProps {
   source: string
@@ -56,9 +57,49 @@ export function ArticleRenderer({ source, preloadedProducts = {} }: ArticleRende
         }
       }
 
-      // 3. Process generic scripts (Twitter, Instagram, etc)
+      // 2.5 Process Twitter embeds safely into clean containers 
+      if (domNode instanceof Element && domNode.name === 'blockquote' && domNode.attribs.class?.includes('twitter-tweet')) {
+        let tweetId = ''
+        
+        // Helper to recursively find the tweet ID in the child anchor tags
+        const findTweetId = (node: any) => {
+          if (node.name === 'a' && node.attribs?.href) {
+            const match = node.attribs.href.match(/(?:twitter\.com|x\.com)\/[^/]+\/status\/(\d+)/)
+            if (match) {
+              tweetId = match[1]
+              return true // stop searching
+            }
+          }
+          if (node.children) {
+            for (const child of node.children) {
+              if (findTweetId(child)) return true
+            }
+          }
+          return false
+        }
+        
+        findTweetId(domNode)
+
+        if (tweetId) {
+          return <LazyTwitterEmbed tweetId={tweetId} />
+        }
+      }
+
+      // 3. Process generic scripts (generic widgets, instagram, etc)
       if (domNode instanceof Element && domNode.name === 'script' && domNode.attribs.src) {
-        return <EmbeddedScript src={domNode.attribs.src} />
+        const src = domNode.attribs.src
+
+        // Twitter/X and TikTok are already converted into first-class React embeds
+        // above. Running their original widget scripts as well causes duplicate
+        // renders in preview/live output.
+        if (
+          /platform\.twitter\.com\/widgets\.js/i.test(src) ||
+          /tiktok\.com/i.test(src)
+        ) {
+          return null
+        }
+
+        return <EmbeddedScript src={src} />
       }
     },
   })

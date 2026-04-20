@@ -44,6 +44,7 @@ export default async function EditArticlePage({
       <ArticleEditor
         mode="edit"
         initialData={{
+          originalSlug: article.slug,
           slug: article.slug,
           title: article.title,
           content: article.content,
@@ -62,6 +63,7 @@ export default async function EditArticlePage({
           article_type: article.article_type,
           generation_status: article.generation_status,
           listed_by: article.listed_by,
+          published_at: article.published_at,
         }}
         initialWriters={writers}
         initialProducts={products}

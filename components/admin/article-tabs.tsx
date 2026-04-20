@@ -8,23 +8,43 @@ import { Edit, Eye, EyeOff, FileText, Wand2, Trash2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { SupabaseImage } from '@/components/supabase-image'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
-import { Article } from '@/lib/supabase/types'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { toast } from '@/hooks/use-toast'
 
 interface ArticleTabsProps {
   articles: any[] // Using any here to bypass exact match, since Supabase Row types differ slightly
 }
 
 export function ArticleTabs({ articles }: ArticleTabsProps) {
-  const published = articles.filter(a => a.published)
-  const manualDrafts = articles.filter(a => !a.published && a.article_type !== 'programmatic')
-  const generated = articles.filter(a => a.article_type === 'programmatic')
+  const [localArticles, setLocalArticles] = React.useState(articles)
+
+  React.useEffect(() => {
+    setLocalArticles(articles)
+  }, [articles])
+
+  const published = localArticles.filter(a => a.published)
+  const manualDrafts = localArticles.filter(a => !a.published && a.article_type !== 'programmatic')
+  const generated = localArticles.filter(a => a.article_type === 'programmatic')
+
+  const handleDeleted = React.useCallback((slug: string) => {
+    setLocalArticles((current) => current.filter((article) => article.slug !== slug))
+  }, [])
 
   return (
     <Tabs defaultValue="all" className="w-full">
       <div className="flex items-center justify-between mb-4">
         <TabsList className="flex items-center gap-2 p-1 bg-slate-100 rounded-lg">
           <TabsTrigger value="all" className="px-4 py-1.5 text-sm font-semibold text-slate-600 rounded-md data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm transition-all">
-            All ({articles.length})
+            All ({localArticles.length})
           </TabsTrigger>
           <TabsTrigger value="published" className="px-4 py-1.5 text-sm font-semibold text-slate-600 rounded-md data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm transition-all">
             Published ({published.length})
@@ -39,22 +59,22 @@ export function ArticleTabs({ articles }: ArticleTabsProps) {
       </div>
 
       <TabsContent value="all" className="mt-0">
-        <ArticleList articles={articles} />
+        <ArticleList articles={localArticles} onDeleted={handleDeleted} />
       </TabsContent>
       <TabsContent value="published" className="mt-0">
-        <ArticleList articles={published} />
+        <ArticleList articles={published} onDeleted={handleDeleted} />
       </TabsContent>
       <TabsContent value="drafts" className="mt-0">
-        <ArticleList articles={manualDrafts} />
+        <ArticleList articles={manualDrafts} onDeleted={handleDeleted} />
       </TabsContent>
       <TabsContent value="generated" className="mt-0">
-        <ArticleList articles={generated} />
+        <ArticleList articles={generated} onDeleted={handleDeleted} />
       </TabsContent>
     </Tabs>
   )
 }
 
-function ArticleList({ articles }: { articles: any[] }) {
+function ArticleList({ articles, onDeleted }: { articles: any[], onDeleted: (slug: string) => void }) {
   if (articles.length === 0) {
     return (
       <div className="text-center py-20 rounded-2xl flex flex-col items-center gap-4 bg-white border border-dashed border-slate-200">
@@ -146,7 +166,7 @@ function ArticleList({ articles }: { articles: any[] }) {
                   View
                 </Link>
               </Button>
-              <DeleteArticleButton slug={article.slug} title={article.title} />
+              <DeleteArticleButton slug={article.slug} title={article.title} onDeleted={onDeleted} />
             </div>
           </div>
         </div>
@@ -155,38 +175,97 @@ function ArticleList({ articles }: { articles: any[] }) {
   )
 }
 
-function DeleteArticleButton({ slug, title }: { slug: string, title: string }) {
+function DeleteArticleButton({
+  slug,
+  title,
+  onDeleted,
+}: {
+  slug: string
+  title: string
+  onDeleted: (slug: string) => void
+}) {
   const [isDeleting, setIsDeleting] = React.useState(false)
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+  const [isPendingRefresh, startRefreshTransition] = React.useTransition()
   const router = useRouter()
 
   const handleDelete = async () => {
-    if (!window.confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
-      return
-    }
-
     setIsDeleting(true)
     try {
       const res = await fetch(`/api/articles/${slug}`, { method: 'DELETE' })
-      if (!res.ok) throw new Error('Failed to delete')
-      
-      router.refresh()
+      if (!res.ok) {
+        const body = await res.json().catch(() => null)
+        throw new Error(body?.message || 'Failed to delete article')
+      }
+
+      onDeleted(slug)
+      setIsDialogOpen(false)
+      toast({
+        title: 'Article deleted',
+        description: `"${title}" was removed successfully.`,
+      })
+
+      startRefreshTransition(() => {
+        router.refresh()
+      })
     } catch (e) {
-      alert('Error deleting article. Please try again.')
+      toast({
+        title: 'Delete failed',
+        description: e instanceof Error ? e.message : 'Unable to delete article right now.',
+        variant: 'destructive',
+      })
     } finally {
       setIsDeleting(false)
     }
   }
 
   return (
-    <Button 
-      variant="outline" 
-      size="sm" 
-      onClick={handleDelete}
-      disabled={isDeleting}
-      className="h-8 px-3 text-xs font-medium border-slate-200 text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-200"
-    >
-      <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-      {isDeleting ? '...' : 'Delete'}
-    </Button>
+    <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setIsDialogOpen(true)}
+        disabled={isDeleting || isPendingRefresh}
+        className="h-8 px-3 text-xs font-medium border-slate-200 text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-200"
+      >
+        <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+        {isDeleting ? 'Deleting...' : 'Delete'}
+      </Button>
+
+      <AlertDialogContent className="max-w-md rounded-2xl border-slate-200 p-0 overflow-hidden">
+        <AlertDialogHeader className="px-6 pt-6 text-left">
+          <AlertDialogTitle className="text-xl font-bold text-slate-900">
+            Delete article?
+          </AlertDialogTitle>
+          <AlertDialogDescription className="text-sm text-slate-600 leading-relaxed">
+            <span className="block mb-2">
+              This will permanently remove <strong className="text-slate-900">“{title}”</strong>.
+            </span>
+            <span className="block">
+              This action can’t be undone.
+            </span>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter className="px-6 py-5 bg-slate-50 border-t border-slate-100">
+          <AlertDialogCancel
+            disabled={isDeleting}
+            className="border-slate-200 text-slate-700 hover:bg-white"
+          >
+            Keep Article
+          </AlertDialogCancel>
+          <AlertDialogAction
+            onClick={(event) => {
+              event.preventDefault()
+              if (!isDeleting) {
+                void handleDelete()
+              }
+            }}
+            className="bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500"
+          >
+            {isDeleting ? 'Deleting...' : 'Delete Article'}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }

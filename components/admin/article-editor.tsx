@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -26,8 +26,20 @@ import Link from 'next/link'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
 import { ArticleRenderer, compileArticleSourceToHtml } from '@/components/article-renderer'
 
+interface SerializedSelectionPoint {
+  path: number[]
+  offset: number
+}
+
+interface SerializedSelectionRange {
+  start: SerializedSelectionPoint
+  end: SerializedSelectionPoint
+  collapsed: boolean
+}
+
 interface ArticleEditorProps {
   initialData?: {
+    originalSlug?: string
     slug: string
     title: string
     content: string
@@ -95,16 +107,26 @@ function escapeHtml(value: string) {
     .replace(/"/g, '&quot;')
 }
 
+function decodeHtmlEntities(value: string) {
+  if (typeof document === 'undefined') return value
+  const textarea = document.createElement('textarea')
+  textarea.innerHTML = value
+  return textarea.value
+}
+
 export function ArticleEditor({ initialData, mode, initialWriters = [], initialProducts = [] }: ArticleEditorProps) {
   const router = useRouter()
   const supabase = createClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const editorRef = useRef<HTMLDivElement>(null)
   const editorHtmlRef = useRef(initialData?.content || '')
+  const savedRangeRef = useRef<Range | null>(null)
+  const savedSelectionRef = useRef<SerializedSelectionRange | null>(null)
+  const validationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const titleInputRef = useRef<HTMLTextAreaElement>(null)
-  const productPreviewMap = Object.fromEntries(
+  const productPreviewMap = useMemo(() => Object.fromEntries(
     initialProducts.map((product: any) => [product.slug, product]),
-  )
+  ), [initialProducts])
 
   // State
   const [title, setTitle] = useState(initialData?.title || '')
@@ -141,6 +163,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const [modalMode, setModalMode] = useState<'product' | 'embed'>('product')
   const [embedCode, setEmbedCode] = useState('')
   const [activeTab, setActiveTab] = useState<'write' | 'seo' | 'preview' | 'html'>('write')
+  const [hasMounted, setHasMounted] = useState(false)
   const [productSearch, setProductSearch] = useState('')
   const [productDomainFilter, setProductDomainFilter] = useState<string | null>(null)
   const [loadedProductImages, setLoadedProductImages] = useState<Record<string, boolean>>({})
@@ -152,7 +175,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     const imageUrl = product?.image_url
 
     return `
-      <div contenteditable="false" data-product-shortcode="${escapeHtml(slug)}" class="not-prose my-6 rounded-2xl border border-orange-200 bg-gradient-to-br from-orange-50 to-white shadow-sm overflow-hidden">
+      <div contenteditable="false" data-product-shortcode="${escapeHtml(slug)}" class="not-prose block w-full clear-both my-6 rounded-2xl border border-orange-200 bg-gradient-to-br from-orange-50 to-white shadow-sm overflow-hidden">
         <div class="flex items-center gap-4 p-4">
           <div class="w-16 h-16 rounded-xl overflow-hidden border border-orange-100 bg-white flex items-center justify-center flex-shrink-0">
             ${imageUrl
@@ -172,9 +195,72 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     `.trim()
   }
 
+  const buildEmbedPlaceholderHtml = (rawHtml: string, label: string, hint: string) => {
+    const encodedHtml = escapeHtml(encodeURIComponent(rawHtml))
+
+    return `
+      <div contenteditable="false" data-embed-html="${encodedHtml}" class="not-prose block w-full clear-both my-6 rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 to-white shadow-sm overflow-hidden">
+        <div class="flex items-center gap-4 p-4">
+          <div class="w-16 h-16 rounded-xl overflow-hidden border border-sky-100 bg-white flex items-center justify-center flex-shrink-0">
+            <span class="text-[10px] font-black uppercase tracking-[0.22em] text-sky-500">Embed</span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="text-[10px] font-black uppercase tracking-[0.22em] text-sky-600 mb-1">${escapeHtml(label)}</div>
+            <div class="text-sm font-bold text-slate-900 leading-snug line-clamp-2">${escapeHtml(hint)}</div>
+            <div class="mt-1 text-xs text-slate-500">Rendered safely in preview and on the live article.</div>
+          </div>
+          <div class="hidden sm:flex items-center rounded-full bg-sky-600 text-white px-3 py-1.5 text-[11px] font-bold whitespace-nowrap">
+            Live Embed Block
+          </div>
+        </div>
+      </div>
+    `.trim()
+  }
+
+  const replaceNodeWithHtml = (node: Element, html: string) => {
+    const wrapper = document.createElement('div')
+    wrapper.innerHTML = html
+    node.replaceWith(...Array.from(wrapper.childNodes))
+  }
+
+  const decorateExistingEmbeds = (container: HTMLDivElement) => {
+    container.querySelectorAll('blockquote.twitter-tweet').forEach((blockquote) => {
+      const next = blockquote.nextElementSibling
+      let rawHtml = blockquote.outerHTML
+      if (next?.tagName === 'SCRIPT' && /platform\.twitter\.com\/widgets\.js/i.test(next.getAttribute('src') || '')) {
+        rawHtml += next.outerHTML
+        next.remove()
+      }
+      replaceNodeWithHtml(blockquote, buildEmbedPlaceholderHtml(rawHtml, 'Twitter Embed', 'Tweet post'))
+    })
+
+    container.querySelectorAll('blockquote.tiktok-embed').forEach((blockquote) => {
+      const next = blockquote.nextElementSibling
+      let rawHtml = blockquote.outerHTML
+      if (next?.tagName === 'SCRIPT') {
+        rawHtml += next.outerHTML
+        next.remove()
+      }
+      replaceNodeWithHtml(blockquote, buildEmbedPlaceholderHtml(rawHtml, 'TikTok Embed', 'Short-form social post'))
+    })
+
+    container.querySelectorAll('iframe').forEach((iframe) => {
+      const src = iframe.getAttribute('src') || 'Embedded media'
+      replaceNodeWithHtml(iframe, buildEmbedPlaceholderHtml(iframe.outerHTML, 'Iframe Embed', src))
+    })
+
+    container.querySelectorAll('script[src]').forEach((script) => {
+      const src = script.getAttribute('src') || 'External script'
+      replaceNodeWithHtml(script, buildEmbedPlaceholderHtml(script.outerHTML, 'Script Embed', src))
+    })
+  }
+
   const decorateEditorContent = (rawContent: string) => {
     if (!rawContent) return ''
-    return rawContent.replace(/\[product-card:([^\]]+)\]/g, (_, slug: string) => buildProductPlaceholderHtml(slug))
+    const container = document.createElement('div')
+    container.innerHTML = rawContent.replace(/\[product-card:([^\]]+)\]/g, (_, slug: string) => buildProductPlaceholderHtml(slug))
+    decorateExistingEmbeds(container)
+    return container.innerHTML
   }
 
   const serializeEditorContent = (rawHtml: string) => {
@@ -185,7 +271,316 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
       if (!slug) return
       node.replaceWith(document.createTextNode(`[product-card:${slug}]`))
     })
+    container.querySelectorAll<HTMLElement>('[data-embed-html]').forEach((node) => {
+      const encodedHtml = node.getAttribute('data-embed-html')
+      if (!encodedHtml) return
+      const decodedHtml = decodeURIComponent(decodeHtmlEntities(encodedHtml))
+      const wrapper = document.createElement('div')
+      wrapper.innerHTML = decodedHtml
+      node.replaceWith(...Array.from(wrapper.childNodes))
+    })
     return container.innerHTML
+  }
+
+  const getNodePath = (node: Node, root: Node) => {
+    const path: number[] = []
+    let current: Node | null = node
+
+    while (current && current !== root) {
+      const parent = current.parentNode
+      if (!parent) return null
+      const index = Array.prototype.indexOf.call(parent.childNodes, current)
+      if (index < 0) return null
+      path.unshift(index)
+      current = parent
+    }
+
+    return current === root ? path : null
+  }
+
+  const getNodeFromPath = (root: Node, path: number[]) => {
+    let current: Node | null = root
+    for (const index of path) {
+      current = current?.childNodes[index] ?? null
+      if (!current) return null
+    }
+    return current
+  }
+
+  const clampOffset = (node: Node, offset: number) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return Math.min(offset, node.textContent?.length ?? 0)
+    }
+    return Math.min(offset, node.childNodes.length)
+  }
+
+  const serializeRange = (range: Range, root: HTMLElement): SerializedSelectionRange | null => {
+    const startPath = getNodePath(range.startContainer, root)
+    const endPath = getNodePath(range.endContainer, root)
+    if (!startPath || !endPath) return null
+
+    return {
+      start: { path: startPath, offset: range.startOffset },
+      end: { path: endPath, offset: range.endOffset },
+      collapsed: range.collapsed,
+    }
+  }
+
+  const deserializeRange = (serialized: SerializedSelectionRange, root: HTMLElement) => {
+    const startNode = getNodeFromPath(root, serialized.start.path)
+    const endNode = getNodeFromPath(root, serialized.end.path)
+    if (!startNode || !endNode) return null
+
+    const range = document.createRange()
+    range.setStart(startNode, clampOffset(startNode, serialized.start.offset))
+    range.setEnd(endNode, clampOffset(endNode, serialized.end.offset))
+    return range
+  }
+
+  const saveSelectionRange = () => {
+    if (!editorRef.current || typeof window === 'undefined') return
+
+    const selection = window.getSelection()
+    if (!selection || selection.rangeCount === 0) return
+
+    const range = selection.getRangeAt(0)
+    const commonNode = range.commonAncestorContainer
+    const editor = editorRef.current
+    const isInsideEditor =
+      commonNode === editor ||
+      editor.contains(commonNode.nodeType === Node.ELEMENT_NODE ? commonNode : commonNode.parentNode)
+
+    if (!isInsideEditor) return
+
+    savedRangeRef.current = range.cloneRange()
+    savedSelectionRef.current = serializeRange(range, editor)
+  }
+
+  const restoreSelectionRange = () => {
+    if (!editorRef.current || typeof window === 'undefined') return null
+
+    const selection = window.getSelection()
+    if (!selection) return null
+
+    selection.removeAllRanges()
+
+    if (savedRangeRef.current) {
+      try {
+        selection.addRange(savedRangeRef.current)
+        return savedRangeRef.current
+      } catch {
+        savedRangeRef.current = null
+      }
+    }
+
+    if (savedSelectionRef.current) {
+      const restoredRange = deserializeRange(savedSelectionRef.current, editorRef.current)
+      if (restoredRange) {
+        selection.addRange(restoredRange)
+        savedRangeRef.current = restoredRange.cloneRange()
+        return restoredRange
+      }
+    }
+
+    const fallbackRange = document.createRange()
+    fallbackRange.selectNodeContents(editorRef.current)
+    fallbackRange.collapse(false)
+    selection.addRange(fallbackRange)
+    savedRangeRef.current = fallbackRange.cloneRange()
+    savedSelectionRef.current = serializeRange(fallbackRange, editorRef.current)
+    return fallbackRange
+  }
+
+  const insertHtmlAtSelection = (html: string) => {
+    if (!editorRef.current) return
+
+    editorRef.current.focus()
+    const range = restoreSelectionRange()
+    if (!range) return
+
+    range.deleteContents()
+    const fragment = range.createContextualFragment(html)
+    const lastNode = fragment.lastChild
+    range.insertNode(fragment)
+
+    const selection = window.getSelection()
+    if (selection) {
+      selection.removeAllRanges()
+      const nextRange = document.createRange()
+      if (lastNode) {
+        nextRange.setStartAfter(lastNode)
+      } else {
+        nextRange.selectNodeContents(editorRef.current)
+        nextRange.collapse(false)
+      }
+      nextRange.collapse(true)
+      selection.addRange(nextRange)
+      savedRangeRef.current = nextRange.cloneRange()
+      if (editorRef.current) {
+        savedSelectionRef.current = serializeRange(nextRange, editorRef.current)
+      }
+    }
+
+    syncEditorContent()
+  }
+
+  const isBlockContainerTag = (tagName: string) => {
+    return ['P', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'BLOCKQUOTE'].includes(tagName)
+  }
+
+  const hasMeaningfulFragmentContent = (fragment: DocumentFragment) => {
+    if ((fragment.textContent || '').replace(/\u200B/g, '').trim()) return true
+    return Array.from(fragment.childNodes).some((node) => {
+      if (!(node instanceof HTMLElement)) return false
+      return ['BR', 'IMG', 'IFRAME', 'BLOCKQUOTE', 'UL', 'OL'].includes(node.tagName) || node.hasAttribute('data-product-shortcode') || node.hasAttribute('data-embed-html')
+    })
+  }
+
+  const createBlockFromFragment = (tagName: string, fragment: DocumentFragment) => {
+    const element = document.createElement(tagName.toLowerCase())
+    element.appendChild(fragment)
+    return element
+  }
+
+  const placeCaretAtStart = (node: Node) => {
+    const selection = window.getSelection()
+    if (!selection) return
+    const range = document.createRange()
+    range.selectNodeContents(node)
+    range.collapse(true)
+    selection.removeAllRanges()
+    selection.addRange(range)
+    savedRangeRef.current = range.cloneRange()
+    if (editorRef.current) {
+      savedSelectionRef.current = serializeRange(range, editorRef.current)
+    }
+  }
+
+  const placeCaretAfterNode = (node: Node) => {
+    const selection = window.getSelection()
+    if (!selection) return
+    const range = document.createRange()
+    range.setStartAfter(node)
+    range.collapse(true)
+    selection.removeAllRanges()
+    selection.addRange(range)
+    savedRangeRef.current = range.cloneRange()
+    if (editorRef.current) {
+      savedSelectionRef.current = serializeRange(range, editorRef.current)
+    }
+  }
+
+  const insertBlockHtmlAtSelection = (html: string) => {
+    if (!editorRef.current) return
+
+    editorRef.current.focus()
+    const range = restoreSelectionRange()
+    if (!range) return
+
+    const startNode =
+      range.startContainer.nodeType === Node.ELEMENT_NODE
+        ? range.startContainer as Element
+        : range.startContainer.parentElement
+    const blockParent = startNode?.closest('p, div, h1, h2, h3, h4, h5, h6, blockquote')
+    const hostBlock =
+      blockParent && blockParent !== editorRef.current && isBlockContainerTag(blockParent.tagName)
+        ? blockParent
+        : null
+
+    if (!hostBlock || !editorRef.current.contains(hostBlock)) {
+      insertHtmlAtSelection(html)
+      return
+    }
+
+    const beforeRange = document.createRange()
+    beforeRange.selectNodeContents(hostBlock)
+    beforeRange.setEnd(range.startContainer, range.startOffset)
+    const beforeFragment = beforeRange.cloneContents()
+
+    const afterRange = document.createRange()
+    afterRange.selectNodeContents(hostBlock)
+    afterRange.setStart(range.endContainer, range.endOffset)
+    const afterFragment = afterRange.cloneContents()
+
+    const placeholderWrapper = document.createElement('div')
+    placeholderWrapper.innerHTML = html
+    const placeholderNodes = Array.from(placeholderWrapper.childNodes)
+    const insertionParent = hostBlock.parentNode
+    if (!insertionParent) return
+
+    const nodesToInsert: Node[] = []
+    let trailingBlock: HTMLElement | null = null
+
+    if (hasMeaningfulFragmentContent(beforeFragment)) {
+      nodesToInsert.push(createBlockFromFragment(hostBlock.tagName, beforeFragment))
+    }
+
+    nodesToInsert.push(...placeholderNodes)
+
+    if (hasMeaningfulFragmentContent(afterFragment)) {
+      trailingBlock = createBlockFromFragment(hostBlock.tagName, afterFragment)
+      nodesToInsert.push(trailingBlock)
+    }
+
+    nodesToInsert.forEach((node) => insertionParent.insertBefore(node, hostBlock))
+    hostBlock.remove()
+
+    if (trailingBlock) {
+      placeCaretAtStart(trailingBlock)
+    } else if (placeholderNodes.length > 0) {
+      placeCaretAfterNode(placeholderNodes[placeholderNodes.length - 1])
+    }
+
+    syncEditorContent()
+  }
+
+  const getEditableSibling = (node: Node | null, direction: 'previous' | 'next'): Node | null => {
+    let current = node
+    while (current) {
+      current = direction === 'previous' ? current.previousSibling : current.nextSibling
+      if (!current) return null
+      if (current.nodeType === Node.TEXT_NODE && !(current.textContent || '').trim()) continue
+      return current
+    }
+    return null
+  }
+
+  const handleEditorKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Backspace' && event.key !== 'Delete') return
+    if (!editorRef.current) return
+
+    const selection = window.getSelection()
+    if (!selection || !selection.isCollapsed || selection.rangeCount === 0) return
+
+    const range = selection.getRangeAt(0)
+    let targetNode: Node | null = null
+
+    if (event.key === 'Backspace') {
+      if (range.startContainer.nodeType === Node.TEXT_NODE && range.startOffset > 0) return
+      targetNode =
+        range.startContainer.nodeType === Node.TEXT_NODE
+          ? getEditableSibling(range.startContainer, 'previous')
+          : (range.startContainer.childNodes[range.startOffset - 1] ?? getEditableSibling(range.startContainer, 'previous'))
+    } else {
+      if (
+        range.startContainer.nodeType === Node.TEXT_NODE &&
+        range.startOffset < (range.startContainer.textContent || '').length
+      ) {
+        return
+      }
+      targetNode =
+        range.startContainer.nodeType === Node.TEXT_NODE
+          ? getEditableSibling(range.startContainer, 'next')
+          : (range.startContainer.childNodes[range.startOffset] ?? getEditableSibling(range.startContainer, 'next'))
+    }
+
+    if (!(targetNode instanceof HTMLElement)) return
+    if (!targetNode.matches('[data-product-shortcode], [data-embed-html]')) return
+
+    event.preventDefault()
+    targetNode.remove()
+    syncEditorContent()
+    saveSelectionRange()
   }
 
   // Automatically set author on mount if absent
@@ -196,6 +591,12 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   }, [mode, initialData?.author, author])
 
   useEffect(() => {
+    setHasMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!hasMounted) return
+
     editorHtmlRef.current = content
 
     if (activeTab !== 'write' || !editorRef.current) return
@@ -204,7 +605,15 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     if (currentSerialized !== content) {
       editorRef.current.innerHTML = decorateEditorContent(content)
     }
-  }, [activeTab, content])
+  }, [activeTab, content, hasMounted])
+
+  useEffect(() => {
+    return () => {
+      if (validationTimeoutRef.current) {
+        clearTimeout(validationTimeoutRef.current)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     if (!titleInputRef.current) return
@@ -239,8 +648,6 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   }
 
   const handleSave = async (publish: boolean = false) => {
-    console.log('[handleSave] called, publish=', publish)
-
     let contentToSave = content
 
     if (activeTab === 'write' && editorRef.current) {
@@ -250,8 +657,6 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
         setContent(contentToSave)
       }
     }
-
-    console.log('[handleSave] title:', title, '| slug:', slug, '| content length:', contentToSave?.length)
 
     // ── Base validation ──────────────────────────────────────────────────
     if (!(title || '').trim()) {
@@ -267,12 +672,13 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
       return
     }
 
-    console.log('[handleSave] basic validation passed')
-
     // helper to show inline error and auto-clear after 5s
     const showError = (msg: string) => {
+      if (validationTimeoutRef.current) {
+        clearTimeout(validationTimeoutRef.current)
+      }
       setValidationError(msg)
-      setTimeout(() => setValidationError(null), 5000)
+      validationTimeoutRef.current = setTimeout(() => setValidationError(null), 5000)
     }
 
     // ── Publish-only validation ──────────
@@ -295,8 +701,6 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
       }
     }
 
-    console.log('[handleSave] publish validation passed, sending to API...')
-
     publish ? setPublishing(true) : setSaving(true)
 
     try {
@@ -309,14 +713,19 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
       const titleWords = (title || '').toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 3)
       const derivedMetaKeywords = (metaKeywords || '').trim() || [(category || '').toLowerCase(), ...titleWords].slice(0, 8).join(', ')
 
+      const willBePublished = publish || Boolean(initialData?.published)
+      const publishedAtValue = willBePublished
+        ? (initialData?.published_at || new Date().toISOString())
+        : null
+
       const payload = {
         slug, title, content: contentToSave, author, category,
         image_url: imageUrl || null,
         read_time: readTime,
-        published: publish,
-        published_at: publish ? (initialData?.published_at || new Date().toISOString()) : null,
+        published: willBePublished,
+        published_at: publishedAtValue,
         article_type: articleType,
-        generation_status: publish ? 'published' : generationStatus,
+        generation_status: willBePublished ? 'published' : generationStatus,
         meta_description: derivedMetaDescription || null,
         meta_keywords: derivedMetaKeywords || null,
         focus_keyword: derivedFocusKeyword || null,
@@ -327,17 +736,16 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
         listed_by: listedBy || null,
       }
 
-      const apiUrl = mode === 'create' ? '/api/articles' : `/api/articles/${slug}`
+      const apiUrl = mode === 'create'
+        ? '/api/articles'
+        : `/api/articles/${initialData?.originalSlug || initialData?.slug || slug}`
       const apiMethod = mode === 'create' ? 'POST' : 'PUT'
-      console.log('[handleSave] fetching', apiMethod, apiUrl)
 
       const response = await fetch(apiUrl, {
         method: apiMethod,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
-
-      console.log('[handleSave] response status:', response.status)
 
       if (!response.ok) {
         let message = 'Failed to save article'
@@ -351,11 +759,10 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
       }
 
       setValidationError(null)
-      toast({ title: publish ? 'Article published! 🚀' : 'Draft saved ✓' })
+      toast({ title: publish ? 'Article published! 🚀' : (initialData?.published ? 'Article saved ✓' : 'Draft saved ✓') })
       router.push('/admin/articles')
       router.refresh()
     } catch (error: any) {
-      console.error('[handleSave] error:', error)
       toast({ title: 'Save failed', description: error.message, variant: 'destructive' })
     } finally {
       setSaving(false)
@@ -366,8 +773,10 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   // --- WYSIWYG Editor Helpers (execCommand-based) ---
   const exec = (command: string, value?: string) => {
     editorRef.current?.focus()
+    restoreSelectionRange()
     document.execCommand(command, false, value)
     syncEditorContent()
+    saveSelectionRange()
   }
 
   const syncEditorContent = () => {
@@ -386,30 +795,63 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   }
 
   const handleInsertLink = () => {
+    saveSelectionRange()
     const url = window.prompt('Enter link URL:')
     if (url) exec('createLink', url)
   }
 
   const insertProductCode = (productSlug: string) => {
     if (!editorRef.current) return
-    editorRef.current.focus()
-    document.execCommand('insertHTML', false, `<p></p>${buildProductPlaceholderHtml(productSlug)}<p></p>`)
-    syncEditorContent()
+    insertBlockHtmlAtSelection(buildProductPlaceholderHtml(productSlug))
     setShowProductModal(false)
     toast({ title: 'Product Inserted', description: `Product block inserted into the workspace.` })
   }
 
   const handleInsertEmbed = () => {
     if (!embedCode.trim() || !editorRef.current) return
-    editorRef.current.focus()
-    document.execCommand('insertHTML', false, embedCode)
-    syncEditorContent()
+    const embedLabel = /twitter-tweet/i.test(embedCode)
+      ? 'Twitter Embed'
+      : /tiktok-embed/i.test(embedCode)
+        ? 'TikTok Embed'
+        : /iframe/i.test(embedCode)
+          ? 'Iframe Embed'
+          : 'Custom Embed'
+    const embedHint = /twitter\.com|x\.com/i.test(embedCode)
+      ? 'Tweet post'
+      : /tiktok/i.test(embedCode)
+        ? 'Short-form social post'
+        : /src=["']([^"']+)["']/i.exec(embedCode)?.[1] || 'Embedded content'
+
+    insertBlockHtmlAtSelection(buildEmbedPlaceholderHtml(embedCode, embedLabel, embedHint))
     setEmbedCode('')
     setShowProductModal(false)
     toast({ title: 'Embed Code Inserted' })
   }
 
   const compiledHtml = compileArticleSourceToHtml(content)
+
+  if (!hasMounted) {
+    return (
+      <div className="relative pb-24">
+        <div className="cms-editor-layout">
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <div className="h-16 rounded-xl bg-slate-100 animate-pulse" />
+              <div className="h-10 w-72 rounded-lg bg-slate-100 animate-pulse" />
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+              <div className="h-12 border-b border-slate-100 bg-slate-50" />
+              <div className="h-[720px] bg-slate-50/40 animate-pulse" />
+            </div>
+          </div>
+          <aside className="space-y-6">
+            <div className="rounded-xl border border-slate-200 bg-white shadow-sm h-64 animate-pulse" />
+            <div className="rounded-xl border border-slate-200 bg-white shadow-sm h-80 animate-pulse" />
+          </aside>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="relative pb-24">
@@ -544,6 +986,10 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                       type="button" 
                       variant="ghost" 
                       size="sm" 
+                      onMouseDown={(e) => {
+                        e.preventDefault()
+                        saveSelectionRange()
+                      }}
                       onClick={() => {
                         setModalMode('product')
                         setProductSearch('')
@@ -558,6 +1004,10 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                       type="button" 
                       variant="ghost" 
                       size="sm" 
+                      onMouseDown={(e) => {
+                        e.preventDefault()
+                        saveSelectionRange()
+                      }}
                       onClick={() => {
                         setModalMode('embed')
                         setShowProductModal(true)
@@ -577,6 +1027,10 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                   suppressContentEditableWarning
                   onInput={syncEditorContent}
                   onBlur={syncEditorContent}
+                  onKeyDown={handleEditorKeyDown}
+                  onKeyUp={saveSelectionRange}
+                  onMouseUp={saveSelectionRange}
+                  onFocus={saveSelectionRange}
                   data-placeholder="Start writing your article here..."
                   className="flex-1 w-full px-10 py-8 text-base leading-relaxed text-slate-800 outline-none overflow-y-auto
                     prose prose-slate max-w-full
