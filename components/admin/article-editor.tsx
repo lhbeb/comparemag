@@ -131,6 +131,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [publishing, setPublishing] = useState(false)
+  const [validationError, setValidationError] = useState<string | null>(null)
   
   // Use passed server-rendered data to prevent client waterfalls
   const editors = initialWriters;
@@ -238,6 +239,8 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   }
 
   const handleSave = async (publish: boolean = false) => {
+    console.log('[handleSave] called, publish=', publish)
+
     let contentToSave = content
 
     if (activeTab === 'write' && editorRef.current) {
@@ -248,7 +251,9 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
       }
     }
 
-    // ── Base validation (applies to both Save Draft & Publish) ──────────
+    console.log('[handleSave] title:', title, '| slug:', slug, '| content length:', contentToSave?.length)
+
+    // ── Base validation ──────────────────────────────────────────────────
     if (!(title || '').trim()) {
       toast({ title: 'Missing title', description: 'Add an article title before saving.', variant: 'destructive' })
       return
@@ -262,71 +267,52 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
       return
     }
 
-    // ── Publish-only strict gate ─────────────────────────────────────────
+    console.log('[handleSave] basic validation passed')
+
+    // helper to show inline error and auto-clear after 5s
+    const showError = (msg: string) => {
+      setValidationError(msg)
+      setTimeout(() => setValidationError(null), 5000)
+    }
+
+    // ── Publish-only validation ──────────
     if (publish) {
       if (!(imageUrl || '').trim()) {
-        toast({
-          title: '🖼 Featured image required',
-          description: 'Upload or paste a featured image URL in the sidebar before publishing.',
-          variant: 'destructive',
-        })
+        showError('📷 A featured image URL is required before publishing. Add one in the sidebar.')
         return
       }
       if (!(author || '').trim()) {
-        toast({
-          title: '✍️ Byline required',
-          description: 'Choose an editor/author for this article before publishing.',
-          variant: 'destructive',
-        })
-        return
-      }
-      if (!(listedBy || '').trim()) {
-        toast({
-          title: '🆔 Who listed this?',
-          description: 'Select your name in the "Listed By" field so we know who published this.',
-          variant: 'destructive',
-        })
+        showError('✍️ An author is required before publishing. Choose one in the sidebar.')
         return
       }
       if (!(category || '').trim()) {
-        toast({
-          title: '📂 Category required',
-          description: 'Choose a category before publishing.',
-          variant: 'destructive',
-        })
+        showError('📂 A category is required before publishing. Choose one in the sidebar.')
         return
       }
     }
 
+    console.log('[handleSave] publish validation passed, sending to API...')
+
     publish ? setPublishing(true) : setSaving(true)
+
     try {
-      // ── Auto-derive SEO fields from article content when left blank ──────
-      const plainText = (contentToSave || '')
-        .replace(/<[^>]+>/g, ' ')           // strip HTML tags
-        .replace(/\s+/g, ' ')               // collapse whitespace
-        .trim()
-
-      const derivedMetaDescription = (metaDescription || '').trim()
-        || plainText.substring(0, 155).trimEnd() + (plainText.length > 155 ? '…' : '')
-
+      const plainText = (contentToSave || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+      const derivedMetaDescription = (metaDescription || '').trim() || plainText.substring(0, 155).trimEnd()
       const derivedOgTitle = (ogTitle || '').trim() || (title || '').trim()
-
-      const derivedOgDescription = (ogDescription || '').trim()
-        || derivedMetaDescription
-
+      const derivedOgDescription = (ogDescription || '').trim() || derivedMetaDescription
       const derivedOgImage = (ogImage || '').trim() || (imageUrl || '').trim() || ''
-
-      // Extract sensible keywords from title and category instead of random content words
       const derivedFocusKeyword = (focusKeyword || '').trim() || (category || '').trim()
       const titleWords = (title || '').toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 3)
-      const derivedMetaKeywords = (metaKeywords || '').trim() || 
-        [(category || '').toLowerCase(), ...titleWords].slice(0, 8).join(', ')
+      const derivedMetaKeywords = (metaKeywords || '').trim() || [(category || '').toLowerCase(), ...titleWords].slice(0, 8).join(', ')
 
       const payload = {
         slug, title, content: contentToSave, author, category,
-        image_url: imageUrl || null, read_time: readTime,
-        published: publish, published_at: publish ? (initialData?.published_at || new Date().toISOString()) : null,
-        article_type: articleType, generation_status: publish ? 'published' : generationStatus,
+        image_url: imageUrl || null,
+        read_time: readTime,
+        published: publish,
+        published_at: publish ? (initialData?.published_at || new Date().toISOString()) : null,
+        article_type: articleType,
+        generation_status: publish ? 'published' : generationStatus,
         meta_description: derivedMetaDescription || null,
         meta_keywords: derivedMetaKeywords || null,
         focus_keyword: derivedFocusKeyword || null,
@@ -336,11 +322,19 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
         canonical_url: canonicalUrl || null,
         listed_by: listedBy || null,
       }
-      const response = await fetch(mode === 'create' ? '/api/articles' : `/api/articles/${initialData?.slug}`, {
-        method: mode === 'create' ? 'POST' : 'PUT',
+
+      const apiUrl = mode === 'create' ? '/api/articles' : `/api/articles/${slug}`
+      const apiMethod = mode === 'create' ? 'POST' : 'PUT'
+      console.log('[handleSave] fetching', apiMethod, apiUrl)
+
+      const response = await fetch(apiUrl, {
+        method: apiMethod,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
+
+      console.log('[handleSave] response status:', response.status)
+
       if (!response.ok) {
         let message = 'Failed to save article'
         try {
@@ -348,16 +342,21 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
           if (typeof errorBody?.message === 'string' && errorBody.message.trim()) {
             message = errorBody.message
           }
-        } catch {
-          // Ignore JSON parse failures and keep fallback message
-        }
+        } catch { /* ignore */ }
         throw new Error(message)
       }
-      toast({ title: publish ? (initialData?.published ? 'Article saved ✓' : 'Article published! 🚀') : 'Draft saved ✓' })
-      router.push('/admin/articles'); router.refresh()
+
+      setValidationError(null)
+      toast({ title: publish ? 'Article published! 🚀' : 'Draft saved ✓' })
+      router.push('/admin/articles')
+      router.refresh()
     } catch (error: any) {
+      console.error('[handleSave] error:', error)
       toast({ title: 'Save failed', description: error.message, variant: 'destructive' })
-    } finally { setSaving(false); setPublishing(false) }
+    } finally {
+      setSaving(false)
+      setPublishing(false)
+    }
   }
 
   // --- WYSIWYG Editor Helpers (execCommand-based) ---
@@ -411,6 +410,16 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   return (
     <div className="relative pb-24">
       {/* ── Fixed Bottom Action Bar ───────────────────────────────── */}
+      {/* ── Inline Validation Error Banner ──────────────────────────── */}
+      {validationError && (
+        <div className="fixed bottom-[73px] left-0 right-0 lg:left-60 z-50 px-8">
+          <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 flex items-center justify-between gap-4 shadow-lg animate-in slide-in-from-bottom-2 duration-200">
+            <span className="text-sm font-medium">{validationError}</span>
+            <button type="button" onClick={() => setValidationError(null)} className="text-red-400 hover:text-red-600 font-bold text-lg leading-none flex-shrink-0">×</button>
+          </div>
+        </div>
+      )}
+
       <div className="fixed bottom-0 right-0 left-0 lg:left-60 bg-white/80 backdrop-blur-md border-t border-slate-200 p-4 px-8 z-40 flex items-center justify-between shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
         <div className="flex items-center gap-3">
           <span className={initialData?.published ? 'status-published' : 'status-draft'}>
