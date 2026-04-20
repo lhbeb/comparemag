@@ -5,3 +5,24 @@
 [00:00:09.416] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
 [00:00:09.665] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
 [00:00:10.534] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:05:41.548] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:05:51.149] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:20:31.810] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:20:31.984] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:20:55.041] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:20:55.041] Browser WARN    Image with src "/placeholder.svg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:21:09.096] Browser INFO    %c[TikTok] 
+
+We're hiring!
+Are you ready to make a change?
+Check out some of our available positions at https://careers.tiktok.com/ color: #fe2c55
+[00:23:54.871] Server  ERROR   Error updating article: Error: Cannot coerce the result to a single JSON object
+[00:23:55.242] Server  ERROR   Error updating article: Error: Cannot coerce the result to a single JSON object
+[00:23:55.586] Server  ERROR   Error updating article: Error: Cannot coerce the result to a single JSON object
+[00:23:55.928] Server  ERROR   Error updating article: Error: Cannot coerce the result to a single JSON object
+[00:23:56.336] Server  ERROR   Error updating article: Error: Cannot coerce the result to a single JSON object
+[00:23:56.645] Server  ERROR   Error updating article: Error: Cannot coerce the result to a single JSON object
+[00:23:56.956] Server  ERROR   Error updating article: Error: Cannot coerce the result to a single JSON object
+[00:23:57.272] Server  ERROR   Error updating article: Error: Cannot coerce the result to a single JSON object
+[00:23:57.567] Server  ERROR   Error updating article: Error: Cannot coerce the result to a single JSON object
+[00:23:57.935] Server  ERROR   Error updating article: Error: Cannot coerce the result to a single JSON object
