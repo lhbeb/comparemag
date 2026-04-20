@@ -72,6 +72,17 @@ const categories = [
   'News', 'Deals'
 ]
 
+const internalTrackingStaff = [
+  'walid',
+  'yassine',
+  'jebbar',
+  'janah',
+  'amine',
+  'abdo',
+  'mehdi',
+  'othmane',
+]
+
 interface Editor {
   id: string; slug: string; name: string; avatar_url: string | null; specialty: string | null;
 }
@@ -158,9 +169,15 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   // Use passed server-rendered data to prevent client waterfalls
   const editors = initialWriters;
   const products = initialProducts;
-  const editorNames = useMemo(
-    () => Array.from(new Set(editors.map((editor: any) => editor.name).filter(Boolean))).sort((a, b) => a.localeCompare(b)),
-    [editors],
+  const listedByOptions = useMemo(
+    () =>
+      Array.from(
+        new Set([
+          ...internalTrackingStaff,
+          ...(listedBy ? [listedBy] : []),
+        ]),
+      ),
+    [listedBy],
   )
   
   const [showProductModal, setShowProductModal] = useState(false)
@@ -1249,15 +1266,11 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                     <SelectValue placeholder="Listed By..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {editorNames.length > 0 ? (
-                      editorNames.map((name) => (
-                        <SelectItem key={name} value={name}>
-                          {name}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <SelectItem value="unassigned">Unassigned</SelectItem>
-                    )}
+                    {listedByOptions.map((name) => (
+                      <SelectItem key={name} value={name}>
+                        {name.charAt(0).toUpperCase() + name.slice(1)}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <p className="text-[10px] text-slate-400">Used for staff payout and tracking metrics. Does not appear on live site.</p>
