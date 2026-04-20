@@ -1,1 +1,11 @@
-{"version":4,"routes":{"/topics/smartphones":{},"/topics/laptops":{},"/topics/audio":{},"/topics/home-appliances":{},"/topics/gaming":{},"/topics/cameras":{},"/topics/trending":{},"/topics/tech":{},"/topics/innovation":{},"/topics/business":{},"/topics/security":{},"/topics/advice":{},"/blog/google-pixel-9-pro-six-weeks-camera-honest-verdict":{},"/blog/i-bought-five-robot-vacuums-under-300-heres-which-one-won":{},"/blog/i-used-nintendo-switch-2-every-day-for-a-month-5-things-love-2-hate":{},"/blog/the-internets-favorite-pocket-camera-for-a-reason-canon-powershot-g7-x-mark-iii-201mp-4k":{},"/blog/i-owned-lg-oled-c4-for-one-year-honest-update":{},"/blog/i-tested-every-android-phone-this-year-heres-the-one-i-kept":{},"/blog/i-used-macbook-air-m3-for-six-months-before-writing-this":{},"/blog/i-switched-from-airpods-pro-to-sony-xm6-and-switched-back":{},"/blog/canon-g7x-the-compact-camera-that-outlived-its-era":{},"/blog/zrtgzaetgaertg":{},"/blog/hello-my-name-is-zebi":{},"/blog/i-replaced-my-nest-cameras-with-35-dollar-cameras-and-heres-what-happened":{},"/blog/thzgegfgbzef-zvb-nzevbfbvze-ze":{}},"dynamicRoutes":{"/topics/[slug]":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/topics/[slug]","routeRegex":"^\\/topics\\/([^/]+?)(?:\\/)?$","allowHeader":[]},"/blog/[slug]":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/blog/[slug]","routeRegex":"^\\/blog\\/([^/]+?)(?:\\/)?$","allowHeader":[]}},"notFoundRoutes":[],"preview":{"previewModeId":"ef7a247917b686e4ae2595350876d0ea","previewModeSigningKey":"64ecff8bbe7c56aa3cdadcf355647e967ef9fdee8dadb444d9a79a5ea47faa92","previewModeEncryptionKey":"89c70410b9f81d54be3cf9d6b00ad8e9e6f4f2093031e2a8261830b7a32f01ca"}}
+{
+  "version": 4,
+  "routes": {},
+  "dynamicRoutes": {},
+  "notFoundRoutes": [],
+  "preview": {
+    "previewModeId": "6a57df4a379a436af0e42c2eefab51f4",
+    "previewModeSigningKey": "936fbf6ac3f31802418be2feb2c38c1a88c8dd127d9e02271632a92540ab0290",
+    "previewModeEncryptionKey": "34e780905bd704cc82874357e692bad111798b9e4c3f5b7d818b75c760a6beb0"
+  }
+}

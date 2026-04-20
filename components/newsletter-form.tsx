@@ -2,7 +2,6 @@
 
 import React, { useState, FormEvent } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
 
 export function NewsletterForm() {
@@ -36,18 +35,19 @@ export function NewsletterForm() {
   }
 
   return (
-    <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
-      <Input
+    <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 w-full">
+      <input
         type="email"
         placeholder="your@email.com"
-        className="h-12 sm:h-14 text-base px-6 bg-white/10 border-white/30 text-white placeholder:text-blue-200 focus-visible:bg-white/20 focus-visible:ring-white/30 flex-1 rounded-full"
+        style={{ height: '3rem' }}
+        className="h-12 sm:h-14 min-h-[48px] sm:min-h-[56px] text-base px-6 bg-white/10 border border-white/30 text-white placeholder:text-blue-200 focus:outline-none focus:bg-white/20 focus:border-white/50 flex-1 rounded-full w-full box-border"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
       />
       <Button
         type="submit"
-        className="h-12 sm:h-14 text-base px-8 bg-orange-600 hover:bg-orange-700 whitespace-nowrap text-white w-full sm:w-auto font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 rounded-full transition-all"
+        className="h-12 sm:h-14 min-h-[48px] text-base px-8 bg-orange-600 hover:bg-orange-700 whitespace-nowrap text-white w-full sm:w-auto font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 rounded-full transition-all"
         disabled={isSubmitting}
       >
         {isSubmitting ? "Subscribing..." : "Subscribe Free"}

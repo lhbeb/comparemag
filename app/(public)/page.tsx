@@ -131,8 +131,8 @@ export default async function Home() {
                 see all experts →
               </Link>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {editors.map((editor) => (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {editors.slice(0, 4).map((editor) => (
                 <div key={editor.id} className="expert-card">
                   <div className="expert-card-photo">
                     {editor.avatar_url ? (

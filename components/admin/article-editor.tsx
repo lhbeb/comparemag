@@ -289,6 +289,10 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
         showError('📂 A category is required before publishing. Choose one in the sidebar.')
         return
       }
+      if (!(listedBy || '').trim()) {
+        showError('🧾 "Listed By" is required before publishing. Select a staff member in the Internal Tracking section of the sidebar.')
+        return
+      }
     }
 
     console.log('[handleSave] publish validation passed, sending to API...')

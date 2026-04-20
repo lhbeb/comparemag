@@ -447,11 +447,11 @@ header.site-header {
   border-color: hsl(221 78% 60% / 0.4);
 }
 
-/* The big photo area at the top */
+/* The big photo area at the top — 3:4 portrait aspect ratio */
 .expert-card-photo {
   position: relative;
   width: 100%;
-  height: 200px;
+  aspect-ratio: 3 / 4;
   overflow: hidden;
   flex-shrink: 0;
 }
