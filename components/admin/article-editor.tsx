@@ -158,6 +158,10 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   // Use passed server-rendered data to prevent client waterfalls
   const editors = initialWriters;
   const products = initialProducts;
+  const editorNames = useMemo(
+    () => Array.from(new Set(editors.map((editor: any) => editor.name).filter(Boolean))).sort((a, b) => a.localeCompare(b)),
+    [editors],
+  )
   
   const [showProductModal, setShowProductModal] = useState(false)
   const [modalMode, setModalMode] = useState<'product' | 'embed'>('product')
@@ -1245,14 +1249,15 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                     <SelectValue placeholder="Listed By..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="walid">Walid</SelectItem>
-                    <SelectItem value="yassine">Yassine</SelectItem>
-                    <SelectItem value="jebbar">Jebbar</SelectItem>
-                    <SelectItem value="janah">Janah</SelectItem>
-                    <SelectItem value="amine">Amine</SelectItem>
-                    <SelectItem value="abdo">Abdo</SelectItem>
-                    <SelectItem value="mehdi">Mehdi</SelectItem>
-                    <SelectItem value="othmane">Othmane</SelectItem>
+                    {editorNames.length > 0 ? (
+                      editorNames.map((name) => (
+                        <SelectItem key={name} value={name}>
+                          {name}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="unassigned">Unassigned</SelectItem>
+                    )}
                   </SelectContent>
                 </Select>
                 <p className="text-[10px] text-slate-400">Used for staff payout and tracking metrics. Does not appear on live site.</p>

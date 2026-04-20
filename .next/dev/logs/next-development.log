@@ -81,3 +81,4 @@ Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
 [00:20:44.155] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
 [00:20:44.155] Browser WARN    Image with src "/placeholder.svg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:32:19.765] Server  LOG      ✓ Compiled in 334ms

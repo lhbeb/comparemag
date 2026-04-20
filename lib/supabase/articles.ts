@@ -1,4 +1,5 @@
 import 'server-only'
+// Trigger Vercel Build
 import { createClient } from './server'
 import type { Article, ArticleInsert, ArticleUpdate } from './types'
 
