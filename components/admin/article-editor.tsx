@@ -176,6 +176,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const [embedCode, setEmbedCode] = useState('')
   const [activeTab, setActiveTab] = useState<'write' | 'seo' | 'preview' | 'html'>('write')
   const [hasMounted, setHasMounted] = useState(false)
+  const [htmlOutput, setHtmlOutput] = useState(() => compileArticleSourceToHtml(initialData?.content || ''))
   const [productSearch, setProductSearch] = useState('')
   const [productDomainFilter, setProductDomainFilter] = useState<string | null>(null)
   const [loadedProductImages, setLoadedProductImages] = useState<Record<string, boolean>>({})
@@ -668,7 +669,13 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const handleSave = async (publish: boolean = false) => {
     let contentToSave = content
 
-    if (activeTab === 'write' && editorRef.current) {
+    if (activeTab === 'html') {
+      contentToSave = htmlOutput
+      editorHtmlRef.current = contentToSave
+      if (contentToSave !== content) {
+        setContent(contentToSave)
+      }
+    } else if (activeTab === 'write' && editorRef.current) {
       contentToSave = serializeEditorContent(editorRef.current.innerHTML)
       editorHtmlRef.current = contentToSave
       if (contentToSave !== content) {
@@ -846,7 +853,13 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     toast({ title: 'Embed Code Inserted' })
   }
 
-  const compiledHtml = compileArticleSourceToHtml(content)
+  const compiledHtml = useMemo(() => compileArticleSourceToHtml(content), [content])
+
+  useEffect(() => {
+    if (activeTab !== 'html') {
+      setHtmlOutput(compiledHtml)
+    }
+  }, [compiledHtml, activeTab])
 
   if (!hasMounted) {
     return (
@@ -1180,8 +1193,22 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
 
             {/* TAB: HTML OUTPUT */}
             <TabsContent value="html" forceMount className="mt-0 outline-none data-[state=inactive]:hidden">
-              <div className="bg-slate-900 rounded-xl shadow-inner p-6 min-h-[700px] font-mono text-sm text-green-400 overflow-x-auto whitespace-pre-wrap">
-                {compiledHtml || '<!-- No content yet -->'}
+              <div className="space-y-4">
+                <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                  Advanced mode. HTML here stays synced with the write workspace. Changes made in either tab update the same article content.
+                </div>
+                <Textarea
+                  value={htmlOutput}
+                  onChange={(e) => {
+                    const nextHtml = e.target.value
+                    setHtmlOutput(nextHtml)
+                    setContent(nextHtml)
+                    editorHtmlRef.current = nextHtml
+                  }}
+                  placeholder="<!-- Generated HTML will appear here -->"
+                  spellCheck={false}
+                  className="min-h-[700px] resize-none rounded-xl border-slate-800 bg-slate-950 p-6 font-mono text-sm leading-relaxed text-emerald-300"
+                />
               </div>
             </TabsContent>
           </Tabs>

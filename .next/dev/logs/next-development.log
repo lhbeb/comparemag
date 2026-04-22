@@ -247,3 +247,6 @@ Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
 [01:12:41.533] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776318148991-170hn.jpg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[01:17:53.506] Server  LOG      ✓ Compiled in 243ms
+[01:18:04.893] Server  LOG      ✓ Compiled in 176ms
+[01:24:24.225] Server  LOG      ✓ Compiled in 255ms
