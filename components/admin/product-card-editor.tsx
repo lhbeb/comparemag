@@ -84,6 +84,19 @@ const BADGE_LABEL_OPTIONS = [
   'Essential Pick',
 ] as const
 
+const CTA_LABEL_OPTIONS = [
+  'Check Price',
+  'View Deal',
+  'Shop Now',
+  'See Price',
+  'Get Deal',
+  'View Offer',
+  'Buy Now',
+  'See Details',
+  'Compare Price',
+  'See Today’s Price',
+] as const
+
 function normalizeExternalUrl(raw: string) {
   const trimmed = raw.trim()
   if (!trimmed) {
@@ -388,7 +401,7 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
                 onChange={(e) => handleTitleChange(e.target.value)}
                 onBlur={(e) => setFieldError('title', validateField('title', e.target.value) || undefined)}
                 placeholder="Enter the full product name"
-                className={fieldClassName('title', 'h-11 rounded-xl border-slate-200 bg-white px-4 text-lg font-bold text-slate-900 placeholder:text-slate-300')}
+                className={fieldClassName('title', 'h-10 rounded-xl border-slate-200 bg-white px-4 text-base font-semibold text-slate-900 placeholder:text-slate-300')}
                 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
               />
             </div>
@@ -489,16 +502,24 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
 
                 <div className="space-y-1.5">
                   <Label className="text-[10px] text-slate-400 uppercase">Button Label</Label>
-                  <Input
+                  <Select
                     value={ctaLabel}
-                    onChange={(e) => {
-                      setCtaLabel(e.target.value)
-                      if (errors.ctaLabel) setFieldError('ctaLabel', validateField('ctaLabel', e.target.value) || undefined)
+                    onValueChange={(value) => {
+                      setCtaLabel(value)
+                      if (errors.ctaLabel) setFieldError('ctaLabel', validateField('ctaLabel', value) || undefined)
                     }}
-                    onBlur={(e) => setFieldError('ctaLabel', validateField('ctaLabel', e.target.value) || undefined)}
-                    placeholder="Check Price"
-                    className={fieldClassName('ctaLabel', 'bg-slate-50 border-slate-200 font-semibold')}
-                  />
+                  >
+                    <SelectTrigger className={fieldClassName('ctaLabel', 'bg-slate-50 border-slate-200 font-semibold')}>
+                      <SelectValue placeholder="Select button label" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CTA_LABEL_OPTIONS.map((label) => (
+                        <SelectItem key={label} value={label}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   {errors.ctaLabel ? <p className="text-xs text-red-600">{errors.ctaLabel}</p> : null}
                 </div>
 

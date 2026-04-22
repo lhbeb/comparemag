@@ -86,7 +86,11 @@ export default function ProductsPage() {
   )
 
   const availableDomains = Array.from(
-    new Set(products.map((product) => getAffiliateDomain(product.external_url)).filter(Boolean))
+    new Set(
+      products
+        .map((product) => getAffiliateDomain(product.external_url))
+        .filter((domain): domain is string => Boolean(domain))
+    )
   ).sort()
 
   return (
