@@ -1,8 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Edit2, Trash2, ShoppingBag, Eye, EyeOff, Image as ImageIcon, User2 } from 'lucide-react'
+import { Edit2, Trash2, ShoppingBag, Eye, EyeOff, Image as ImageIcon, UserCog } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
 import { SupabaseImage } from '@/components/supabase-image'
 
@@ -21,9 +22,18 @@ interface ProductCard {
 interface ProductTabsProps {
   products: ProductCard[]
   onDelete: (slug: string) => void
+  onBulkDelete: (slugs: string[]) => void
 }
 
-export function ProductTabs({ products, onDelete }: ProductTabsProps) {
+function formatInternalOwner(value: string) {
+  return value
+    .split(/[\s_-]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
+}
+
+export function ProductTabs({ products, onDelete, onBulkDelete }: ProductTabsProps) {
   const published = products.filter(p => p.published)
   const drafts = products.filter(p => !p.published)
 
@@ -44,13 +54,13 @@ export function ProductTabs({ products, onDelete }: ProductTabsProps) {
       </div>
 
       <TabsContent value="all" className="mt-0">
-        <ProductList products={products} onDelete={onDelete} />
+        <ProductList products={products} onDelete={onDelete} onBulkDelete={onBulkDelete} />
       </TabsContent>
       <TabsContent value="published" className="mt-0">
-        <ProductList products={published} onDelete={onDelete} />
+        <ProductList products={published} onDelete={onDelete} onBulkDelete={onBulkDelete} />
       </TabsContent>
       <TabsContent value="drafts" className="mt-0">
-        <ProductList products={drafts} onDelete={onDelete} />
+        <ProductList products={drafts} onDelete={onDelete} onBulkDelete={onBulkDelete} />
       </TabsContent>
     </Tabs>
   )
@@ -67,7 +77,9 @@ function getAffiliateDomain(url: string | null | undefined) {
   }
 }
 
-function ProductList({ products, onDelete }: { products: ProductCard[], onDelete: (slug: string) => void }) {
+function ProductList({ products, onDelete, onBulkDelete }: { products: ProductCard[], onDelete: (slug: string) => void, onBulkDelete: (slugs: string[]) => void }) {
+  const [selectedSlugs, setSelectedSlugs] = useState<string[]>([])
+
   if (products.length === 0) {
     return (
       <div className="text-center py-20 rounded-2xl flex flex-col items-center gap-4 bg-white border border-dashed border-slate-200">
@@ -82,13 +94,50 @@ function ProductList({ products, onDelete }: { products: ProductCard[], onDelete
     )
   }
 
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedSlugs(products.map(p => p.slug))
+    } else {
+      setSelectedSlugs([])
+    }
+  }
+
+  const handleSelectOne = (slug: string, checked: boolean) => {
+    if (checked) {
+      setSelectedSlugs(prev => [...prev, slug])
+    } else {
+      setSelectedSlugs(prev => prev.filter(s => s !== slug))
+    }
+  }
+
+  const handleBulk = () => {
+    onBulkDelete(selectedSlugs)
+    setSelectedSlugs([])
+  }
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      {selectedSlugs.length > 0 && (
+        <div className="bg-blue-50/50 flex items-center justify-between px-6 py-3 border-b border-slate-200 text-sm">
+          <span className="font-medium text-blue-700">{selectedSlugs.length} product(s) selected</span>
+          <Button onClick={handleBulk} variant="destructive" size="sm" className="h-8 text-xs gap-1.5">
+            <Trash2 className="h-3.5 w-3.5" /> Delete Selected
+          </Button>
+        </div>
+      )}
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left">
           <thead className="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-100">
             <tr>
-              <th className="px-6 py-4 font-semibold">Product info</th>
+              <th className="px-6 py-4 w-10 text-center">
+                <input 
+                  type="checkbox" 
+                  className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600"
+                  checked={products.length > 0 && selectedSlugs.length === products.length}
+                  onChange={(e) => handleSelectAll(e.target.checked)}
+                />
+              </th>
+              <th className="py-4 font-semibold">Product info</th>
               <th className="px-6 py-4 font-semibold text-center">Status</th>
               <th className="px-6 py-4 font-semibold text-right">Actions</th>
             </tr>
@@ -96,7 +145,15 @@ function ProductList({ products, onDelete }: { products: ProductCard[], onDelete
           <tbody className="divide-y divide-slate-100">
             {products.map((product) => (
               <tr key={product.id} className="hover:bg-slate-50 transition-colors group">
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 text-center">
+                  <input 
+                    type="checkbox" 
+                    className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600"
+                    checked={selectedSlugs.includes(product.slug)}
+                    onChange={(e) => handleSelectOne(product.slug, e.target.checked)}
+                  />
+                </td>
+                <td className="py-4 pr-6">
                   {(() => {
                     const affiliateDomain = getAffiliateDomain(product.external_url)
 
@@ -126,10 +183,10 @@ function ProductList({ products, onDelete }: { products: ProductCard[], onDelete
                           </span>
                         ) : null}
                         {product.listed_by && (
-                          <span className="inline-flex items-center gap-1 rounded-full border border-purple-100 bg-purple-50 px-2 py-0.5 font-medium text-purple-700">
-                            <User2 className="h-2.5 w-2.5" />
-                            {product.listed_by}
-                          </span>
+                          <div className="inline-flex items-center gap-1.5 ml-1">
+                            <UserCog className="h-3.5 w-3.5 text-slate-400" aria-hidden="true" />
+                            <span>{formatInternalOwner(product.listed_by)}</span>
+                          </div>
                         )}
                       </div>
                       <div className="mt-2">

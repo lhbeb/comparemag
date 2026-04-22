@@ -64,6 +64,26 @@ export default function ProductsPage() {
     }
   }
 
+  const handleBulkDelete = async (slugs: string[]) => {
+    if (!confirm(`Are you sure you want to delete ${slugs.length} product(s)?`)) return
+
+    let deletedCount = 0
+    try {
+      await Promise.all(
+        slugs.map(async (slug) => {
+          const res = await fetch(`/api/products/${slug}`, { method: 'DELETE' })
+          if (res.ok) deletedCount++
+        })
+      )
+      toast({ title: 'Products deleted', description: `${deletedCount} product card(s) have been removed.` })
+      setProducts(prev => prev.filter(p => !slugs.includes(p.slug)))
+    } catch (e) {
+      toast({ title: 'Error', description: 'Could not delete all products.', variant: 'destructive' })
+      setProducts(prev => prev.filter(p => !slugs.includes(p.slug))) // Refresh optimistic if needed, or simply re-fetch
+      fetchProducts()
+    }
+  }
+
   const handleDelete = async (slug: string) => {
     if (!confirm('Are you sure you want to delete this product card?')) return
     
@@ -172,7 +192,7 @@ export default function ProductsPage() {
            Loading products...
         </div>
       ) : (
-        <ProductTabs products={filteredProducts} onDelete={handleDelete} />
+        <ProductTabs products={filteredProducts} onDelete={handleDelete} onBulkDelete={handleBulkDelete} />
       )}
     </div>
   )
