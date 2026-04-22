@@ -90,6 +90,8 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const isProductEditorPage =
+    pathname === '/admin/products/new' || pathname.startsWith('/admin/products/edit/')
   const currentArticleSlug = pathname.startsWith('/admin/articles/edit/')
     ? pathname.split('/').pop()
     : null
@@ -324,8 +326,8 @@ export default function AdminLayout({
         </div>
 
         {/* Page content — centered with max-width */}
-        <main className="flex-1 px-8 py-8">
-          <div className="mx-auto w-full" style={{ maxWidth: 960 }}>
+        <main className={isProductEditorPage ? 'flex-1 px-4 py-4 lg:px-5 lg:py-4' : 'flex-1 px-8 py-8'}>
+          <div className="mx-auto w-full" style={{ maxWidth: isProductEditorPage ? 1240 : 960 }}>
             {children}
           </div>
         </main>

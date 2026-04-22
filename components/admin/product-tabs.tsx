@@ -2,16 +2,17 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Edit2, Trash2, ShoppingBag, Eye, EyeOff } from 'lucide-react'
-import { format } from 'date-fns'
+import { Edit2, Trash2, ShoppingBag, Eye, EyeOff, Image as ImageIcon } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
-import { toast } from '@/hooks/use-toast'
+import { SupabaseImage } from '@/components/supabase-image'
 
 interface ProductCard {
   id: string
   slug: string
   title: string
   brand: string | null
+  image_url: string | null
+  external_url: string
   published: boolean
   created_at: string
 }
@@ -54,6 +55,17 @@ export function ProductTabs({ products, onDelete }: ProductTabsProps) {
   )
 }
 
+function getAffiliateDomain(url: string | null | undefined) {
+  if (!url) return null
+
+  try {
+    const hostname = new URL(url).hostname.toLowerCase().replace(/^www\./, '')
+    return hostname
+  } catch {
+    return null
+  }
+}
+
 function ProductList({ products, onDelete }: { products: ProductCard[], onDelete: (slug: string) => void }) {
   if (products.length === 0) {
     return (
@@ -84,15 +96,44 @@ function ProductList({ products, onDelete }: { products: ProductCard[], onDelete
             {products.map((product) => (
               <tr key={product.id} className="hover:bg-slate-50 transition-colors group">
                 <td className="px-6 py-4">
-                  <div className="flex flex-col">
-                    <span className="font-bold text-slate-900 text-base">{product.title}</span>
-                    <span className="text-slate-500 text-xs mt-1 font-medium">{product.brand || 'No brand'}</span>
-                    <div className="mt-2">
-                       <code className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] font-mono border border-blue-100">
-                        [product-card:{product.slug}]
-                      </code>
+                  {(() => {
+                    const affiliateDomain = getAffiliateDomain(product.external_url)
+
+                    return (
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="relative w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 shadow-sm">
+                      {product.image_url ? (
+                        <SupabaseImage
+                          src={product.image_url}
+                          alt={product.title}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <ImageIcon className="h-5 w-5 text-slate-300" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <span className="font-bold text-slate-900 text-base line-clamp-2">{product.title}</span>
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
+                        <span className="font-medium text-slate-500">{product.brand || 'No brand'}</span>
+                        {affiliateDomain ? (
+                          <span className="inline-flex items-center rounded-full border border-orange-100 bg-orange-50 px-2 py-0.5 font-medium text-orange-700">
+                            {affiliateDomain}
+                          </span>
+                        ) : null}
+                      </div>
+                      <div className="mt-2">
+                         <code className="inline-block max-w-full truncate rounded border !border-slate-200 !bg-slate-50 px-2 py-0.5 font-mono text-[10px] !text-slate-500">
+                          [product-card:{product.slug}]
+                        </code>
+                      </div>
                     </div>
                   </div>
+                    )
+                  })()}
                 </td>
                 <td className="px-6 py-4 text-center">
                   {product.published ? (

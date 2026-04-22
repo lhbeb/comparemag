@@ -5,10 +5,12 @@ import type { ProductCard, ProductCardInsert, ProductCardUpdate } from './types'
 export async function getAllProductsOverview(publishedOnly: boolean = false) {
   try {
     const supabase = await createClient()
+    const overviewSelect =
+      'id, slug, title, brand, image_url, external_url, price_text, rating_text, published, created_at, updated_at'
     
     let query = supabase
       .from('product_cards')
-      .select('id, slug, title, brand, price_text, rating_text, published, created_at, updated_at')
+      .select(overviewSelect)
       .order('created_at', { ascending: false })
 
     if (publishedOnly) {
@@ -32,7 +34,7 @@ export async function getAllProductsOverview(publishedOnly: boolean = false) {
       )
       let query = directClient
         .from('product_cards')
-        .select('id, slug, title, brand, price_text, rating_text, published, created_at, updated_at')
+        .select(overviewSelect)
         .order('created_at', { ascending: false })
 
       if (publishedOnly) query = query.eq('published', true)

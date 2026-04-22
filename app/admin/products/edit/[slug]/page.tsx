@@ -15,10 +15,6 @@ export default async function EditProductPage({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-        <ProductCardEditor initialData={productData} mode="edit" />
-      </div>
-    </div>
+    <ProductCardEditor initialData={productData} mode="edit" />
   )
 }

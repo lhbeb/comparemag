@@ -5,8 +5,15 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { 
-  Upload, X, Save, Send, ShoppingBag, 
+  Upload, Save, Send, ShoppingBag, 
   Tag, ExternalLink, Star, Image as ImageIcon, 
   Settings, Info, Code, RefreshCw
 } from 'lucide-react'
@@ -31,6 +38,51 @@ interface ProductCardEditorProps {
   }
   mode: 'create' | 'edit'
 }
+
+type ProductField =
+  | 'brand'
+  | 'title'
+  | 'slug'
+  | 'shortDesc'
+  | 'itemCondition'
+  | 'priceText'
+  | 'ratingText'
+  | 'externalUrl'
+  | 'ctaLabel'
+  | 'badgeText'
+  | 'imageUrl'
+  | 'specs'
+
+const ITEM_CONDITION_OPTIONS = [
+  'Brand New',
+  'New',
+  'Mint',
+  'Open Box',
+  'Gently Used',
+  'Fair',
+] as const
+
+const BADGE_LABEL_OPTIONS = [
+  'Top Pick',
+  'Premium Choice',
+  'Preferred Choice',
+  'Elite Choice',
+  'Select Choice',
+  'Best Value',
+  'Smart Choice',
+  'Our Pick',
+  'Good Choice',
+  'Recommended',
+  'Prime Select',
+  'Choice Select',
+  'Top Select',
+  'Choice Plus',
+  'Editor’s Pick',
+  'Value Choice',
+  'Budget Pick',
+  'Everyday Choice',
+  'Essential Pick',
+] as const
 
 function normalizeExternalUrl(raw: string) {
   const trimmed = raw.trim()
@@ -89,12 +141,100 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
   const [saving, setSaving] = useState(false)
   const [publishing, setPublishing] = useState(false)
   const [fetchingMetadataImage, setFetchingMetadataImage] = useState(false)
+  const [errors, setErrors] = useState<Partial<Record<ProductField, string>>>({})
 
   const generateSlug = (text: string) => text.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '')
+
+  const fieldClassName = (field: ProductField, baseClassName: string) =>
+    `${baseClassName} ${errors[field] ? 'border-red-300 bg-red-50/60 focus-visible:ring-red-200' : ''}`
+
+  const setFieldError = (field: ProductField, message?: string) => {
+    setErrors((current) => {
+      if (!message) {
+        const next = { ...current }
+        delete next[field]
+        return next
+      }
+      return { ...current, [field]: message }
+    })
+  }
+
+  const validateField = (field: ProductField, value?: string) => {
+    const normalizedValue = (value ?? '').trim()
+
+    switch (field) {
+      case 'brand':
+        return normalizedValue ? '' : 'Brand is required.'
+      case 'title':
+        return normalizedValue ? '' : 'Product title is required.'
+      case 'slug':
+        return normalizedValue ? '' : 'Slug is required.'
+      case 'shortDesc':
+        return normalizedValue ? '' : 'Short note is required.'
+      case 'itemCondition':
+        return normalizedValue ? '' : 'Item condition is required.'
+      case 'priceText':
+        return normalizedValue ? '' : 'Price label is required.'
+      case 'ratingText':
+        return normalizedValue ? '' : 'Rating is required.'
+      case 'externalUrl':
+        if (!normalizedValue) return 'Affiliate link URL is required.'
+        try {
+          normalizeExternalUrl(normalizedValue)
+          return ''
+        } catch (error: any) {
+          return error.message || 'Please enter a valid product URL.'
+        }
+      case 'ctaLabel':
+        return normalizedValue ? '' : 'Button label is required.'
+      case 'badgeText':
+        return normalizedValue ? '' : 'Badge label is required.'
+      case 'imageUrl':
+        return normalizedValue ? '' : 'Product image is required.'
+      case 'specs':
+        if (!normalizedValue) return ''
+        try {
+          JSON.parse(normalizedValue)
+          return ''
+        } catch {
+          return 'Specifications must be valid JSON.'
+        }
+    }
+  }
+
+  const validateForm = () => {
+    const nextErrors: Partial<Record<ProductField, string>> = {}
+    const fieldValues: Array<[ProductField, string]> = [
+      ['brand', brand],
+      ['title', title],
+      ['slug', slug],
+      ['shortDesc', shortDesc],
+      ['itemCondition', itemCondition],
+      ['priceText', priceText],
+      ['ratingText', ratingText],
+      ['externalUrl', externalUrl],
+      ['ctaLabel', ctaLabel],
+      ['badgeText', badgeText],
+      ['imageUrl', imageUrl],
+      ['specs', specs],
+    ]
+
+    for (const [field, value] of fieldValues) {
+      const message = validateField(field, value)
+      if (message) nextErrors[field] = message
+    }
+
+    setErrors(nextErrors)
+    return Object.keys(nextErrors).length === 0
+  }
 
   const handleTitleChange = (value: string) => {
     setTitle(value)
     if (mode === 'create' && !initialData?.slug) setSlug(generateSlug(value))
+    if (errors.title) setFieldError('title', validateField('title', value) || undefined)
+    if (mode === 'create' && !initialData?.slug && errors.slug) {
+      setFieldError('slug', validateField('slug', generateSlug(value)) || undefined)
+    }
   }
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,6 +247,7 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
       if (uploadError) throw uploadError
       const { data } = supabase.storage.from('article_images').getPublicUrl(`products/${fileName}`)
       setImageUrl(data.publicUrl)
+      setFieldError('imageUrl')
       toast({ title: 'Image uploaded' })
     } catch (error: any) {
       toast({ title: 'Upload failed', description: error.message, variant: 'destructive' })
@@ -114,8 +255,8 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
   }
 
   const handleSave = async (publish: boolean = false) => {
-    if (!title || !slug || !shortDesc || !externalUrl) {
-      toast({ title: 'Missing fields', description: 'Title, Slug, Description, and Link are required.', variant: 'destructive' })
+    if (!validateForm()) {
+      toast({ title: 'Missing required fields', description: 'Please fix the highlighted fields before saving.', variant: 'destructive' })
       return
     }
 
@@ -123,6 +264,7 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
     try {
       normalizedExternalUrl = normalizeExternalUrl(externalUrl)
     } catch (error: any) {
+      setFieldError('externalUrl', error.message || 'Please enter a valid product URL.')
       toast({ title: 'Invalid product link', description: error.message, variant: 'destructive' })
       return
     }
@@ -130,7 +272,10 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
     let parsedSpecs: any = null
     if (specs) {
       try { parsedSpecs = JSON.parse(specs) } 
-      catch (err) { toast({ title: 'Invalid specs JSON', variant: 'destructive' }); return }
+      catch (err) {
+        setFieldError('specs', 'Specifications must be valid JSON.')
+        toast({ title: 'Invalid specs JSON', variant: 'destructive' }); return
+      }
     } else {
       parsedSpecs = {}
     }
@@ -198,6 +343,7 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
       }
 
       setImageUrl(payload.image_url)
+      setFieldError('imageUrl')
       toast({
         title: 'Preview image imported',
         description: 'The product card image was pulled from the product page metadata.',
@@ -214,95 +360,210 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
   }
 
   return (
-    <div className="cms-editor-layout">
-      {/* ── Main content (Left) ─────────────────────────────────── */}
-      <div className="space-y-6">
-        {/* Brand & Title */}
-        <div className="space-y-2">
-            <div className="flex items-center gap-2 px-1">
-                <Tag className="w-4 h-4 text-slate-400" />
-                <input 
-                    value={brand} 
-                    onChange={(e) => setBrand(e.target.value)} 
-                    placeholder="Brand Name (e.g. Sony)..." 
-                    className="text-xs font-bold text-slate-400 uppercase tracking-widest bg-transparent border-none p-0 focus:ring-0"
+    <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_290px]">
+      <div className="space-y-3">
+        <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+          <div className="mb-3 space-y-1.5">
+            <div className="space-y-1.5">
+              <Label className="text-[10px] text-slate-400 uppercase tracking-[0.2em]">Brand Name</Label>
+              <div className="relative">
+                <Tag className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Input
+                  value={brand}
+                  onChange={(e) => {
+                    setBrand(e.target.value)
+                    if (errors.brand) setFieldError('brand', validateField('brand', e.target.value) || undefined)
+                  }}
+                  onBlur={(e) => setFieldError('brand', validateField('brand', e.target.value) || undefined)}
+                  placeholder="e.g. Sony"
+                  className={fieldClassName('brand', 'h-9 rounded-xl border-slate-200 bg-slate-50 pl-10 text-sm font-semibold text-slate-700')}
                 />
+              </div>
             </div>
-            <Input
+            {errors.brand ? <p className="text-xs text-red-600">{errors.brand}</p> : null}
+            <div className="space-y-1.5">
+              <Label className="text-[10px] text-slate-400 uppercase tracking-[0.2em]">Product Display Name</Label>
+              <Input
                 value={title}
                 onChange={(e) => handleTitleChange(e.target.value)}
-                placeholder="Product Display Name..."
-                className="text-3xl font-bold h-auto py-2 border-none bg-transparent hover:bg-slate-50 focus:bg-white transition-all shadow-none placeholder:text-slate-300"
+                onBlur={(e) => setFieldError('title', validateField('title', e.target.value) || undefined)}
+                placeholder="Enter the full product name"
+                className={fieldClassName('title', 'h-11 rounded-xl border-slate-200 bg-white px-4 text-lg font-bold text-slate-900 placeholder:text-slate-300')}
                 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-            />
-            <div className="flex items-center gap-1.5 px-1">
-                <Code className="w-3.5 h-3.5 text-slate-400" />
-                <span className="text-xs text-slate-400 font-medium">Internal ID (Slug):</span>
-                <input 
-                    value={slug}
-                    onChange={(e) => setSlug(e.target.value)}
-                    className="text-xs font-mono text-blue-600 bg-transparent border-none p-0 focus:ring-0 flex-1"
-                />
+              />
             </div>
-        </div>
-
-        {/* Short Description Card */}
-        <div className="cms-sidebar-card shadow-sm border-slate-200">
-          <div className="cms-sidebar-card-header bg-slate-50 border-b-slate-100 py-3 px-5">
-            Content Details
-            <Info className="w-3.5 h-3.5 text-slate-400" />
+            {errors.title ? <p className="text-xs text-red-600">{errors.title}</p> : null}
+            <section className="space-y-1.5">
+              <Label className="text-[10px] text-slate-400 uppercase tracking-[0.2em]">Internal ID (Slug)</Label>
+              <p className="block min-w-0 truncate font-mono text-sm !text-slate-500">
+                {slug || 'Will be generated from the product title'}
+              </p>
+            </section>
+            {errors.slug ? <p className="text-xs text-red-600">{errors.slug}</p> : null}
           </div>
-          <div className="cms-sidebar-card-body p-6 space-y-6">
-            <div className="space-y-2">
-              <Label className="text-xs text-slate-500 font-bold uppercase tracking-wider">Short Note</Label>
-              <Textarea
-                value={shortDesc}
-                onChange={(e) => setShortDesc(e.target.value)}
-                placeholder="A subtle note or short editorial aside that appears under the title..."
-                className="min-h-[120px] bg-white border-slate-200 text-sm leading-relaxed text-slate-700 italic"
-              />
-              <p className="text-[10px] text-slate-400">Shown quietly on the product card and trimmed after 70 characters.</p>
-            </div>
-            
-            <div className="space-y-2 pt-2 border-t border-slate-100">
-              <Label className="text-xs text-slate-500 font-bold uppercase tracking-wider">Item Condition</Label>
-              <Input
-                value={itemCondition}
-                onChange={(e) => setItemCondition(e.target.value)}
-                placeholder="e.g. New, Used, Refurbished, Open Box"
-                className="bg-white border-slate-200 w-full max-w-sm text-sm"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label className="text-xs text-slate-500 font-bold uppercase tracking-wider">Product Specifications (JSON)</Label>
-              <div className="relative group">
-                <Textarea
-                  value={specs}
-                  onChange={(e) => setSpecs(e.target.value)}
-                  placeholder='{ "Battery": "14h", "Weight": "2.4 lbs" }'
-                  className="min-h-[220px] font-mono bg-slate-900 text-blue-400 border-none p-6 text-xs leading-relaxed selection:bg-blue-500/30"
-                />
-                <div className="absolute right-3 bottom-3 opacity-40 group-hover:opacity-100 transition-opacity">
-                    <Code className="w-4 h-4 text-slate-500" />
-                </div>
+
+          <div className="space-y-3">
+            <section className="space-y-2.5 rounded-2xl border border-slate-200 bg-slate-50/60 p-3">
+              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                <Info className="w-4 h-4 text-slate-400" />
+                Content Details
               </div>
-              <p className="text-[10px] text-slate-400">Validated as JSON object for comparison engines.</p>
-            </div>
+              <div className="space-y-2">
+                <Label className="text-xs text-slate-500 font-bold uppercase tracking-wider">Short Note</Label>
+                <Textarea
+                  value={shortDesc}
+                  onChange={(e) => {
+                    setShortDesc(e.target.value)
+                    if (errors.shortDesc) setFieldError('shortDesc', validateField('shortDesc', e.target.value) || undefined)
+                  }}
+                  onBlur={(e) => setFieldError('shortDesc', validateField('shortDesc', e.target.value) || undefined)}
+                  placeholder="A subtle note or short editorial aside that appears under the title..."
+                  className={fieldClassName('shortDesc', 'min-h-[88px] bg-white border-slate-200 text-sm leading-relaxed text-slate-700 italic')}
+                />
+                {errors.shortDesc ? <p className="text-xs text-red-600">{errors.shortDesc}</p> : null}
+                <p className="text-[10px] text-slate-400">Shown quietly on the product card and trimmed after 70 characters.</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-xs text-slate-500 font-bold uppercase tracking-wider">Item Condition</Label>
+                <Select
+                  value={itemCondition}
+                  onValueChange={(value) => {
+                    setItemCondition(value)
+                    if (errors.itemCondition) setFieldError('itemCondition', validateField('itemCondition', value) || undefined)
+                  }}
+                >
+                  <SelectTrigger className={fieldClassName('itemCondition', 'bg-white border-slate-200 text-sm')}>
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ITEM_CONDITION_OPTIONS.map((condition) => (
+                      <SelectItem key={condition} value={condition}>
+                        {condition}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.itemCondition ? <p className="text-xs text-red-600">{errors.itemCondition}</p> : null}
+              </div>
+            </section>
+
+            <section className="space-y-2.5 rounded-2xl border border-slate-200 bg-white p-3">
+              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                <ExternalLink className="w-4 h-4 text-slate-400" />
+                Price & Affiliate
+              </div>
+              <div className="space-y-2.5">
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] text-slate-400 uppercase">Price Label</Label>
+                  <Input
+                    value={priceText}
+                    onChange={(e) => {
+                      setPriceText(e.target.value)
+                      if (errors.priceText) setFieldError('priceText', validateField('priceText', e.target.value) || undefined)
+                    }}
+                    onBlur={(e) => setFieldError('priceText', validateField('priceText', e.target.value) || undefined)}
+                    placeholder="$299"
+                    className={fieldClassName('priceText', 'bg-slate-50 border-slate-200 font-bold')}
+                  />
+                  {errors.priceText ? <p className="text-xs text-red-600">{errors.priceText}</p> : null}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] text-slate-400 uppercase">Rating</Label>
+                  <div className="relative">
+                    <Star className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-orange-400 fill-orange-400" />
+                    <Input
+                      value={ratingText}
+                      onChange={(e) => {
+                        setRatingText(e.target.value)
+                        if (errors.ratingText) setFieldError('ratingText', validateField('ratingText', e.target.value) || undefined)
+                      }}
+                      onBlur={(e) => setFieldError('ratingText', validateField('ratingText', e.target.value) || undefined)}
+                      placeholder="4.8/5"
+                      className={fieldClassName('ratingText', 'pl-8 bg-slate-50 border-slate-200 font-bold')}
+                    />
+                  </div>
+                  {errors.ratingText ? <p className="text-xs text-red-600">{errors.ratingText}</p> : null}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] text-slate-400 uppercase">Button Label</Label>
+                  <Input
+                    value={ctaLabel}
+                    onChange={(e) => {
+                      setCtaLabel(e.target.value)
+                      if (errors.ctaLabel) setFieldError('ctaLabel', validateField('ctaLabel', e.target.value) || undefined)
+                    }}
+                    onBlur={(e) => setFieldError('ctaLabel', validateField('ctaLabel', e.target.value) || undefined)}
+                    placeholder="Check Price"
+                    className={fieldClassName('ctaLabel', 'bg-slate-50 border-slate-200 font-semibold')}
+                  />
+                  {errors.ctaLabel ? <p className="text-xs text-red-600">{errors.ctaLabel}</p> : null}
+                </div>
+
+             <div className="space-y-1.5">
+                <Label className="text-[10px] text-slate-400 uppercase">Badge Label</Label>
+                  <Select
+                    value={badgeText}
+                    onValueChange={(value) => {
+                      setBadgeText(value)
+                      if (errors.badgeText) setFieldError('badgeText', validateField('badgeText', value) || undefined)
+                    }}
+                  >
+                    <SelectTrigger className={fieldClassName('badgeText', 'bg-orange-50 border-orange-100 text-orange-700 font-bold text-xs')}>
+                      <SelectValue placeholder="Select badge label" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {BADGE_LABEL_OPTIONS.map((badge) => (
+                        <SelectItem key={badge} value={badge}>
+                          {badge}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                {errors.badgeText ? <p className="text-xs text-red-600">{errors.badgeText}</p> : null}
+             </div>
+              </div>
+            </section>
+
+            <section className="space-y-2.5 rounded-2xl border border-slate-200 bg-white p-3">
+              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                <Code className="w-4 h-4 text-slate-400" />
+                Specifications
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs text-slate-500 font-bold uppercase tracking-wider">Product Specifications (JSON)</Label>
+                <div className="relative group">
+                  <Textarea
+                    value={specs}
+                    onChange={(e) => {
+                      setSpecs(e.target.value)
+                      if (errors.specs) setFieldError('specs', validateField('specs', e.target.value) || undefined)
+                    }}
+                    onBlur={(e) => setFieldError('specs', validateField('specs', e.target.value) || undefined)}
+                    placeholder='{ "Battery": "14h", "Weight": "2.4 lbs" }'
+                    className={fieldClassName('specs', 'min-h-[132px] font-mono bg-slate-900 text-slate-200 border-none p-3 text-xs leading-relaxed selection:bg-slate-600/40')}
+                  />
+                  <div className="absolute right-3 bottom-3 opacity-40 group-hover:opacity-100 transition-opacity">
+                    <Code className="w-4 h-4 text-slate-500" />
+                  </div>
+                </div>
+                {errors.specs ? <p className="text-xs text-red-600">{errors.specs}</p> : null}
+                <p className="text-[10px] text-slate-400">Optional. If used, it must be valid JSON for comparison engines.</p>
+              </div>
+            </section>
           </div>
         </div>
       </div>
 
-      {/* ── Sidebar (Right) ───────────────────────────────────── */}
-      <aside className="space-y-6 lg:sticky lg:top-24">
-        
-        {/* Actions Card */}
+      <aside className="space-y-3 lg:sticky lg:top-16 self-start">
         <div className="cms-sidebar-card">
           <div className="cms-sidebar-card-header">
             Management
             <Settings className="w-3.5 h-3.5 text-slate-400" />
           </div>
-          <div className="cms-sidebar-card-body space-y-4">
+          <div className="cms-sidebar-card-body space-y-3">
              <div className="flex items-center justify-between text-xs mb-1">
                 <span className="text-slate-500">Live Status:</span>
                 <span className={initialData?.published ? 'status-published' : 'status-draft'}>
@@ -310,18 +571,18 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
                 </span>
              </div>
              
-             <div className="space-y-3 pt-2">
+             <div className="space-y-2 pt-1">
                 <Button 
                     onClick={() => handleSave(true)} 
                     disabled={saving || publishing}
-                    className="w-full bg-blue-600 hover:bg-blue-700 h-10 font-bold text-white"
+                    className="w-full bg-blue-600 hover:bg-blue-700 h-9 font-bold text-white"
                 >
                     <Send className="mr-2 h-4 w-4" />
                     {publishing ? 'Updating...' : 'Publish Product'}
                 </Button>
                 <Button
                     variant="outline"
-                    className="w-full border-slate-200 h-10 font-semibold"
+                    className="w-full border-slate-200 h-9 font-semibold"
                     onClick={() => handleSave(false)}
                     disabled={saving || publishing}
                 >
@@ -332,114 +593,70 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
           </div>
         </div>
 
-        {/* Commerce Details Card */}
         <div className="cms-sidebar-card">
           <div className="cms-sidebar-card-header">
-            Price & Affiliate
-            <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-          </div>
-          <div className="cms-sidebar-card-body space-y-5">
-             <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                    <Label className="text-[10px] text-slate-400 uppercase">Price Label</Label>
-                    <Input 
-                        value={priceText} 
-                        onChange={(e) => setPriceText(e.target.value)} 
-                        placeholder="$299" 
-                        className="bg-slate-50 border-slate-200 font-bold" 
-                    />
-                </div>
-                <div className="space-y-1.5">
-                    <Label className="text-[10px] text-slate-400 uppercase">Rating</Label>
-                    <div className="relative">
-                        <Star className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-orange-400 fill-orange-400" />
-                        <Input 
-                            value={ratingText} 
-                            onChange={(e) => setRatingText(e.target.value)} 
-                            placeholder="4.8/5" 
-                            className="pl-8 bg-slate-50 border-slate-200 font-bold" 
-                        />
-                    </div>
-                </div>
-             </div>
-
-             <div className="space-y-1.5">
-                <Label className="text-[10px] text-slate-400 uppercase">Affiliate Link URL</Label>
-                <Input 
-                    value={externalUrl} 
-                    onChange={(e) => setExternalUrl(e.target.value)} 
-                    placeholder="https://..." 
-                    className="bg-slate-50 border-slate-200 text-xs" 
-                />
-                <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handlePullImageFromMetadata}
-                    disabled={fetchingMetadataImage || !externalUrl.trim()}
-                    className="w-full border-slate-200 text-xs font-semibold"
-                >
-                    <RefreshCw className={`mr-2 h-3.5 w-3.5 ${fetchingMetadataImage ? 'animate-spin' : ''}`} />
-                    {fetchingMetadataImage ? 'Pulling preview image...' : 'Pull Preview Image From Link'}
-                </Button>
-             </div>
-
-             <div className="space-y-1.5">
-                <Label className="text-[10px] text-slate-400 uppercase">Button Label</Label>
-                <Input 
-                    value={ctaLabel} 
-                    onChange={(e) => setCtaLabel(e.target.value)} 
-                    placeholder="Check Price" 
-                    className="bg-slate-50 border-slate-200 font-semibold" 
-                />
-             </div>
-             
-             <div className="space-y-1.5">
-                <Label className="text-[10px] text-slate-400 uppercase">Badge Label</Label>
-                <Input 
-                    value={badgeText} 
-                    onChange={(e) => setBadgeText(e.target.value)} 
-                    placeholder="Best Choice" 
-                    className="bg-orange-50 border-orange-100 text-orange-700 font-bold text-xs" 
-                />
-             </div>
-          </div>
-        </div>
-
-        {/* Product Visual Card */}
-        <div className="cms-sidebar-card">
-          <div className="cms-sidebar-card-header">
-            Visual Media
+            Product Visual
             <ImageIcon className="w-3.5 h-3.5 text-slate-400" />
           </div>
-          <div className="cms-sidebar-card-body space-y-4">
-             <div 
-                className="aspect-square w-full rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center bg-slate-50 overflow-hidden group cursor-pointer relative shadow-inner"
-                onClick={() => fileInputRef.current?.click()}
-             >
-                {imageUrl ? (
-                  <>
-                    <img src={imageUrl} className="w-full h-full object-contain p-4" alt={title} />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                       <Upload className="w-6 h-6 text-white" />
-                    </div>
-                  </>
-                ) : (
-                  <div className="text-center p-4">
-                    <ImageIcon className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Add Photo</p>
+          <div className="cms-sidebar-card-body space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-[10px] text-slate-400 uppercase">Affiliate Link URL</Label>
+              <Input
+                value={externalUrl}
+                onChange={(e) => {
+                  setExternalUrl(e.target.value)
+                  if (errors.externalUrl) setFieldError('externalUrl', validateField('externalUrl', e.target.value) || undefined)
+                }}
+                onBlur={(e) => setFieldError('externalUrl', validateField('externalUrl', e.target.value) || undefined)}
+                placeholder="https://..."
+                className={fieldClassName('externalUrl', 'bg-slate-50 border-slate-200 text-xs')}
+              />
+              {errors.externalUrl ? <p className="text-xs text-red-600">{errors.externalUrl}</p> : null}
+            </div>
+            <div
+              className={`aspect-[16/10] w-full rounded-2xl border-2 border-dashed flex items-center justify-center bg-slate-50 overflow-hidden group cursor-pointer relative shadow-inner ${errors.imageUrl ? 'border-red-300 bg-red-50/40' : 'border-slate-200'}`}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {imageUrl ? (
+                <>
+                  <img src={imageUrl} className="w-full h-full object-contain p-4" alt={title} />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                    <Upload className="w-6 h-6 text-white" />
                   </div>
-                )}
-             </div>
-             <input ref={fileInputRef} type="file" className="hidden" onChange={handleImageUpload} accept="image/*" />
-             <Input 
-                value={imageUrl} 
-                onChange={(e) => setImageUrl(e.target.value)} 
-                placeholder="Or paste external asset URL..." 
-                className="text-[10px] bg-slate-50 border-slate-200" 
-             />
+                </>
+              ) : (
+                <div className="text-center p-4">
+                  <ImageIcon className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                    {uploading ? 'Uploading...' : 'Add Photo'}
+                  </p>
+                </div>
+              )}
+            </div>
+            <input ref={fileInputRef} type="file" className="hidden" onChange={handleImageUpload} accept="image/*" />
+            <Input
+              value={imageUrl}
+              onChange={(e) => {
+                setImageUrl(e.target.value)
+                if (errors.imageUrl) setFieldError('imageUrl', validateField('imageUrl', e.target.value) || undefined)
+              }}
+              onBlur={(e) => setFieldError('imageUrl', validateField('imageUrl', e.target.value) || undefined)}
+              placeholder="Or paste external asset URL..."
+              className={fieldClassName('imageUrl', 'text-[10px] bg-slate-50 border-slate-200')}
+            />
+            {errors.imageUrl ? <p className="text-xs text-red-600">{errors.imageUrl}</p> : null}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handlePullImageFromMetadata}
+              disabled={fetchingMetadataImage || !externalUrl.trim()}
+              className="w-full border-slate-200 text-xs font-semibold"
+            >
+              <RefreshCw className={`mr-2 h-3.5 w-3.5 ${fetchingMetadataImage ? 'animate-spin' : ''}`} />
+              {fetchingMetadataImage ? 'Pulling preview image...' : 'Pull Preview Image From Link'}
+            </Button>
           </div>
         </div>
-
       </aside>
     </div>
   )

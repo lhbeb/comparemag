@@ -936,8 +936,8 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
               placeholder="Article Title..."
-              rows={1}
-              className="w-full resize-none overflow-hidden text-3xl lg:text-4xl font-black leading-[1.05] tracking-tight min-h-0 py-2 border-none bg-transparent focus-visible:ring-0 px-0 shadow-none placeholder:text-slate-300 text-slate-900"
+              rows={2}
+              className="w-full resize-none overflow-hidden text-3xl lg:text-4xl font-black leading-[1.08] tracking-tight min-h-[5.5rem] py-3 border-none bg-transparent focus-visible:ring-0 px-0 shadow-none placeholder:text-slate-300 text-slate-900"
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: '-0.03em' }}
             />
             <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-md py-1.5 px-3 w-max max-w-full overflow-hidden">
@@ -1478,6 +1478,9 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                               
                               <Button
                                 size="sm"
+                                onMouseDown={(e) => {
+                                  e.preventDefault()
+                                }}
                                 onClick={() => insertProductCode(p.slug)}
                                 className="flex-shrink-0 bg-white text-slate-700 font-semibold border border-slate-200 shadow-sm hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-colors"
                               >
@@ -1504,6 +1507,9 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                   <p className="text-xs text-slate-500 mt-2">This HTML will be injected directly into the article body exactly as provided.</p>
                 </div>
                 <Button 
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                  }}
                   onClick={handleInsertEmbed}
                   disabled={!embedCode.trim()}
                   className="w-full bg-blue-600 font-bold h-10 text-white"

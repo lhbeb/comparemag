@@ -2,9 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { PlusCircle, Search, Edit2, Trash2 } from 'lucide-react'
+import { PlusCircle, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { toast } from '@/hooks/use-toast'
 
 interface ProductCard {
@@ -12,16 +19,29 @@ interface ProductCard {
   slug: string
   title: string
   brand: string | null
+  image_url: string | null
+  external_url: string
   published: boolean
   created_at: string
 }
 
 import { ProductTabs } from '@/components/admin/product-tabs'
 
+function getAffiliateDomain(url: string | null | undefined) {
+  if (!url) return null
+
+  try {
+    return new URL(url).hostname.toLowerCase().replace(/^www\./, '')
+  } catch {
+    return null
+  }
+}
+
 export default function ProductsPage() {
   const [products, setProducts] = useState<ProductCard[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [domainFilter, setDomainFilter] = useState('all')
 
   useEffect(() => {
     fetchProducts()
@@ -56,10 +76,18 @@ export default function ProductsPage() {
   }
 
   const filteredProducts = products.filter(p => 
-    p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    p.slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (p.brand && p.brand.toLowerCase().includes(searchQuery.toLowerCase()))
+    (
+      p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      p.slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (p.brand && p.brand.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (getAffiliateDomain(p.external_url)?.includes(searchQuery.toLowerCase()) ?? false)
+    ) &&
+    (domainFilter === 'all' || getAffiliateDomain(p.external_url) === domainFilter)
   )
+
+  const availableDomains = Array.from(
+    new Set(products.map((product) => getAffiliateDomain(product.external_url)).filter(Boolean))
+  ).sort()
 
   return (
     <div className="space-y-6">
@@ -85,6 +113,21 @@ export default function ProductsPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
           />
+        </div>
+        <div className="w-full sm:w-[240px]">
+          <Select value={domainFilter} onValueChange={setDomainFilter}>
+            <SelectTrigger className="bg-slate-50 border-slate-200">
+              <SelectValue placeholder="Filter by domain" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All domains</SelectItem>
+              {availableDomains.map((domain) => (
+                <SelectItem key={domain} value={domain}>
+                  {domain}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 

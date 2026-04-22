@@ -16,7 +16,7 @@
       "static/media/MonumentGrotesk_Bold-s.p.21258c4d.woff2",
       "static/media/MonumentGrotesk_BoldItalic-s.p.dabe37b7.woff2"
     ],
-    "[project]/app/admin/articles/edit/[slug]/page": [
+    "[project]/app/admin/articles/new/page": [
       "static/media/MonumentGrotesk_Regular-s.p.d3cfc223.woff2",
       "static/media/MonumentGrotesk_Italic-s.p.0682c6f8.woff2",
       "static/media/MonumentGrotesk_Medium-s.p.3ba2d28d.woff2",
@@ -40,7 +40,7 @@
       "static/media/MonumentGrotesk_Bold-s.p.21258c4d.woff2",
       "static/media/MonumentGrotesk_BoldItalic-s.p.dabe37b7.woff2"
     ],
-    "[project]/app/admin/writers/new/page": [
+    "[project]/app/admin/products/edit/[slug]/page": [
       "static/media/MonumentGrotesk_Regular-s.p.d3cfc223.woff2",
       "static/media/MonumentGrotesk_Italic-s.p.0682c6f8.woff2",
       "static/media/MonumentGrotesk_Medium-s.p.3ba2d28d.woff2",
@@ -48,7 +48,15 @@
       "static/media/MonumentGrotesk_Bold-s.p.21258c4d.woff2",
       "static/media/MonumentGrotesk_BoldItalic-s.p.dabe37b7.woff2"
     ],
-    "[project]/app/admin/writers/page": [
+    "[project]/app/admin/products/new/page": [
+      "static/media/MonumentGrotesk_Regular-s.p.d3cfc223.woff2",
+      "static/media/MonumentGrotesk_Italic-s.p.0682c6f8.woff2",
+      "static/media/MonumentGrotesk_Medium-s.p.3ba2d28d.woff2",
+      "static/media/MonumentGrotesk_MediumItalic-s.p.ee475905.woff2",
+      "static/media/MonumentGrotesk_Bold-s.p.21258c4d.woff2",
+      "static/media/MonumentGrotesk_BoldItalic-s.p.dabe37b7.woff2"
+    ],
+    "[project]/app/admin/products/page": [
       "static/media/MonumentGrotesk_Regular-s.p.d3cfc223.woff2",
       "static/media/MonumentGrotesk_Italic-s.p.0682c6f8.woff2",
       "static/media/MonumentGrotesk_Medium-s.p.3ba2d28d.woff2",

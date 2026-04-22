@@ -32,9 +32,50 @@ export function SupabaseImage({
   quality = 85,
   onLoad,
 }: SupabaseImageProps) {
+  const isRemoteUrl = typeof src === "string" && /^https?:\/\//i.test(src)
   const isSupabaseStorageImage =
-    typeof src === "string" &&
+    isRemoteUrl &&
     /https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\//i.test(src)
+
+  const canUseNextImage = (() => {
+    if (!isRemoteUrl) return true
+
+    try {
+      const hostname = new URL(src).hostname.toLowerCase()
+      return (
+        hostname === "images.unsplash.com" ||
+        hostname.endsWith(".supabase.co") ||
+        hostname.endsWith(".amazonaws.com") ||
+        hostname.endsWith(".cloudinary.com") ||
+        hostname.endsWith(".imgix.net")
+      )
+    } catch {
+      return false
+    }
+  })()
+
+  if (!canUseNextImage) {
+    return fill ? (
+      <img
+        src={src}
+        alt={alt}
+        className={className}
+        loading={priority ? "eager" : "lazy"}
+        onLoad={onLoad}
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+      />
+    ) : (
+      <img
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        className={className}
+        loading={priority ? "eager" : "lazy"}
+        onLoad={onLoad}
+      />
+    )
+  }
 
   return (
     <Image
