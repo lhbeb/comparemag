@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Zap, X, Upload, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { Zap, X, Upload, Loader2, CheckCircle2, AlertCircle, FileJson } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from '@/hooks/use-toast'
@@ -49,6 +49,26 @@ export function QuickImportPanel({ onImported }: { onImported: () => void }) {
   const [json, setJson] = useState('')
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState<QuickImportResult[]>([])
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      try {
+        const content = event.target?.result as string
+        // Optionally validate JSON format immediately, but setting it allows user edits
+        setJson(content)
+      } catch (error) {
+        toast({ title: 'Read Error', description: 'Failed to read file.', variant: 'destructive' })
+      }
+    }
+    reader.readAsText(file)
+    // Clear input so same file can be selected again
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
 
   const handleImport = async () => {
     let parsed: any[]
@@ -158,7 +178,7 @@ export function QuickImportPanel({ onImported }: { onImported: () => void }) {
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900">Quick Import Products</h2>
-              <p className="text-sm text-slate-500">Paste JSON — images are pulled from product URLs automatically</p>
+              <p className="text-sm text-slate-500">Paste JSON or upload a .json file — images are pulled from product URLs automatically</p>
             </div>
           </div>
           <button onClick={() => { setOpen(false); setResults([]) }} className="text-slate-400 hover:text-slate-600 transition-colors">
@@ -169,9 +189,30 @@ export function QuickImportPanel({ onImported }: { onImported: () => void }) {
         {/* Body */}
         <div className="p-6 flex-1 overflow-y-auto space-y-4">
           <div>
-            <label className="text-sm font-medium text-slate-700 block mb-2">
-              JSON Data <span className="text-slate-400 font-normal">(single object or array)</span>
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-medium text-slate-700">
+                JSON Data <span className="text-slate-400 font-normal">(single object or array)</span>
+              </label>
+              
+              <div>
+                <input
+                  type="file"
+                  accept=".json"
+                  className="hidden"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                />
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="h-8 gap-2 text-xs"
+                >
+                  <FileJson className="h-4 w-4" />
+                  Upload .json file
+                </Button>
+              </div>
+            </div>
             <Textarea
               value={json}
               onChange={(e) => setJson(e.target.value)}
