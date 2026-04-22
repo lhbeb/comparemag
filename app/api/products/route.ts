@@ -1,15 +1,24 @@
 import { NextResponse } from 'next/server'
-import { createProduct, getAllProductsOverview } from '@/lib/supabase/products'
+import { createProduct, getAllProducts, getAllProductsOverview } from '@/lib/supabase/products'
 import type { ProductCardInsert } from '@/lib/supabase/types'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const publishedOnly = searchParams.get('published') === 'true'
+    const includeFull = searchParams.get('full') === 'true'
     
-    // Use overview to prevent downloading massive spec bodies
-    const products = await getAllProductsOverview(publishedOnly)
-    return NextResponse.json(products)
+    const products = includeFull
+      ? await getAllProducts(publishedOnly)
+      : await getAllProductsOverview(publishedOnly)
+
+    return NextResponse.json(products, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+      },
+    })
   } catch (error) {
     console.error('API Error:', error)
     return NextResponse.json(

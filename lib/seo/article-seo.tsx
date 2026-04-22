@@ -9,7 +9,7 @@ interface ArticleSEOProps {
 
 export function generateArticleMetadata(article: Article, siteUrl: string = SITE_URL): Metadata {
   const url = `${siteUrl}/blog/${article.slug}`
-  const imageUrl = article.og_image || article.image_url || `${siteUrl}/placeholder.svg`
+  const imageUrl = article.image_url || article.og_image || `${siteUrl}/placeholder.svg`
   
   // Use provided meta description or generate from content
   const metaDescription = article.meta_description || article.content

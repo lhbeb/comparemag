@@ -3,6 +3,8 @@ import { getAllWriters } from '@/lib/supabase/writers'
 import { getAllProducts } from '@/lib/supabase/products'
 import { notFound } from 'next/navigation'
 
+export const dynamic = 'force-dynamic'
+
 async function getArticle(slug: string) {
   try {
     const supabase = await import('@/lib/supabase/server').then(m => m.createClient())

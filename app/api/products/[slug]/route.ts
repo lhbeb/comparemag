@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getProductBySlug, updateProduct } from '@/lib/supabase/products'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ slug: string }> | { slug: string } }
@@ -13,7 +15,11 @@ export async function GET(
       return new NextResponse('Not Found', { status: 404 })
     }
 
-    return NextResponse.json(product)
+    return NextResponse.json(product, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+      },
+    })
   } catch (error) {
     console.error('Error fetching product by slug:', error)
     return new NextResponse('Internal Server Error', { status: 500 })

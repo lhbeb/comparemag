@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, useMemo } from 'react'
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -16,7 +16,7 @@ import {
   X, Save, Send,
   PlusCircle, Layout, Settings,
   Eye, Image as ImageIcon, Globe, Info, Wand2,
-  Bold, Italic, Link as LinkIcon, Heading2, Heading3, Quote, Code, List,
+  Bold, Italic, Link as LinkIcon, Heading2, Heading3, Quote, Code, List, RefreshCw,
   Search, Upload, Package
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -136,9 +136,6 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const savedSelectionRef = useRef<SerializedSelectionRange | null>(null)
   const validationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const titleInputRef = useRef<HTMLTextAreaElement>(null)
-  const productPreviewMap = useMemo(() => Object.fromEntries(
-    initialProducts.map((product: any) => [product.slug, product]),
-  ), [initialProducts])
 
   // State
   const [title, setTitle] = useState(initialData?.title || '')
@@ -169,7 +166,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   
   // Use passed server-rendered data to prevent client waterfalls
   const editors = initialWriters;
-  const products = initialProducts;
+  const [products, setProducts] = useState(initialProducts)
   const listedByOptions = useMemo(() => internalTrackingStaff, [])
   
   const [showProductModal, setShowProductModal] = useState(false)
@@ -181,6 +178,35 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const [productSearch, setProductSearch] = useState('')
   const [productDomainFilter, setProductDomainFilter] = useState<string | null>(null)
   const [loadedProductImages, setLoadedProductImages] = useState<Record<string, boolean>>({})
+  const [productsLoading, setProductsLoading] = useState(false)
+  const [productsLoadError, setProductsLoadError] = useState<string | null>(null)
+  const productPreviewMap = useMemo(() => Object.fromEntries(
+    products.map((product: any) => [product.slug, product]),
+  ), [products])
+
+  const refreshProducts = useCallback(async () => {
+    setProductsLoading(true)
+    setProductsLoadError(null)
+
+    try {
+      const response = await fetch(`/api/products?published=false&full=true&_=${Date.now()}`, {
+        method: 'GET',
+        cache: 'no-store',
+      })
+
+      const payload = await response.json().catch(() => null)
+      if (!response.ok) {
+        throw new Error(payload?.error || 'Failed to fetch the latest products.')
+      }
+
+      const latestProducts = Array.isArray(payload) ? payload : []
+      setProducts(latestProducts)
+    } catch (error: any) {
+      setProductsLoadError(error?.message || 'Could not refresh products.')
+    } finally {
+      setProductsLoading(false)
+    }
+  }, [])
 
   const buildProductPlaceholderHtml = (slug: string) => {
     const product = productPreviewMap[slug]
@@ -611,8 +637,17 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   }, [listedBy])
 
   useEffect(() => {
+    setProducts(initialProducts)
+  }, [initialProducts])
+
+  useEffect(() => {
     setHasMounted(true)
   }, [])
+
+  useEffect(() => {
+    if (!showProductModal || modalMode !== 'product') return
+    void refreshProducts()
+  }, [showProductModal, modalMode, refreshProducts])
 
   useEffect(() => {
     if (!hasMounted) return
@@ -1364,25 +1399,50 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
               <div className="flex flex-col bg-white">
                 {/* ── Search bar ── */}
                 <div className="px-6 pt-4 pb-3 border-b border-slate-100 space-y-3">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-                    <input
-                      type="text"
-                      autoFocus
-                      value={productSearch}
-                      onChange={(e) => setProductSearch(e.target.value)}
-                      placeholder="Search by title, brand, slug, or store…"
-                      className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"
-                    />
-                    {productSearch && (
-                      <button
-                        onClick={() => setProductSearch('')}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    )}
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                      <input
+                        type="text"
+                        autoFocus
+                        value={productSearch}
+                        onChange={(e) => setProductSearch(e.target.value)}
+                        placeholder="Search by title, brand, slug, or store…"
+                        className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"
+                      />
+                      {productSearch && (
+                        <button
+                          onClick={() => setProductSearch('')}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => void refreshProducts()}
+                      disabled={productsLoading}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:text-slate-700 hover:border-blue-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                      title="Refresh products"
+                    >
+                      <RefreshCw className={`h-4 w-4 ${productsLoading ? 'animate-spin' : ''}`} />
+                    </button>
                   </div>
+
+                  {(productsLoading || productsLoadError) && (
+                    <div className={`flex items-center justify-between rounded-lg border px-3 py-2 text-xs ${
+                      productsLoadError
+                        ? 'border-amber-200 bg-amber-50 text-amber-700'
+                        : 'border-sky-200 bg-sky-50 text-sky-700'
+                    }`}>
+                      <span>
+                        {productsLoadError
+                          ? `Using last available product list. ${productsLoadError}`
+                          : 'Refreshing latest product cards from the database…'}
+                      </span>
+                    </div>
+                  )}
 
                   {/* ── Domain filter pills ── */}
                   {allDomains.length > 0 && (
@@ -1438,6 +1498,14 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                       })
                     }
 
+                    if (products.length === 0 && productsLoading) {
+                      return (
+                        <div className="text-center py-10">
+                          <RefreshCw className="w-8 h-8 text-slate-200 mx-auto mb-3 animate-spin" />
+                          <p className="text-sm font-semibold text-slate-500">Loading latest products…</p>
+                        </div>
+                      )
+                    }
                     if (products.length === 0) {
                       return <div className="text-center py-10 text-slate-400 text-sm">No products in database yet.</div>
                     }
