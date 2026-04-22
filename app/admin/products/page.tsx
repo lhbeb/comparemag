@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { PlusCircle, Search } from 'lucide-react'
+import { QuickImportPanel } from '@/components/admin/quick-import-panel'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -22,6 +23,7 @@ interface ProductCard {
   image_url: string | null
   external_url: string
   published: boolean
+  listed_by: string | null
   created_at: string
 }
 
@@ -42,6 +44,7 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [domainFilter, setDomainFilter] = useState('all')
+  const [listedByFilter, setListedByFilter] = useState('all')
 
   useEffect(() => {
     fetchProducts()
@@ -75,14 +78,15 @@ export default function ProductsPage() {
     }
   }
 
-  const filteredProducts = products.filter(p => 
+  const filteredProducts = products.filter(p =>
     (
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
       p.slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (p.brand && p.brand.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (getAffiliateDomain(p.external_url)?.includes(searchQuery.toLowerCase()) ?? false)
     ) &&
-    (domainFilter === 'all' || getAffiliateDomain(p.external_url) === domainFilter)
+    (domainFilter === 'all' || getAffiliateDomain(p.external_url) === domainFilter) &&
+    (listedByFilter === 'all' || (p.listed_by || 'unassigned') === listedByFilter)
   )
 
   const availableDomains = Array.from(
@@ -93,6 +97,13 @@ export default function ProductsPage() {
     )
   ).sort()
 
+  const availableStaff = Array.from(
+    new Set(
+      products
+        .map((p) => p.listed_by || 'unassigned')
+    )
+  ).sort()
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -100,12 +111,15 @@ export default function ProductsPage() {
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 font-sans" style={{ letterSpacing: '-0.025em' }}>Product Cards</h1>
           <p className="text-sm text-slate-500 mt-1">Manage product cards for embeddings and comparisons.</p>
         </div>
-        <Button asChild className="bg-blue-600 hover:bg-blue-700 !text-white">
-          <Link href="/admin/products/new">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            New Product Card
-          </Link>
-        </Button>
+        <div className="flex items-center gap-3">
+          <QuickImportPanel onImported={fetchProducts} />
+          <Button asChild className="bg-blue-600 hover:bg-blue-700 !text-white">
+            <Link href="/admin/products/new">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              New Product Card
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4 justify-between bg-white p-4 rounded-xl shadow-sm border border-slate-200">
@@ -118,20 +132,37 @@ export default function ProductsPage() {
             className="pl-9 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
           />
         </div>
-        <div className="w-full sm:w-[240px]">
-          <Select value={domainFilter} onValueChange={setDomainFilter}>
-            <SelectTrigger className="bg-slate-50 border-slate-200">
-              <SelectValue placeholder="Filter by domain" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All domains</SelectItem>
-              {availableDomains.map((domain) => (
-                <SelectItem key={domain} value={domain}>
-                  {domain}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="flex gap-3 flex-col sm:flex-row">
+          <div className="w-full sm:w-[220px]">
+            <Select value={listedByFilter} onValueChange={setListedByFilter}>
+              <SelectTrigger className="bg-slate-50 border-slate-200">
+                <SelectValue placeholder="Filter by staff" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All staff</SelectItem>
+                {availableStaff.map((name) => (
+                  <SelectItem key={name} value={name}>
+                    {name === 'unassigned' ? '— Unassigned' : name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="w-full sm:w-[220px]">
+            <Select value={domainFilter} onValueChange={setDomainFilter}>
+              <SelectTrigger className="bg-slate-50 border-slate-200">
+                <SelectValue placeholder="Filter by domain" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All domains</SelectItem>
+                {availableDomains.map((domain) => (
+                  <SelectItem key={domain} value={domain}>
+                    {domain}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 

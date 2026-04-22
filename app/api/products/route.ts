@@ -28,12 +28,13 @@ export async function POST(request: Request) {
       brand: data.brand || null,
       image_url: data.image_url || null,
       short_description: data.short_description,
-      cta_label: data.cta_label || 'Check Price',
+      cta_label: data.cta_label || 'Get Deal',
       external_url: data.external_url,
       price_text: data.price_text || null,
       rating_text: data.rating_text || null,
       badge_text: data.badge_text || null,
       specs: data.specs || null,
+      listed_by: data.listed_by || null,
       published: data.published || false
     }
 

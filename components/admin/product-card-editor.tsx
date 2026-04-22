@@ -143,11 +143,11 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
   const [slug, setSlug] = useState(initialData?.slug || '')
   const [brand, setBrand] = useState(initialData?.brand || '')
   const [shortDesc, setShortDesc] = useState(initialData?.short_description || '')
-  const [ctaLabel, setCtaLabel] = useState(initialData?.cta_label || 'Check Price')
+  const [ctaLabel, setCtaLabel] = useState(initialData?.cta_label || 'Get Deal')
   const [externalUrl, setExternalUrl] = useState(initialData?.external_url || '')
   const [priceText, setPriceText] = useState(normalizeUsdPrice(initialData?.price_text || ''))
   const [ratingText, setRatingText] = useState(initialData?.rating_text || '')
-  const [badgeText, setBadgeText] = useState(initialData?.badge_text || '')
+  const [badgeText, setBadgeText] = useState(initialData?.badge_text || 'Smart Choice')
   const [imageUrl, setImageUrl] = useState(initialData?.image_url || '')
 
   // Keep legacy `condition` keys from reappearing in the editor.

@@ -145,9 +145,11 @@ export default async function Home() {
                     <div className="expert-card-photo-overlay" />
                     <div className="expert-card-photo-name">
                       {editor.specialty && (
-                        <span className="expert-card-badge mb-2 block w-fit">
-                          <Award className="h-3 w-3 inline-block mr-1" />
-                          {editor.specialty}
+                        <span className="expert-card-badge mb-2 block w-fit max-w-full" title={editor.specialty}>
+                          <Award className="h-3 w-3 inline-block mr-1 flex-shrink-0" />
+                          <span className="truncate">
+                            {editor.specialty.length > 20 ? editor.specialty.slice(0, 20) + '…' : editor.specialty}
+                          </span>
                         </span>
                       )}
                       <h3>{editor.name}</h3>

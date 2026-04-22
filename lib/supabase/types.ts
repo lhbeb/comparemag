@@ -161,6 +161,7 @@ export interface Database {
           badge_text: string | null
           specs: any | null
           published: boolean
+          listed_by: string | null
           created_at: string
           updated_at: string
         }
@@ -178,6 +179,7 @@ export interface Database {
           badge_text?: string | null
           specs?: any | null
           published?: boolean
+          listed_by?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -195,6 +197,7 @@ export interface Database {
           badge_text?: string | null
           specs?: any | null
           published?: boolean
+          listed_by?: string | null
           created_at?: string
           updated_at?: string
         }

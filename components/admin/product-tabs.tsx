@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Edit2, Trash2, ShoppingBag, Eye, EyeOff, Image as ImageIcon } from 'lucide-react'
+import { Edit2, Trash2, ShoppingBag, Eye, EyeOff, Image as ImageIcon, User2 } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
 import { SupabaseImage } from '@/components/supabase-image'
 
@@ -14,6 +14,7 @@ interface ProductCard {
   image_url: string | null
   external_url: string
   published: boolean
+  listed_by: string | null
   created_at: string
 }
 
@@ -124,6 +125,12 @@ function ProductList({ products, onDelete }: { products: ProductCard[], onDelete
                             {affiliateDomain}
                           </span>
                         ) : null}
+                        {product.listed_by && (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-purple-100 bg-purple-50 px-2 py-0.5 font-medium text-purple-700">
+                            <User2 className="h-2.5 w-2.5" />
+                            {product.listed_by}
+                          </span>
+                        )}
                       </div>
                       <div className="mt-2">
                          <code className="inline-block max-w-full truncate rounded border !border-slate-200 !bg-slate-50 px-2 py-0.5 font-mono text-[10px] !text-slate-500">
