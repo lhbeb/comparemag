@@ -6,6 +6,12 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -15,7 +21,7 @@ import {
 import { 
   Upload, Save, Send, ShoppingBag, 
   Tag, ExternalLink, Star, Image as ImageIcon, 
-  Settings, Info, Code, RefreshCw
+  Settings, Info, Code, RefreshCw, CircleHelp
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -401,7 +407,7 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
                 onChange={(e) => handleTitleChange(e.target.value)}
                 onBlur={(e) => setFieldError('title', validateField('title', e.target.value) || undefined)}
                 placeholder="Enter the full product name"
-                className={fieldClassName('title', 'h-10 rounded-xl border-slate-200 bg-white px-4 text-base font-semibold text-slate-900 placeholder:text-slate-300')}
+                className={fieldClassName('title', 'h-10 rounded-xl border-slate-200 bg-white px-4 text-base font-semibold text-slate-900 placeholder:text-sm placeholder:font-normal placeholder:text-slate-400')}
                 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
               />
             </div>
@@ -501,7 +507,21 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-[10px] text-slate-400 uppercase">Button Label</Label>
+                  <div className="flex items-center gap-1.5">
+                    <Label className="text-[10px] text-slate-400 uppercase">Button Label</Label>
+                    <TooltipProvider delayDuration={150}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button type="button" className="text-slate-400 hover:text-slate-600 transition-colors">
+                            <CircleHelp className="h-3.5 w-3.5" />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="max-w-[240px] text-xs leading-relaxed">
+                          buttona li ki clicki 3liha wkatdih ychri product
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <Select
                     value={ctaLabel}
                     onValueChange={(value) => {
@@ -524,7 +544,21 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
                 </div>
 
              <div className="space-y-1.5">
-                <Label className="text-[10px] text-slate-400 uppercase">Badge Label</Label>
+                <div className="flex items-center gap-1.5">
+                  <Label className="text-[10px] text-slate-400 uppercase">Badge Label</Label>
+                  <TooltipProvider delayDuration={150}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button type="button" className="text-slate-400 hover:text-slate-600 transition-colors">
+                          <CircleHelp className="h-3.5 w-3.5" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="max-w-[240px] text-xs leading-relaxed">
+                        hada howa dak lbadge li las9 fl product card
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
                   <Select
                     value={badgeText}
                     onValueChange={(value) => {
