@@ -1,5 +1,5 @@
-import Link from "next/link"
 import { Mail } from "lucide-react"
+import { CONTACT_EMAIL, SITE_DOMAIN } from "@/lib/site-config"
 
 export default function AdvertisePage() {
   return (
@@ -9,7 +9,7 @@ export default function AdvertisePage() {
           <h1 className="text-4xl md:text-5xl font-bold mb-8 text-slate-900">Advertise With Us</h1>
           <div className="prose prose-blue prose-lg max-w-none text-slate-700">
             <p className="lead text-xl text-slate-600 mb-8 border-l-4 border-blue-600 pl-4">
-              Reach a highly engaged audience of tech enthusiasts, early adopters, and serious buyers at Compareradar.com.
+              Reach a highly engaged audience of tech enthusiasts, early adopters, and serious buyers at {SITE_DOMAIN}.
             </p>
             <h2 className="text-2xl font-bold text-slate-900 mt-12 mb-4">Our Audience</h2>
             <p className="mb-6">
@@ -27,8 +27,8 @@ export default function AdvertisePage() {
             </p>
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center gap-2 mt-8">
                <Mail className="h-8 w-8 text-blue-600 mb-2" />
-               <a href="mailto:contact@compareradar.com" className="text-xl font-bold text-slate-900 hover:text-blue-600 transition-colors">
-                 contact@compareradar.com
+               <a href={`mailto:${CONTACT_EMAIL}`} className="text-xl font-bold text-slate-900 hover:text-blue-600 transition-colors">
+                 {CONTACT_EMAIL}
                </a>
             </div>
           </div>

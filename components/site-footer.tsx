@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Logo } from "@/components/logo"
 import { Github, Linkedin, Mail, Rss, Twitter, MapPin } from "lucide-react"
+import { CONTACT_EMAIL, SITE_DOMAIN } from "@/lib/site-config"
 
 export function SiteFooter() {
   return (
@@ -41,7 +42,7 @@ export function SiteFooter() {
             <ul className="space-y-4 text-sm text-slate-300">
               <li className="flex items-center gap-3">
                 <Mail className="h-4 w-4 shrink-0" />
-                <span className="break-all">contact@compareradar.com</span>
+                <span className="break-all">{CONTACT_EMAIL}</span>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="h-4 w-4 shrink-0 mt-0.5" />
@@ -51,7 +52,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="border-t border-slate-800 mt-12 pt-6 text-sm text-slate-300 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p>© {new Date().getFullYear()} Compareradar.com. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {SITE_DOMAIN}. All rights reserved.</p>
           <div className="flex gap-4 text-slate-300">
              <Link href="/privacy/" className="hover:text-white transition-colors">Privacy Policy</Link>
              <Link href="/terms/" className="hover:text-white transition-colors">Terms of Service</Link>

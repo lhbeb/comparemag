@@ -2,7 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { SupabaseImage } from "@/components/supabase-image"
 import { Logo } from "@/components/logo"
-import { BrainCircuit, Clock, Twitter, Facebook, Linkedin, Rss, Mail, Github } from "lucide-react"
+import { BookOpen, BrainCircuit, Clock, Twitter, Facebook, Linkedin, Rss, Mail, Github, User } from "lucide-react"
 import type { BlogPost } from "@/lib/data/blogPosts"
 import type { Article } from "@/lib/supabase/types"
 import { Breadcrumbs } from "@/components/seo/breadcrumbs"
@@ -97,9 +97,21 @@ export function BlogPostContent({ post, article, preloadedProducts }: BlogPostCo
                     {post.date}
                   </time>
                 </div>
-                <span itemProp="timeRequired">{post.readTime}</span>
-                <div itemProp="author" itemScope itemType="https://schema.org/Person">
-                  <span>By <Link href={`/writers/${post.author.toLowerCase().replace(/\s+/g, '-')}`} itemProp="url" className="font-semibold text-blue-600 hover:underline"><span itemProp="name">{post.author}</span></Link></span>
+                <div className="flex items-center gap-1" itemProp="timeRequired">
+                  <BookOpen className="h-4 w-4" aria-hidden="true" />
+                  <span>{post.readTime}</span>
+                </div>
+                <div className="flex items-center gap-1" itemProp="author" itemScope itemType="https://schema.org/Person">
+                  <User className="h-4 w-4" aria-hidden="true" />
+                  <span>
+                    <Link
+                      href={`/writers/${post.author.toLowerCase().replace(/\s+/g, '-')}`}
+                      itemProp="url"
+                      className="font-semibold text-slate-700 transition-colors hover:text-blue-600 hover:underline"
+                    >
+                      <span itemProp="name">{post.author}</span>
+                    </Link>
+                  </span>
                 </div>
                 {article?.updated_at && article.updated_at !== article.created_at && (
                   <meta itemProp="dateModified" content={article.updated_at} />

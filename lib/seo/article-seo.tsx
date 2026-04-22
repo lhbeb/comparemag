@@ -1,12 +1,13 @@
 import { Metadata } from 'next'
 import type { Article } from '@/lib/supabase/types'
+import { SITE_URL, TWITTER_HANDLE } from '@/lib/site-config'
 
 interface ArticleSEOProps {
   article: Article
   siteUrl?: string
 }
 
-export function generateArticleMetadata(article: Article, siteUrl: string = 'https://comparemag.blog'): Metadata {
+export function generateArticleMetadata(article: Article, siteUrl: string = SITE_URL): Metadata {
   const url = `${siteUrl}/blog/${article.slug}`
   const imageUrl = article.og_image || article.image_url || `${siteUrl}/placeholder.svg`
   
@@ -69,8 +70,8 @@ export function generateArticleMetadata(article: Article, siteUrl: string = 'htt
       title: ogTitle,
       description: ogDescription,
       images: [imageUrl],
-      creator: '@comparemag',
-      site: '@comparemag',
+      creator: TWITTER_HANDLE,
+      site: TWITTER_HANDLE,
     },
     robots: {
       index: article.published,
@@ -93,7 +94,7 @@ export function generateArticleMetadata(article: Article, siteUrl: string = 'htt
   }
 }
 
-export function generateArticleStructuredDataGraph(article: Article, siteUrl: string = 'https://comparemag.blog') {
+export function generateArticleStructuredDataGraph(article: Article, siteUrl: string = SITE_URL) {
   const url = `${siteUrl}/blog/${article.slug}`
   const imageUrl = article.image_url || `${siteUrl}/placeholder.svg`
   
@@ -221,4 +222,3 @@ export function generateArticleStructuredDataGraph(article: Article, siteUrl: st
     ]
   }
 }
-

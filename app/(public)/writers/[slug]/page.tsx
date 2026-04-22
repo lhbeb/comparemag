@@ -8,6 +8,7 @@ import { format } from 'date-fns'
 import { User, Mail, Globe, Twitter, Linkedin, Github, Clock, Rss } from 'lucide-react'
 import { Logo } from '@/components/logo'
 import type { Writer, Article } from '@/lib/supabase/types'
+import { absoluteUrl } from '@/lib/site-config'
 
 export async function generateStaticParams() {
   try {
@@ -52,7 +53,7 @@ export default async function WriterPage({
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: writer.name,
-    url: `https://comparemag.blog/writers/${writer.slug}`,
+    url: absoluteUrl(`/writers/${writer.slug}`),
     image: writer.avatar_url,
     jobTitle: writer.specialty || 'Tech Reviewer',
     description: writer.bio,

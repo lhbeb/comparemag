@@ -9,6 +9,7 @@ import { format } from "date-fns"
 import { Breadcrumbs } from "@/components/seo/breadcrumbs"
 import { StructuredData } from "@/components/seo/structured-data"
 import type { Metadata } from "next"
+import { absoluteUrl, SITE_NAME } from '@/lib/site-config'
 
 type TopicConfig = {
   title: string
@@ -88,13 +89,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!topic) return {}
 
   return {
-    title: `${topic.title} Reviews & News | CompareMag`,
+    title: `${topic.title} Reviews & News | ${SITE_NAME}`,
     description: topic.description,
     openGraph: {
-      title: `${topic.title} Reviews & News | CompareMag`,
+      title: `${topic.title} Reviews & News | ${SITE_NAME}`,
       description: topic.description,
       type: "website",
-      url: `https://comparemag.blog/topics/${resolvedParams.slug}`,
+      url: absoluteUrl(`/topics/${resolvedParams.slug}`),
     },
   }
 }
@@ -131,9 +132,9 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
   const schemaData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: `${topic.title} Reviews & News | CompareMag`,
+    name: `${topic.title} Reviews & News | ${SITE_NAME}`,
     description: topic.description,
-    url: `https://comparemag.blog/topics/${resolvedParams.slug}`,
+    url: absoluteUrl(`/topics/${resolvedParams.slug}`),
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: categoryArticles.map((article, index) => ({
@@ -142,7 +143,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
         item: {
           '@type': 'Article',
           name: article.title,
-          url: `https://comparemag.blog/blog/${article.slug}`,
+          url: absoluteUrl(`/blog/${article.slug}`),
           datePublished: article.published_at || article.created_at,
           author: {
             '@type': 'Person',
@@ -157,9 +158,9 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://comparemag.blog' },
-      { '@type': 'ListItem', position: 2, name: 'Categories', item: 'https://comparemag.blog/topics' },
-      { '@type': 'ListItem', position: 3, name: topic.title, item: `https://comparemag.blog/topics/${resolvedParams.slug}` }
+      { '@type': 'ListItem', position: 1, name: 'Home', item: absoluteUrl('/') },
+      { '@type': 'ListItem', position: 2, name: 'Categories', item: absoluteUrl('/topics') },
+      { '@type': 'ListItem', position: 3, name: topic.title, item: absoluteUrl(`/topics/${resolvedParams.slug}`) }
     ]
   }
 

@@ -1,8 +1,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { getAllArticlesOverview } from '@/lib/supabase/articles'
-import { Plus, Edit, Eye, EyeOff, FileText } from 'lucide-react'
-import { format } from 'date-fns'
+import { Plus } from 'lucide-react'
 
 async function getArticles() {
   try {
@@ -13,7 +12,7 @@ async function getArticles() {
   }
 }
 
-import { ArticleTabs } from '@/components/admin/article-tabs'
+import { ArticlesFilters } from '@/components/admin/articles-filters'
 
 export default async function AdminPage() {
   const articles = await getArticles()
@@ -67,8 +66,7 @@ export default async function AdminPage() {
         </Button>
       </div>
 
-      {/* Articles Tabs List */}
-      <ArticleTabs articles={articles} />
+      <ArticlesFilters articles={articles} />
     </div>
   )
 }

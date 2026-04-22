@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Check, Star, ExternalLink, ShoppingCart, Tag } from 'lucide-react'
+import { Check, Star, ExternalLink, ShoppingCart } from 'lucide-react'
 
 export interface ProductCardData {
   id?: string
@@ -21,6 +21,21 @@ export interface ProductCardData {
 interface ProductCardEmbedProps {
   slug: string
   preloadedData?: ProductCardData | null
+}
+
+function formatDisplayPrice(priceText?: string | null) {
+  const trimmed = (priceText || '').trim()
+  if (!trimmed) return null
+
+  if (/[$€£¥]|usd|eur|gbp|cad|aud|aed|mad|dhs|dh/i.test(trimmed) || /[a-z]/i.test(trimmed.replace(/[0-9.,\s-]/g, ''))) {
+    return trimmed
+  }
+
+  if (/^-?\d[\d,\s.]*$/.test(trimmed)) {
+    return `$${trimmed.replace(/\s+/g, '')}`
+  }
+
+  return trimmed
 }
 
 export function ProductCardEmbed({ slug, preloadedData }: ProductCardEmbedProps) {
@@ -83,7 +98,6 @@ export function ProductCardEmbed({ slug, preloadedData }: ProductCardEmbedProps)
   }
 
   const specsData = data.specs || {}
-  const condition = (specsData as Record<string, string>).condition || null
   const features = Object.entries(specsData as Record<string, string>).filter(([key]) => key !== 'condition')
 
   // Build the CTA URL
@@ -118,6 +132,7 @@ export function ProductCardEmbed({ slug, preloadedData }: ProductCardEmbedProps)
 
   const storeName = getStoreNameFromUrl(validUrl)
   const ctaLabel = data.cta_label || (storeName ? `Check Price on ${storeName}` : 'Check Price')
+  const displayPrice = formatDisplayPrice(data.price_text)
   const shortNote = data.short_description
     ? data.short_description.length > 70
       ? `${data.short_description.slice(0, 70).trimEnd()}…`
@@ -184,14 +199,6 @@ export function ProductCardEmbed({ slug, preloadedData }: ProductCardEmbedProps)
           )}
         </div>
 
-        {/* Condition Badge */}
-        {condition && (
-          <div className="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 font-medium text-xs px-2.5 py-1 rounded-md self-start border border-slate-200">
-            <Tag className="w-3.5 h-3.5 text-slate-400" />
-            <span>Condition: <span className="font-bold text-slate-900">{condition}</span></span>
-          </div>
-        )}
-
         {/* Subtle note */}
         {shortNote && (
           <div className="my-1 border-l-2 border-slate-200 pl-3">
@@ -219,10 +226,10 @@ export function ProductCardEmbed({ slug, preloadedData }: ProductCardEmbedProps)
         {/* ── Price + CTA Row ── */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100 mt-auto">
 
-          {data.price_text ? (
+          {displayPrice ? (
             <div className="w-full sm:w-auto text-left">
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Current Price</p>
-              <div className="text-3xl font-black text-slate-900 tracking-tight">{data.price_text}</div>
+              <div className="text-3xl font-black text-slate-900 tracking-tight">{displayPrice}</div>
             </div>
           ) : (
             <div className="hidden sm:block" />

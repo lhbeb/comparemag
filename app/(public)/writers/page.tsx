@@ -4,18 +4,19 @@ import { Github, Linkedin, Mail, Rss, Twitter, User, Award } from "lucide-react"
 import { getAllWriters } from "@/lib/supabase/writers"
 import { StructuredData } from "@/components/seo/structured-data"
 import type { Metadata } from 'next'
+import { absoluteUrl, SITE_NAME } from '@/lib/site-config'
 
 export const metadata: Metadata = {
-  title: "Our Expert Reviewers | CompareMag",
-  description: "Meet the team of tech experts and reviewers behind CompareMag's in-depth product analysis.",
+  title: `Our Expert Reviewers | ${SITE_NAME}`,
+  description: `Meet the team of tech experts and reviewers behind ${SITE_NAME}'s in-depth product analysis.`,
   alternates: {
-    canonical: "https://comparemag.blog/writers",
+    canonical: absoluteUrl('/writers'),
   },
   openGraph: {
-    title: "Our Expert Reviewers | CompareMag",
-    description: "Meet the team of tech experts and reviewers behind CompareMag's in-depth product analysis.",
-    siteName: "CompareMag",
-    url: "https://comparemag.blog/writers",
+    title: `Our Expert Reviewers | ${SITE_NAME}`,
+    description: `Meet the team of tech experts and reviewers behind ${SITE_NAME}'s in-depth product analysis.`,
+    siteName: SITE_NAME,
+    url: absoluteUrl('/writers'),
     type: "profile",
   },
 }
@@ -35,18 +36,18 @@ export default async function EditorsPage() {
   const schemaData = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'Our Expert Reviewers | CompareMag',
-    description: "Meet the team of tech experts and reviewers behind CompareMag's in-depth product analysis.",
-    url: 'https://comparemag.blog/writers',
+    name: `Our Expert Reviewers | ${SITE_NAME}`,
+    description: `Meet the team of tech experts and reviewers behind ${SITE_NAME}'s in-depth product analysis.`,
+    url: absoluteUrl('/writers'),
     itemListElement: editors.map((editor, index) => ({
       '@type': 'ListItem',
       position: index + 1,
       item: {
         '@type': 'Person',
         name: editor.name,
-        description: editor.bio || "Tech reviewer at CompareMag",
+        description: editor.bio || `Tech reviewer at ${SITE_NAME}`,
         jobTitle: (editor as any).specialty || "Reviewer",
-        url: `https://comparemag.blog/writers/${editor.slug}`,
+        url: absoluteUrl(`/writers/${editor.slug}`),
         image: editor.avatar_url,
       }
     }))

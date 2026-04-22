@@ -1,4 +1,4 @@
-import Link from "next/link"
+import { SITE_DOMAIN } from "@/lib/site-config"
 
 export default function PrivacyPolicyPage() {
   return (
@@ -8,7 +8,7 @@ export default function PrivacyPolicyPage() {
           <h1 className="text-4xl md:text-5xl font-bold mb-8 text-slate-900">Privacy Policy</h1>
           <div className="prose prose-blue prose-lg max-w-none text-slate-700">
             <p className="lead text-xl text-slate-600 mb-8 border-l-4 border-blue-600 pl-4">
-              At Compareradar.com, we are committed to protecting your privacy and ensuring your data is handled securely.
+              At {SITE_DOMAIN}, we are committed to protecting your privacy and ensuring your data is handled securely.
             </p>
             <h2 className="text-2xl font-bold text-slate-900 mt-12 mb-4">Information We Collect</h2>
             <p className="mb-6">

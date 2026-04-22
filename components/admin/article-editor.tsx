@@ -25,6 +25,7 @@ import { toast } from '@/hooks/use-toast'
 import Link from 'next/link'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
 import { ArticleRenderer, compileArticleSourceToHtml } from '@/components/article-renderer'
+import { SITE_DOMAIN } from '@/lib/site-config'
 
 interface SerializedSelectionPoint {
   path: number[]
@@ -955,7 +956,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
             />
             <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-md py-1.5 px-3 w-max max-w-full overflow-hidden">
               <Globe className="w-4 h-4 flex-shrink-0 text-slate-400" />
-              <span className="text-sm text-slate-400 font-medium hidden sm:inline">comparemag.com/blog/</span>
+              <span className="text-sm text-slate-400 font-medium hidden sm:inline">{SITE_DOMAIN}/blog/</span>
               <input 
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
@@ -1106,7 +1107,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                         </div>
                         <div className="flex flex-col">
                           <span className="text-sm font-medium text-[#202124]">CompareMag</span>
-                          <span className="text-xs text-[#4d5156]">comparemag.com › blog › {slug || 'article-slug'}</span>
+                          <span className="text-xs text-[#4d5156]">{SITE_DOMAIN} › blog › {slug || 'article-slug'}</span>
                         </div>
                       </div>
                       <h3 className="text-[20px] text-[#1a0dab] group-hover:underline cursor-pointer leading-tight mb-1" style={{ fontFamily: 'arial, sans-serif' }}>

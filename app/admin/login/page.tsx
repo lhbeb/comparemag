@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useRouter } from 'next/navigation'
 import { LayoutDashboard, Lock, AlertCircle } from 'lucide-react'
+import { SITE_DOMAIN } from '@/lib/site-config'
 
 export default function AdminLoginPage() {
   const [error, setError] = useState<string>('')
@@ -58,7 +59,7 @@ export default function AdminLoginPage() {
                 id="email" 
                 name="email" 
                 type="email" 
-                placeholder="admin@comparemag.com"
+                placeholder={`admin@${SITE_DOMAIN}`}
                 required 
                 className="h-11"
               />

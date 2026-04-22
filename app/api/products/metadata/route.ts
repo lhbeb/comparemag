@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { SITE_URL } from '@/lib/site-config'
 
 function extractMetaContent(html: string, patterns: RegExp[]) {
   for (const pattern of patterns) {
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
     const response = await fetch(targetUrl.toString(), {
       headers: {
         'user-agent':
-          'Mozilla/5.0 (compatible; CompareMagBot/1.0; +https://comparemag.blog)',
+          `Mozilla/5.0 (compatible; CompareMagBot/1.0; +${SITE_URL})`,
         accept: 'text/html,application/xhtml+xml',
       },
       redirect: 'follow',

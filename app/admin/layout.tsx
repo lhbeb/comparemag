@@ -30,17 +30,7 @@ const navGroups = [
         icon: Newspaper,
         children: [
           { label: 'All Articles', href: '/admin/articles' },
-          { label: 'New Article', href: '/admin/articles/new' },
-        ],
-      },
-      {
-        label: 'Programmatic SEO',
-        href: '/admin/programmatic',
-        icon: Wand2,
-        children: [
-          { label: 'Templates', href: '/admin/programmatic/templates' },
-          { label: 'Generated Pages', href: '/admin/programmatic/generated-pages' },
-          { label: 'Bulk Generate', href: '/admin/programmatic/new' },
+          { label: 'New Article', href: '/admin/articles/new', icon: PlusCircle },
         ],
       },
     ],
@@ -54,16 +44,7 @@ const navGroups = [
         icon: ShoppingBag,
         children: [
           { label: 'All Products', href: '/admin/products' },
-          { label: 'New Product', href: '/admin/products/new' },
-        ],
-      },
-      {
-        label: 'Imports & Exports',
-        href: '/admin/imports-exports',
-        icon: Database,
-        children: [
-          { label: 'Import Products', href: '/admin/imports-exports/import-products' },
-          { label: 'Export Data', href: '/admin/imports-exports/export-data' },
+          { label: 'New Product', href: '/admin/products/new', icon: PlusCircle },
         ],
       },
     ],
@@ -77,7 +58,31 @@ const navGroups = [
         icon: Users,
         children: [
           { label: 'All Editors', href: '/admin/writers' },
-          { label: 'Add Editor', href: '/admin/writers/new' },
+          { label: 'Add Editor', href: '/admin/writers/new', icon: PlusCircle },
+        ],
+      },
+    ],
+  },
+  {
+    groupLabel: 'Growth & Operations',
+    items: [
+      {
+        label: 'Programmatic SEO',
+        href: '/admin/programmatic',
+        icon: Wand2,
+        children: [
+          { label: 'Templates', href: '/admin/programmatic/templates' },
+          { label: 'Generated Pages', href: '/admin/programmatic/generated-pages' },
+          { label: 'Bulk Generate', href: '/admin/programmatic/new' },
+        ],
+      },
+      {
+        label: 'Imports & Exports',
+        href: '/admin/imports-exports',
+        icon: Database,
+        children: [
+          { label: 'Import Products', href: '/admin/imports-exports/import-products', icon: PlusCircle },
+          { label: 'Export Data', href: '/admin/imports-exports/export-data' },
         ],
       },
     ],
@@ -92,9 +97,17 @@ export default function AdminLayout({
   const pathname = usePathname()
   const isProductEditorPage =
     pathname === '/admin/products/new' || pathname.startsWith('/admin/products/edit/')
+  const isArticlesIndexPage = pathname === '/admin/articles'
   const currentArticleSlug = pathname.startsWith('/admin/articles/edit/')
     ? pathname.split('/').pop()
     : null
+
+  const contentMaxWidth = isProductEditorPage ? 1240 : isArticlesIndexPage ? 1560 : 960
+  const contentPaddingClass = isProductEditorPage
+    ? 'flex-1 px-4 py-4 lg:px-5 lg:py-4'
+    : isArticlesIndexPage
+      ? 'flex-1 px-5 py-8 xl:px-8'
+      : 'flex-1 px-8 py-8'
 
   const isGroupActive = (href: string) => {
     if (href === '/admin') return pathname === '/admin' 
@@ -178,6 +191,8 @@ export default function AdminLayout({
                     <div className="mt-0.5 space-y-0.5 pl-3">
                       {item.children.map((child) => {
                         const childActive = isChildActive(child.href)
+                        const ChildIcon = child.icon || ChevronRight
+                        const isActionChild = Boolean(child.icon)
                         return (
                           <Link
                             key={child.href}
@@ -196,10 +211,23 @@ export default function AdminLayout({
                                 style={{ background: '#60A5FA' }}
                               />
                             )}
-                            <ChevronRight
-                              className="h-3 w-3 flex-shrink-0"
-                              style={{ opacity: childActive ? 1 : 0.4 }}
-                            />
+                            {isActionChild ? (
+                              <span
+                                className="inline-flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-md border"
+                                style={{
+                                  background: childActive ? 'rgba(255,255,255,0.18)' : 'rgba(251, 146, 60, 0.18)',
+                                  borderColor: childActive ? 'rgba(255,255,255,0.22)' : 'rgba(251, 146, 60, 0.28)',
+                                  color: childActive ? '#FFFFFF' : '#FDBA74',
+                                }}
+                              >
+                                <ChildIcon className="h-2.5 w-2.5" />
+                              </span>
+                            ) : (
+                              <ChildIcon
+                                className="h-3 w-3 flex-shrink-0"
+                                style={{ opacity: childActive ? 1 : 0.4 }}
+                              />
+                            )}
                             {child.label}
                           </Link>
                         )
@@ -326,8 +354,8 @@ export default function AdminLayout({
         </div>
 
         {/* Page content — centered with max-width */}
-        <main className={isProductEditorPage ? 'flex-1 px-4 py-4 lg:px-5 lg:py-4' : 'flex-1 px-8 py-8'}>
-          <div className="mx-auto w-full" style={{ maxWidth: isProductEditorPage ? 1240 : 960 }}>
+        <main className={contentPaddingClass}>
+          <div className="mx-auto w-full" style={{ maxWidth: contentMaxWidth }}>
             {children}
           </div>
         </main>

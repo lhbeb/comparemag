@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { SITE_URL } from '@/lib/site-config'
 
 interface ArticleHeadProps {
   article: {
@@ -16,7 +17,7 @@ interface ArticleHeadProps {
   siteUrl?: string
 }
 
-export function ArticleHead({ article, siteUrl = 'https://comparemag.blog' }: ArticleHeadProps) {
+export function ArticleHead({ article, siteUrl = SITE_URL }: ArticleHeadProps) {
   const url = `${siteUrl}/blog/${article.slug}`
   const imageUrl = article.image_url || `${siteUrl}/placeholder.svg`
   const metaDescription = article.meta_description || article.title
@@ -57,4 +58,3 @@ export function ArticleHead({ article, siteUrl = 'https://comparemag.blog' }: Ar
     </Head>
   )
 }
-

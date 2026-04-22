@@ -50,7 +50,6 @@ type ProductField =
   | 'title'
   | 'slug'
   | 'shortDesc'
-  | 'itemCondition'
   | 'priceText'
   | 'ratingText'
   | 'externalUrl'
@@ -58,15 +57,6 @@ type ProductField =
   | 'badgeText'
   | 'imageUrl'
   | 'specs'
-
-const ITEM_CONDITION_OPTIONS = [
-  'Brand New',
-  'New',
-  'Mint',
-  'Open Box',
-  'Gently Used',
-  'Fair',
-] as const
 
 const BADGE_LABEL_OPTIONS = [
   'Top Pick',
@@ -127,6 +117,23 @@ function normalizeExternalUrl(raw: string) {
   return parsed.toString()
 }
 
+function normalizeUsdPrice(raw: string) {
+  const trimmed = raw.trim()
+  if (!trimmed) return ''
+
+  // If the editor already typed a currency symbol/code or descriptive text, keep it.
+  if (/[$€£¥]|usd|eur|gbp|cad|aud|aed|mad|dhs|dh/i.test(trimmed) || /[a-z]/i.test(trimmed.replace(/[0-9.,\s-]/g, ''))) {
+    return trimmed
+  }
+
+  // Default plain numeric values to USD.
+  if (/^-?\d[\d,\s.]*$/.test(trimmed)) {
+    return `$${trimmed.replace(/\s+/g, '')}`
+  }
+
+  return trimmed
+}
+
 export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps) {
   const router = useRouter()
   const supabase = createClient()
@@ -138,19 +145,15 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
   const [shortDesc, setShortDesc] = useState(initialData?.short_description || '')
   const [ctaLabel, setCtaLabel] = useState(initialData?.cta_label || 'Check Price')
   const [externalUrl, setExternalUrl] = useState(initialData?.external_url || '')
-  const [priceText, setPriceText] = useState(initialData?.price_text || '')
+  const [priceText, setPriceText] = useState(normalizeUsdPrice(initialData?.price_text || ''))
   const [ratingText, setRatingText] = useState(initialData?.rating_text || '')
   const [badgeText, setBadgeText] = useState(initialData?.badge_text || '')
   const [imageUrl, setImageUrl] = useState(initialData?.image_url || '')
-  
-  // Extract condition from specs if it exists
-  const initialCondition = initialData?.specs?.condition || ''
-  const [itemCondition, setItemCondition] = useState(initialCondition)
-  
-  // Exclude condition from the raw specs text editor
+
+  // Keep legacy `condition` keys from reappearing in the editor.
   const buildInitialSpecs = () => {
     if (!initialData?.specs) return ''
-    const { condition, ...restSpecs } = initialData.specs
+    const { condition: _condition, ...restSpecs } = initialData.specs
     if (Object.keys(restSpecs).length === 0) return ''
     return JSON.stringify(restSpecs, null, 2)
   }
@@ -190,8 +193,6 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
         return normalizedValue ? '' : 'Slug is required.'
       case 'shortDesc':
         return normalizedValue ? '' : 'Short note is required.'
-      case 'itemCondition':
-        return normalizedValue ? '' : 'Item condition is required.'
       case 'priceText':
         return normalizedValue ? '' : 'Price label is required.'
       case 'ratingText':
@@ -228,7 +229,6 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
       ['title', title],
       ['slug', slug],
       ['shortDesc', shortDesc],
-      ['itemCondition', itemCondition],
       ['priceText', priceText],
       ['ratingText', ratingText],
       ['externalUrl', externalUrl],
@@ -288,6 +288,14 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
       return
     }
 
+    const normalizedPriceText = normalizeUsdPrice(priceText)
+    setPriceText(normalizedPriceText)
+    if (!normalizedPriceText) {
+      setFieldError('priceText', 'Price label is required.')
+      toast({ title: 'Missing price', description: 'Please add the product price before saving.', variant: 'destructive' })
+      return
+    }
+
     let parsedSpecs: any = null
     if (specs) {
       try { parsedSpecs = JSON.parse(specs) } 
@@ -298,14 +306,12 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
     } else {
       parsedSpecs = {}
     }
-    
-    // Inject item condition into the specs JSONB
-    if (itemCondition.trim()) {
-      if (!parsedSpecs) parsedSpecs = {}
-      parsedSpecs.condition = itemCondition.trim()
+
+    // Strip legacy `condition` values from specs when saving.
+    if (parsedSpecs && typeof parsedSpecs === 'object' && 'condition' in parsedSpecs) {
+      delete parsedSpecs.condition
     }
-    
-    // If empty after stripping, set to null
+
     if (parsedSpecs && Object.keys(parsedSpecs).length === 0) {
       parsedSpecs = null
     }
@@ -315,7 +321,7 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
       const payload = {
         slug, title, brand: brand || null, short_description: shortDesc,
         cta_label: ctaLabel || 'Check Price', external_url: normalizedExternalUrl,
-        price_text: priceText || null, rating_text: ratingText || null,
+        price_text: normalizedPriceText || null, rating_text: ratingText || null,
         badge_text: badgeText || null, image_url: imageUrl || null,
         specs: parsedSpecs, published: publish,
       }
@@ -442,29 +448,6 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
                 {errors.shortDesc ? <p className="text-xs text-red-600">{errors.shortDesc}</p> : null}
                 <p className="text-[10px] text-slate-400">Shown quietly on the product card and trimmed after 70 characters.</p>
               </div>
-
-              <div className="space-y-2">
-                <Label className="text-xs text-slate-500 font-bold uppercase tracking-wider">Item Condition</Label>
-                <Select
-                  value={itemCondition}
-                  onValueChange={(value) => {
-                    setItemCondition(value)
-                    if (errors.itemCondition) setFieldError('itemCondition', validateField('itemCondition', value) || undefined)
-                  }}
-                >
-                  <SelectTrigger className={fieldClassName('itemCondition', 'bg-white border-slate-200 text-sm')}>
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ITEM_CONDITION_OPTIONS.map((condition) => (
-                      <SelectItem key={condition} value={condition}>
-                        {condition}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.itemCondition ? <p className="text-xs text-red-600">{errors.itemCondition}</p> : null}
-              </div>
             </section>
 
             <section className="space-y-2.5 rounded-2xl border border-slate-200 bg-white p-3">
@@ -481,11 +464,16 @@ export function ProductCardEditor({ initialData, mode }: ProductCardEditorProps)
                       setPriceText(e.target.value)
                       if (errors.priceText) setFieldError('priceText', validateField('priceText', e.target.value) || undefined)
                     }}
-                    onBlur={(e) => setFieldError('priceText', validateField('priceText', e.target.value) || undefined)}
+                    onBlur={(e) => {
+                      const normalized = normalizeUsdPrice(e.target.value)
+                      setPriceText(normalized)
+                      setFieldError('priceText', validateField('priceText', normalized) || undefined)
+                    }}
                     placeholder="$299"
                     className={fieldClassName('priceText', 'bg-slate-50 border-slate-200 font-bold')}
                   />
                   {errors.priceText ? <p className="text-xs text-red-600">{errors.priceText}</p> : null}
+                  <p className="text-[10px] text-slate-400">USD is assumed by default. Typing <span className="font-semibold">360</span> will save as <span className="font-semibold">$360</span>.</p>
                 </div>
 
                 <div className="space-y-1.5">

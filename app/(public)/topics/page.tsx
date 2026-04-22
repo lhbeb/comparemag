@@ -4,18 +4,19 @@ import { Phone, Laptop, Speaker, Home, Gamepad2, Camera } from "lucide-react"
 import { getAllArticles } from "@/lib/supabase/articles"
 import { StructuredData } from "@/components/seo/structured-data"
 import type { Metadata } from "next"
+import { absoluteUrl, SITE_NAME } from '@/lib/site-config'
 
 export const metadata: Metadata = {
-  title: "Categories & Topics | CompareMag",
+  title: `Categories & Topics | ${SITE_NAME}`,
   description: "Browse our comprehensive coverage of smartphones, laptops, audio gear, home appliances, gaming, and cameras.",
   alternates: {
-    canonical: "https://comparemag.blog/topics",
+    canonical: absoluteUrl('/topics'),
   },
   openGraph: {
-    title: "Categories & Topics | CompareMag",
+    title: `Categories & Topics | ${SITE_NAME}`,
     description: "Browse our comprehensive coverage of smartphones, laptops, audio gear, home appliances, gaming, and cameras.",
-    url: "https://comparemag.blog/topics",
-    siteName: "CompareMag",
+    url: absoluteUrl('/topics'),
+    siteName: SITE_NAME,
     type: "website",
   },
 }
@@ -79,9 +80,9 @@ export default async function TopicsPage() {
   const schemaData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'Categories & Topics | CompareMag',
+    name: `Categories & Topics | ${SITE_NAME}`,
     description: 'Browse our comprehensive coverage of tech categories.',
-    url: 'https://comparemag.blog/topics',
+    url: absoluteUrl('/topics'),
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: categoryCounts.map((topic, index) => ({
@@ -91,7 +92,7 @@ export default async function TopicsPage() {
           '@type': 'Thing',
           name: topic.title,
           description: topic.description,
-          url: `https://comparemag.blog/topics/${topic.slug}`
+          url: absoluteUrl(`/topics/${topic.slug}`)
         }
       }))
     }

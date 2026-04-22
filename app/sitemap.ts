@@ -1,12 +1,13 @@
 import { MetadataRoute } from 'next'
 import { getAllArticles } from '@/lib/supabase/articles'
 import { getAllWriters } from '@/lib/supabase/writers'
+import { SITE_URL } from '@/lib/site-config'
 
 // Topic slugs must stay in sync with topicsData in topics/[slug]/page.tsx
 const TOPIC_SLUGS = ['smartphones', 'laptops', 'audio', 'home-appliances', 'gaming', 'cameras']
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://comparemag.blog'
+  const baseUrl = SITE_URL
 
   // Static routes
   const routes = ['', '/articles', '/topics', '/writers', '/about'].map((route) => ({

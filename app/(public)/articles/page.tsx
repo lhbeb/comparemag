@@ -8,18 +8,19 @@ import { format } from 'date-fns'
 import { ArticlesSubscribeButton } from '@/components/articles-subscribe-button'
 import { StructuredData } from '@/components/seo/structured-data'
 import type { Metadata } from 'next'
+import { absoluteUrl, SITE_NAME } from '@/lib/site-config'
 
 export const metadata: Metadata = {
-  title: "All Reviews & Articles | CompareMag",
+  title: `All Reviews & Articles | ${SITE_NAME}`,
   description: "Browse our complete archive of in-depth product reviews, buying guides, and tech news.",
   alternates: {
-    canonical: "https://comparemag.blog/articles",
+    canonical: absoluteUrl('/articles'),
   },
   openGraph: {
-    title: "All Reviews & Articles | CompareMag",
+    title: `All Reviews & Articles | ${SITE_NAME}`,
     description: "Browse our complete archive of in-depth product reviews, buying guides, and tech news.",
-    siteName: "CompareMag",
-    url: "https://comparemag.blog/articles",
+    siteName: SITE_NAME,
+    url: absoluteUrl('/articles'),
     type: "website",
   },
 }
@@ -39,9 +40,9 @@ export default async function ArticlesPage() {
   const schemaData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'All Reviews & Articles | CompareMag',
+    name: `All Reviews & Articles | ${SITE_NAME}`,
     description: 'Browse our complete archive of in-depth product reviews, buying guides, and tech news.',
-    url: 'https://comparemag.blog/articles',
+    url: absoluteUrl('/articles'),
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: articles.map((article, index) => ({
@@ -50,7 +51,7 @@ export default async function ArticlesPage() {
         item: {
           '@type': 'Article',
           name: article.title,
-          url: `https://comparemag.blog/blog/${article.slug}`,
+          url: absoluteUrl(`/blog/${article.slug}`),
           datePublished: article.published_at || article.created_at,
           author: {
             '@type': 'Person',
@@ -65,8 +66,8 @@ export default async function ArticlesPage() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://comparemag.blog' },
-      { '@type': 'ListItem', position: 2, name: 'Articles', item: 'https://comparemag.blog/articles' }
+      { '@type': 'ListItem', position: 1, name: 'Home', item: absoluteUrl('/') },
+      { '@type': 'ListItem', position: 2, name: 'Articles', item: absoluteUrl('/articles') }
     ]
   }
 
