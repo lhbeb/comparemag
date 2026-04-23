@@ -323,7 +323,9 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
               : `<span class="text-[10px] font-black uppercase tracking-[0.22em] text-amber-500">Amazon</span>`}
           </div>
           <div class="min-w-0 flex-1">
-            <div class="text-[10px] font-black uppercase tracking-[0.22em] text-amber-600 mb-1">External Product Card</div>
+            <div class="mb-2 inline-flex items-center justify-center rounded-md bg-white p-1 shadow-sm border border-slate-100">
+              <img src="/amazon-logo.svg" alt="Amazon" class="h-2.5 w-auto" />
+            </div>
             <div class="text-sm font-bold text-slate-900 leading-snug line-clamp-2">${escapeHtml(title)}</div>
             <div class="mt-1 text-xs text-slate-500 line-clamp-2">${escapeHtml(description || 'Saved directly in this article. No separate product database record needed.')}</div>
             ${priceText ? `<div class="mt-2 text-sm font-black tracking-tight text-slate-900">${escapeHtml(priceText)}</div>` : ''}
@@ -2039,9 +2041,11 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                   <p className="mb-3 text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">Preview Summary</p>
                   <div className="rounded-2xl border border-amber-200 bg-white shadow-sm overflow-hidden">
-                    <div className="bg-[#131921] px-4 py-3 text-white">
-                      <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-300">External Product Card</div>
-                      <div className="mt-1 text-sm font-bold leading-snug text-white">
+                    <div className="p-4 space-y-3 border-b border-slate-100">
+                      <div className="mb-2 inline-flex items-center justify-center rounded-md bg-white p-1.5 shadow-sm border border-slate-100">
+                        <img src="/amazon-logo.svg" alt="Amazon" className="h-3 w-auto" />
+                      </div>
+                      <div className="text-sm font-bold leading-snug text-slate-900">
                         {amazonTitle.trim() || 'Amazon product title'}
                       </div>
                     </div>

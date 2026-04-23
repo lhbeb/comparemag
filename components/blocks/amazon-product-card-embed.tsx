@@ -83,7 +83,9 @@ export function AmazonProductCardEmbed({
 
         <div className="flex flex-col gap-4 p-6 md:p-7">
           <div>
-            <p className="mb-1.5 text-[11px] font-semibold tracking-wide text-slate-400">{sourceLabel}</p>
+            <div className="mb-3 inline-flex items-center justify-center rounded-md bg-white p-1.5 shadow-sm border border-slate-100">
+              <img src="/amazon-logo.svg" alt="Amazon" className="h-4 w-auto" />
+            </div>
             <h3 className="text-xl font-bold leading-snug text-slate-900 md:text-2xl">{safeTitle}</h3>
           </div>
 
