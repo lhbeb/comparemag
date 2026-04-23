@@ -20,6 +20,8 @@ interface BlogPostContentProps {
 export function BlogPostContent({ post, article, preloadedProducts }: BlogPostContentProps) {
   if (!post) return null
 
+  const publishedDateTime = article?.published_at || article?.created_at || ''
+
   // Generate breadcrumb items
   const categorySlug = (post.category || 'General').toLowerCase().replace(/\s+/g, '-')
   
@@ -88,15 +90,6 @@ export function BlogPostContent({ post, article, preloadedProducts }: BlogPostCo
               </h1>
 
               <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500 mb-8">
-                <div className="flex items-center gap-1">
-                  <Clock className="h-4 w-4" aria-hidden="true" />
-                  <time 
-                    dateTime={article?.published_at || article?.created_at || ''} 
-                    itemProp="datePublished"
-                  >
-                    {post.date}
-                  </time>
-                </div>
                 <div className="flex items-center gap-1" itemProp="timeRequired">
                   <BookOpen className="h-4 w-4" aria-hidden="true" />
                   <span>{post.readTime}</span>
@@ -113,6 +106,9 @@ export function BlogPostContent({ post, article, preloadedProducts }: BlogPostCo
                     </Link>
                   </span>
                 </div>
+                {publishedDateTime && (
+                  <meta itemProp="datePublished" content={publishedDateTime} />
+                )}
                 {article?.updated_at && article.updated_at !== article.created_at && (
                   <meta itemProp="dateModified" content={article.updated_at} />
                 )}
@@ -185,6 +181,17 @@ export function BlogPostContent({ post, article, preloadedProducts }: BlogPostCo
                     </div>
                   </Link>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {publishedDateTime && (
+            <div className="mt-12 border-t border-slate-200 pt-5 text-sm text-slate-500">
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                <time dateTime={publishedDateTime}>
+                  Published {post.date}
+                </time>
               </div>
             </div>
           )}
