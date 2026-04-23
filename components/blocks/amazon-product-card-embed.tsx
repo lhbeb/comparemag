@@ -34,12 +34,19 @@ function formatDisplayPrice(priceText?: string | null) {
   const trimmed = (priceText || '').trim()
   if (!trimmed) return null
 
-  if (/[$€£¥]|usd|eur|gbp|cad|aud|aed|mad|dhs|dh/i.test(trimmed) || /[a-z]/i.test(trimmed.replace(/[0-9.,\s-]/g, ''))) {
+  // If it already has an explicit currency symbol or code, return it as-is
+  if (/[$€£¥]|usd|eur|gbp|cad|aud|aed|mad|dhs|dh/i.test(trimmed)) {
     return trimmed
   }
 
-  if (/^-?\d[\d,\s.]*$/.test(trimmed)) {
-    return `$${trimmed.replace(/\s+/g, '')}`
+  // If there are digits but no currency symbol, default to USD ($)
+  if (/\d/.test(trimmed)) {
+    // If it's pure numbers/punctuation, cleanly format it
+    if (/^[-\d,\s.]+$/.test(trimmed)) {
+      return `$${trimmed.replace(/\s+/g, '')}`
+    }
+    // Otherwise, prepend $ to the first number it finds
+    return trimmed.replace(/(\d+[\d,.]*)/, '$$$1')
   }
 
   return trimmed

@@ -132,6 +132,17 @@ function normalizeAbsoluteUrl(url: string) {
   return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
 }
 
+function formatDisplayPrice(priceText: string) {
+  const trimmed = priceText.trim()
+  if (!trimmed) return '$0'
+  if (/[$€£¥]|usd|eur|gbp|cad|aud|aed|mad|dhs|dh/i.test(trimmed)) return trimmed
+  if (/\d/.test(trimmed)) {
+    if (/^[-\d,\s.]+$/.test(trimmed)) return `$${trimmed.replace(/\s+/g, '')}`
+    return trimmed.replace(/(\d+[\d,.]*)/, '$$$1')
+  }
+  return trimmed
+}
+
 export function ArticleEditor({ initialData, mode, initialWriters = [], initialProducts = [] }: ArticleEditorProps) {
   const router = useRouter()
   const supabase = createClient()
@@ -2054,7 +2065,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                         {amazonDescription.trim() || 'This separate card is saved directly inside the article and does not create a product record in your database.'}
                       </p>
                       <div className="text-2xl font-black tracking-tight text-slate-900">
-                        {amazonPrice.trim() || '$0'}
+                        {formatDisplayPrice(amazonPrice)}
                       </div>
                       <div className="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-amber-700">
                         {extractCleanDomain(amazonUrl) || 'amazon.com'}
