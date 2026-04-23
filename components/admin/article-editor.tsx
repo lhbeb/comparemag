@@ -191,6 +191,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const [htmlOutput, setHtmlOutput] = useState(() => compileArticleSourceToHtml(initialData?.content || ''))
   const [productSearch, setProductSearch] = useState('')
   const [productDomainFilter, setProductDomainFilter] = useState<string | null>(null)
+  const [productListedByFilter, setProductListedByFilter] = useState<string | null>(null)
   const [loadedProductImages, setLoadedProductImages] = useState<Record<string, boolean>>({})
   const [productsLoading, setProductsLoading] = useState(false)
   const [productsLoadError, setProductsLoadError] = useState<string | null>(null)
@@ -1675,7 +1676,12 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
       {showProductModal && (() => {
         // Derive unique domains from all products' external_url
         const allDomains = Array.from(
-          new Set(products.map(p => extractCleanDomain(p.external_url)).filter(Boolean))
+          new Set(products.map((p: any) => extractCleanDomain(p.external_url)).filter(Boolean))
+        ).sort() as string[]
+
+        // Derive unique listed_by values
+        const allStaff = Array.from(
+          new Set(products.map((p: any) => p.listed_by).filter(Boolean))
         ).sort() as string[]
 
         return (
@@ -1684,7 +1690,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
             <div className="p-4 sm:p-6 border-b border-slate-100 flex flex-wrap justify-between items-start gap-3 bg-slate-50 flex-shrink-0">
                <div className="flex min-w-0 flex-wrap gap-x-4 gap-y-2 pr-2">
                  <button 
-                   onClick={() => { setModalMode('product'); setProductSearch(''); setProductDomainFilter(null) }}
+                   onClick={() => { setModalMode('product'); setProductSearch(''); setProductDomainFilter(null); setProductListedByFilter(null) }}
                   className={`text-sm font-bold pb-1 border-b-2 transition-all ${modalMode === 'product' ? 'text-blue-600 border-blue-600' : 'text-slate-400 border-transparent hover:text-slate-600'}`}
                  >
                    Insert Product Block
@@ -1702,7 +1708,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                    Raw Embed Code
                  </button>
                </div>
-               <Button variant="ghost" size="icon" onClick={() => { setShowProductModal(false); setProductSearch(''); setProductDomainFilter(null); resetAmazonForm() }} className="rounded-full h-8 w-8 hover:bg-slate-200">
+               <Button variant="ghost" size="icon" onClick={() => { setShowProductModal(false); setProductSearch(''); setProductDomainFilter(null); setProductListedByFilter(null); resetAmazonForm() }} className="rounded-full h-8 w-8 hover:bg-slate-200">
                  <X className="w-4 h-4 text-slate-500" />
                </Button>
             </div>
@@ -1767,7 +1773,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                             : 'bg-white text-slate-500 border-slate-200 hover:border-blue-300 hover:text-blue-600'
                         }`}
                       >
-                        All
+                        All stores
                       </button>
                       {allDomains.map(domain => (
                         <button
@@ -1784,6 +1790,36 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                       ))}
                     </div>
                   )}
+
+                  {/* ── Listed-by filter pills ── */}
+                  {allStaff.length > 0 && (
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 pr-1">Staff:</span>
+                      <button
+                        onClick={() => setProductListedByFilter(null)}
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold transition-all border ${
+                          productListedByFilter === null
+                            ? 'bg-purple-600 text-white border-purple-600 shadow-sm'
+                            : 'bg-white text-slate-500 border-slate-200 hover:border-purple-300 hover:text-purple-600'
+                        }`}
+                      >
+                        All
+                      </button>
+                      {allStaff.map(name => (
+                        <button
+                          key={name}
+                          onClick={() => setProductListedByFilter(productListedByFilter === name ? null : name)}
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold transition-all border ${
+                            productListedByFilter === name
+                              ? 'bg-purple-600 text-white border-purple-600 shadow-sm'
+                              : 'bg-white text-slate-500 border-slate-200 hover:border-purple-300 hover:text-purple-600'
+                          }`}
+                        >
+                          {name.charAt(0).toUpperCase() + name.slice(1)}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* ── Filtered list ── */}
@@ -1792,19 +1828,25 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                     const query = productSearch.toLowerCase().trim()
                     let filtered = products
 
-                    // Apply domain filter
-                    if (productDomainFilter) {
-                      filtered = filtered.filter(p => extractCleanDomain(p.external_url) === productDomainFilter)
+                    // Apply listed-by filter
+                    if (productListedByFilter) {
+                      filtered = filtered.filter((p: any) => p.listed_by === productListedByFilter)
                     }
 
-                    // Apply text search
+                    // Apply domain filter
+                    if (productDomainFilter) {
+                      filtered = filtered.filter((p: any) => extractCleanDomain(p.external_url) === productDomainFilter)
+                    }
+
+                    // Apply text search (also matches listed_by)
                     if (query) {
-                      filtered = filtered.filter(p => {
+                      filtered = filtered.filter((p: any) => {
                         const domain = extractCleanDomain(p.external_url)
                         return (
                           p.title?.toLowerCase().includes(query) ||
                           p.slug?.toLowerCase().includes(query) ||
                           p.brand?.toLowerCase().includes(query) ||
+                          p.listed_by?.toLowerCase().includes(query) ||
                           domain?.toLowerCase().includes(query)
                         )
                       })
