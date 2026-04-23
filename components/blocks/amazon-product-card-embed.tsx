@@ -117,10 +117,11 @@ export function AmazonProductCardEmbed({
               href={safeUrl}
               target="_blank"
               rel="noopener noreferrer nofollow sponsored"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold text-white transition-all hover:bg-slate-800 sm:w-auto sm:min-w-[190px]"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold !text-white no-underline transition-all visited:!text-white hover:!text-white hover:bg-slate-800 focus:!text-white active:!text-white sm:w-auto sm:min-w-[190px]"
+              style={{ color: '#ffffff', textDecoration: 'none' }}
             >
-              <span>{safeCtaLabel}</span>
-              <ExternalLink className="h-4 w-4" />
+              <span className="!text-white">{safeCtaLabel}</span>
+              <ExternalLink className="h-4 w-4 !text-white" />
             </a>
           </div>
         </div>
