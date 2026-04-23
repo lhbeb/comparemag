@@ -184,7 +184,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const [amazonDescription, setAmazonDescription] = useState('')
   const [amazonImageUrl, setAmazonImageUrl] = useState('')
   const [amazonPrice, setAmazonPrice] = useState('')
-  const [amazonCtaLabel, setAmazonCtaLabel] = useState('View on Amazon')
+  const [amazonCtaLabel, setAmazonCtaLabel] = useState('View details')
   const [fetchingAmazonMetadata, setFetchingAmazonMetadata] = useState(false)
   const [activeTab, setActiveTab] = useState<'write' | 'seo' | 'preview' | 'html'>('write')
   const [hasMounted, setHasMounted] = useState(false)
@@ -322,7 +322,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
               : `<span class="text-[10px] font-black uppercase tracking-[0.22em] text-amber-500">Amazon</span>`}
           </div>
           <div class="min-w-0 flex-1">
-            <div class="text-[10px] font-black uppercase tracking-[0.22em] text-amber-600 mb-1">Amazon Product Card</div>
+            <div class="text-[10px] font-black uppercase tracking-[0.22em] text-amber-600 mb-1">External Product Card</div>
             <div class="text-sm font-bold text-slate-900 leading-snug line-clamp-2">${escapeHtml(title)}</div>
             <div class="mt-1 text-xs text-slate-500 line-clamp-2">${escapeHtml(description || 'Saved directly in this article. No separate product database record needed.')}</div>
             ${priceText ? `<div class="mt-2 text-sm font-black tracking-tight text-slate-900">${escapeHtml(priceText)}</div>` : ''}
@@ -529,7 +529,17 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const insertHtmlAtSelection = (html: string) => {
     if (!editorRef.current) return
 
+    // Capture the cursors refs before .focus(), because .focus() fires onFocus
+    // which calls saveSelectionRange() and overwrites them with the browser default.
+    const capturedSel = savedSelectionRef.current
+    const capturedRange = savedRangeRef.current ? savedRangeRef.current.cloneRange() : null
+
     editorRef.current.focus()
+
+    // Restore the pre-focus position so restoreSelectionRange() uses the correct spot.
+    savedSelectionRef.current = capturedSel
+    savedRangeRef.current = capturedRange
+
     const range = restoreSelectionRange()
     if (!range) return
 
@@ -608,7 +618,17 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const insertBlockHtmlAtSelection = (html: string) => {
     if (!editorRef.current) return
 
+    // Capture the cursor refs before .focus() fires onFocus -> saveSelectionRange()
+    // which would overwrite them with the browser's default (usually top of editor).
+    const capturedSel = savedSelectionRef.current
+    const capturedRange = savedRangeRef.current ? savedRangeRef.current.cloneRange() : null
+
     editorRef.current.focus()
+
+    // Restore the captured position so we insert where the user actually clicked.
+    savedSelectionRef.current = capturedSel
+    savedRangeRef.current = capturedRange
+
     const range = restoreSelectionRange()
     if (!range) return
 
@@ -990,7 +1010,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     setAmazonDescription('')
     setAmazonImageUrl('')
     setAmazonPrice('')
-    setAmazonCtaLabel('View on Amazon')
+    setAmazonCtaLabel('View details')
     amazonMetadataUrlRef.current = null
   }
 
@@ -1060,13 +1080,17 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
         setAmazonImageUrl(payload.image_url)
       }
 
+      if (payload?.price_text && (overwrite || !amazonPrice.trim())) {
+        setAmazonPrice(payload.price_text)
+      }
+
       amazonMetadataUrlRef.current = normalizedUrl
 
       if (!silent) {
         toast({
           title: 'Amazon details imported',
           description: payload?.title
-            ? 'The card title was pulled from the Amazon page metadata.'
+            ? 'The card title and available product details were pulled from the Amazon page metadata.'
             : 'Available Amazon product metadata was imported.',
         })
       }
@@ -1081,7 +1105,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     } finally {
       setFetchingAmazonMetadata(false)
     }
-  }, [amazonDescription, amazonImageUrl, amazonTitle, amazonUrl])
+  }, [amazonDescription, amazonImageUrl, amazonPrice, amazonTitle, amazonUrl])
 
   useEffect(() => {
     if (!showProductModal || modalMode !== 'amazon') return
@@ -1106,7 +1130,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     const trimmedDescription = amazonDescription.trim()
     const trimmedImageUrl = amazonImageUrl.trim()
     const trimmedPrice = amazonPrice.trim()
-    const trimmedCtaLabel = amazonCtaLabel.trim() || 'View on Amazon'
+    const trimmedCtaLabel = amazonCtaLabel.trim() || 'View details'
 
     if (!trimmedUrl) {
       toast({ title: 'Missing Amazon URL', description: 'Paste the Amazon product link first.', variant: 'destructive' })
@@ -1669,7 +1693,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                   onClick={() => setModalMode('amazon')}
                   className={`text-sm font-bold pb-1 border-b-2 transition-all ${modalMode === 'amazon' ? 'text-amber-700 border-amber-500' : 'text-slate-400 border-transparent hover:text-slate-600'}`}
                  >
-                   Amazon Product Card
+                   Amazon Product
                  </button>
                  <button 
                   onClick={() => setModalMode('embed')}
@@ -1963,7 +1987,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                       <Input
                         value={amazonCtaLabel}
                         onChange={(e) => setAmazonCtaLabel(e.target.value)}
-                        placeholder="View on Amazon"
+                        placeholder="View details"
                         className="bg-slate-50 border-slate-200"
                       />
                     </div>
@@ -1974,7 +1998,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                   <p className="mb-3 text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">Preview Summary</p>
                   <div className="rounded-2xl border border-amber-200 bg-white shadow-sm overflow-hidden">
                     <div className="bg-[#131921] px-4 py-3 text-white">
-                      <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-300">Amazon Product Card</div>
+                      <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-300">External Product Card</div>
                       <div className="mt-1 text-sm font-bold leading-snug text-white">
                         {amazonTitle.trim() || 'Amazon product title'}
                       </div>

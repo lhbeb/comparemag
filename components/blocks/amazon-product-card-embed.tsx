@@ -24,6 +24,12 @@ function extractDisplayDomain(url: string) {
   }
 }
 
+function getSourceLabel(url: string) {
+  const domain = extractDisplayDomain(url)
+  if (/amazon\./i.test(domain)) return 'Available on Amazon'
+  return `Available on ${domain}`
+}
+
 function formatDisplayPrice(priceText?: string | null) {
   const trimmed = (priceText || '').trim()
   if (!trimmed) return null
@@ -48,74 +54,61 @@ export function AmazonProductCardEmbed({
   ctaLabel,
 }: AmazonProductCardData) {
   const safeUrl = normalizeUrl(url)
-  const safeTitle = title?.trim() || 'Amazon Product'
-  const safeDescription = description?.trim() || 'Direct Amazon product recommendation saved inside this article.'
+  const safeTitle = title?.trim() || 'Product Recommendation'
+  const safeDescription = description?.trim() || 'A product mention saved directly inside this article.'
   const displayPrice = formatDisplayPrice(priceText)
-  const safeCtaLabel = ctaLabel?.trim() || 'View on Amazon'
-  const domain = extractDisplayDomain(safeUrl)
+  const safeCtaLabel = ctaLabel?.trim() || 'View details'
+  const sourceLabel = getSourceLabel(safeUrl)
 
   return (
-    <div className="amazon-product-card-embed not-prose my-10 mx-auto w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl">
-      <div className="relative overflow-hidden border-b border-slate-100 bg-gradient-to-br from-[#131921] via-[#1f2937] to-[#111827] px-6 py-4 text-white">
-        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <div className="mb-1 text-[10px] font-black uppercase tracking-[0.24em] text-amber-300">
-              Amazon Product Card
-            </div>
-            <h3 className="text-lg font-bold leading-snug text-white md:text-xl">{safeTitle}</h3>
-          </div>
-          <div className="hidden rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-200 sm:block">
-            {domain}
-          </div>
-        </div>
-      </div>
-
+    <div className="amazon-product-card-embed not-prose my-10 mx-auto w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl group">
       <div className="grid gap-0 md:grid-cols-[minmax(0,240px)_1fr]">
-        <div className="relative min-h-[220px] bg-slate-100">
+        <div className="relative min-h-[220px] border-b border-slate-100 bg-slate-100 md:border-b-0 md:border-r">
           {imageUrl ? (
             <img
               src={imageUrl}
               alt={safeTitle}
-              className="absolute inset-0 h-full w-full object-contain bg-white p-5"
+              className="absolute inset-0 h-full w-full bg-white p-5 object-contain transition-transform duration-500 group-hover:scale-[1.02]"
               loading="lazy"
             />
           ) : (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-center">
               <ShoppingCart className="mb-3 h-12 w-12 text-slate-300" />
               <span className="px-6 text-sm font-medium text-slate-500">
-                Amazon product card without a custom image
+                No image available
               </span>
             </div>
           )}
         </div>
 
-        <div className="flex flex-col gap-5 p-6">
-          <div className="space-y-3">
-            <p className="text-sm leading-relaxed text-slate-600">{safeDescription}</p>
-            <div className="inline-flex w-fit items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-amber-700">
-              Separate Amazon Embed
-            </div>
+        <div className="flex flex-col gap-4 p-6 md:p-7">
+          <div>
+            <p className="mb-1.5 text-[11px] font-semibold tracking-wide text-slate-400">{sourceLabel}</p>
+            <h3 className="text-xl font-bold leading-snug text-slate-900 md:text-2xl">{safeTitle}</h3>
           </div>
 
-          <div className="mt-auto flex flex-col items-start gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="my-1 border-l-2 border-slate-200 pl-3">
+            <p className="text-sm italic leading-relaxed text-slate-500">{safeDescription}</p>
+          </div>
+
+          <div className="mt-auto flex flex-col items-start gap-4 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
             {displayPrice ? (
-              <div className="text-left">
+              <div className="w-full text-left sm:w-auto">
                 <p className="mb-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
-                  Current Price
+                  From
                 </p>
                 <div className="text-3xl font-black tracking-tight text-slate-900">{displayPrice}</div>
               </div>
             ) : (
               <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                Opens on Amazon
+                Product page
               </span>
             )}
             <a
               href={safeUrl}
               target="_blank"
               rel="noopener noreferrer nofollow sponsored"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#ff9900] px-5 py-3 text-sm font-bold text-slate-900 transition-all hover:bg-[#f59e0b]"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold text-white transition-all hover:bg-slate-800 sm:w-auto sm:min-w-[190px]"
             >
               <span>{safeCtaLabel}</span>
               <ExternalLink className="h-4 w-4" />
