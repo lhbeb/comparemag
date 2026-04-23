@@ -994,7 +994,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     amazonMetadataUrlRef.current = null
   }
 
-  const handlePullAmazonMetadata = async ({
+  const handlePullAmazonMetadata = useCallback(async ({
     overwrite = false,
     silent = false,
   }: {
@@ -1081,7 +1081,22 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     } finally {
       setFetchingAmazonMetadata(false)
     }
-  }
+  }, [amazonDescription, amazonImageUrl, amazonTitle, amazonUrl])
+
+  useEffect(() => {
+    if (!showProductModal || modalMode !== 'amazon') return
+
+    const normalizedUrl = normalizeAbsoluteUrl(amazonUrl)
+    const domain = extractCleanDomain(normalizedUrl)
+    if (!normalizedUrl || !domain || (!domain.includes('amazon.') && domain !== 'amzn.to')) return
+    if (amazonMetadataUrlRef.current === normalizedUrl) return
+
+    const timeout = setTimeout(() => {
+      void handlePullAmazonMetadata({ overwrite: true, silent: true })
+    }, 650)
+
+    return () => clearTimeout(timeout)
+  }, [amazonUrl, modalMode, showProductModal, handlePullAmazonMetadata])
 
   const handleInsertAmazonCard = () => {
     if (!editorRef.current) return
