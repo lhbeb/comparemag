@@ -14,7 +14,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
   return (
     <nav aria-label="Breadcrumb" className="mb-8">
       <ol className="flex items-center space-x-2 text-sm text-gray-600" itemScope itemType="https://schema.org/BreadcrumbList">
-        <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+        <li className="flex items-center" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
           <Link 
             href="/" 
             className="hover:text-accent transition-colors flex items-center text-gray-700"
@@ -27,7 +27,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
         </li>
         
         {items.map((item, index) => (
-          <li key={item.href} className="flex items-center" itemProp="itemListElement" itemScope itemType="https://schema.org/BreadcrumbList">
+          <li key={item.href} className="flex items-center" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
             <ChevronRight className="h-4 w-4 mx-2 text-gray-400" />
             <Link 
               href={item.href}
@@ -43,4 +43,3 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
     </nav>
   )
 }
-

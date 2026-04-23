@@ -83,6 +83,8 @@ export default async function WriterPage({
                   src={writer.avatar_url}
                   alt={writer.name}
                   fill
+                  sizes="(max-width: 768px) 128px, 160px"
+                  quality={80}
                   className="rounded-full object-cover border-4 border-blue-50 shadow-md"
                 />
               </div>

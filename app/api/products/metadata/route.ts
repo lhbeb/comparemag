@@ -139,10 +139,26 @@ function extractStructuredDataPrice(html: string) {
 }
 
 function extractRegexPrice(html: string) {
+  let amazonDisplayPrice = null
+
   const priceWholeMatch = html.match(/<span[^>]*class=["'][^"']*a-price-whole[^"']*["'][^>]*>\s*([^<]+)\s*<\/span>\s*(?:<span[^>]*class=["'][^"']*a-price-decimal[^"']*["'][^>]*>\s*([^<]*)\s*<\/span>)?\s*<span[^>]*class=["'][^"']*a-price-fraction[^"']*["'][^>]*>\s*([^<]+)\s*<\/span>/i)
-  const amazonDisplayPrice = priceWholeMatch
-    ? `${priceWholeMatch[1].replace(/[^\d.,]/g, '').trim()}.${priceWholeMatch[3].replace(/[^\d]/g, '').trim()}`
-    : null
+  if (priceWholeMatch) {
+    amazonDisplayPrice = `${priceWholeMatch[1].replace(/[^\d.,]/g, '').trim()}.${priceWholeMatch[3].replace(/[^\d]/g, '').trim()}`
+  }
+
+  if (!amazonDisplayPrice) {
+    const offscreenMatch = html.match(/<span[^>]*class=["'][^"']*a-offscreen[^"']*["'][^>]*>\s*([$€£¥]\s*\d[\d,.]*)\s*<\/span>/i)
+    if (offscreenMatch) {
+      amazonDisplayPrice = offscreenMatch[1]
+    }
+  }
+
+  if (!amazonDisplayPrice) {
+    const blockMatch = html.match(/<span[^>]*id=["']priceblock_(?:ourprice|dealprice)["'][^>]*>\s*([$€£¥]\s*\d[\d,.]*)\s*<\/span>/i)
+    if (blockMatch) {
+      amazonDisplayPrice = blockMatch[1]
+    }
+  }
 
   const price = amazonDisplayPrice || extractMetaContent(html, [
     /<meta[^>]+property=["']product:price:amount["'][^>]+content=["']([^"']+)["'][^>]*>/i,

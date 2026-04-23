@@ -3,6 +3,7 @@ import { Logo } from "@/components/logo"
 import { Github, Linkedin, Mail, Rss, Twitter, User, Award } from "lucide-react"
 import { getAllWriters } from "@/lib/supabase/writers"
 import { StructuredData } from "@/components/seo/structured-data"
+import { SupabaseImage } from "@/components/supabase-image"
 import type { Metadata } from 'next'
 import { absoluteUrl, SITE_NAME } from '@/lib/site-config'
 
@@ -73,9 +74,13 @@ export default async function EditorsPage() {
                 <Link key={editor.id} href={`/writers/${editor.slug}`} className="group block">
                   <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:border-blue-300 hover:shadow-md hover:-translate-y-1 transition-all duration-200 text-center h-full flex flex-col">
                     {editor.avatar_url ? (
-                      <img
+                      <SupabaseImage
                         src={editor.avatar_url}
                         alt={editor.name}
+                        width={80}
+                        height={80}
+                        sizes="80px"
+                        quality={78}
                         className="w-20 h-20 rounded-full object-cover mx-auto mb-4 ring-4 ring-blue-50 group-hover:ring-blue-100 transition-colors"
                       />
                     ) : (

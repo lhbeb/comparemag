@@ -19,7 +19,7 @@ export function PromoBarCarousel({ features }: { features: any[] }) {
 
   if (features.length === 0) {
     return (
-      <Link href="#" className="inline-flex items-center gap-2 group transition-colors">
+      <Link href="/articles/" className="inline-flex items-center gap-2 group transition-colors" aria-label="Browse featured articles">
         <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0 text-orange-500 group-hover:translate-x-0.5 transition-transform" />
         <span className="text-white text-xs sm:text-sm font-bold leading-tight sm:leading-none group-hover:underline decoration-white/50 underline-offset-4">
           Tomorrow belongs to those who embrace it today

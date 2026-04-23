@@ -14,10 +14,9 @@ interface SupabaseImageProps {
 }
 
 /**
- * Custom Image component for Supabase images.
- * We keep storage URLs direct here because Next optimization is disabled for
- * Supabase storage hosts in this app, and not every Supabase project enables
- * the render/image endpoint consistently.
+ * Custom Image component for external and Supabase-hosted images.
+ * When the host is allowed by Next's remotePatterns, we let the built-in image
+ * optimizer handle responsive sizing and modern formats for us.
  */
 
 export function SupabaseImage({
@@ -33,10 +32,6 @@ export function SupabaseImage({
   onLoad,
 }: SupabaseImageProps) {
   const isRemoteUrl = typeof src === "string" && /^https?:\/\//i.test(src)
-  const isSupabaseStorageImage =
-    isRemoteUrl &&
-    /https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\//i.test(src)
-
   const canUseNextImage = (() => {
     if (!isRemoteUrl) return true
 
@@ -88,7 +83,6 @@ export function SupabaseImage({
       sizes={sizes}
       priority={priority}
       quality={quality}
-      unoptimized={isSupabaseStorageImage}
       onLoad={onLoad}
     />
   )

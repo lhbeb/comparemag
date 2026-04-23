@@ -9,6 +9,7 @@ import { Logo } from "@/components/logo"
 import { NewsletterForm } from "@/components/newsletter-form"
 import { getAllArticles } from "@/lib/supabase/articles"
 import { getAllWriters } from "@/lib/supabase/writers"
+import { SupabaseImage } from "@/components/supabase-image"
 
 export default async function Home() {
   const rawArticles = await getAllArticles(true).catch(() => [])
@@ -136,7 +137,13 @@ export default async function Home() {
                 <div key={editor.id} className="expert-card">
                   <div className="expert-card-photo">
                     {editor.avatar_url ? (
-                      <img src={editor.avatar_url} alt={editor.name} />
+                      <SupabaseImage
+                        src={editor.avatar_url}
+                        alt={editor.name}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        quality={78}
+                      />
                     ) : (
                       <div className="w-full h-full bg-blue-100 flex items-center justify-center">
                         <User className="h-16 w-16 text-blue-400" />
