@@ -2,6 +2,7 @@ import React from 'react'
 import parse, { Element } from 'html-react-parser'
 import { marked } from 'marked'
 import { ProductCardEmbed, type ProductCardData } from './blocks/product-card-embed'
+import { AmazonProductCardEmbed } from './blocks/amazon-product-card-embed'
 import { LazyTikTokEmbed } from './lazy-tiktok-embed'
 import { LazyTwitterEmbed } from './lazy-twitter-embed'
 
@@ -22,8 +23,15 @@ function replaceProductShortcodes(source: string) {
   )
 }
 
+function normalizeAmazonProductCards(source: string) {
+  return source.replace(
+    /<amazon-product-card\b([^>]*)>\s*<\/amazon-product-card>/g,
+    '<div><amazon-product-card$1></amazon-product-card></div>',
+  )
+}
+
 export function compileArticleSourceToHtml(source: string) {
-  const preparedSource = replaceProductShortcodes(source)
+  const preparedSource = normalizeAmazonProductCards(replaceProductShortcodes(source))
   return marked.parse(preparedSource, { async: false, breaks: true, gfm: true }) as string
 }
 
@@ -39,6 +47,25 @@ export function ArticleRenderer({ source, preloadedProducts = {} }: ArticleRende
         const slug = domNode.attribs['data-slug']
         if (slug) {
           return <ProductCardEmbed slug={slug} preloadedData={preloadedProducts[slug]} />
+        }
+      }
+
+      // 1.5 Process article-level Amazon product cards
+      if (domNode instanceof Element && domNode.name === 'amazon-product-card') {
+        const url = domNode.attribs['data-url']
+        const title = domNode.attribs['data-title']
+
+        if (url && title) {
+          return (
+            <AmazonProductCardEmbed
+              url={url}
+              title={title}
+              description={domNode.attribs['data-description'] || undefined}
+              imageUrl={domNode.attribs['data-image-url'] || undefined}
+              priceText={domNode.attribs['data-price'] || undefined}
+              ctaLabel={domNode.attribs['data-cta-label'] || undefined}
+            />
+          )
         }
       }
 

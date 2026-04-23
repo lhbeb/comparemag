@@ -17,7 +17,7 @@ import {
   PlusCircle, Layout, Settings,
   Eye, Image as ImageIcon, Globe, Info, Wand2,
   Bold, Italic, Link as LinkIcon, Heading2, Heading3, Quote, Code, List, RefreshCw,
-  Search, Upload, Package
+  Search, Upload, Package, ShoppingCart
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -126,6 +126,12 @@ function decodeHtmlEntities(value: string) {
   return textarea.value
 }
 
+function normalizeAbsoluteUrl(url: string) {
+  const trimmed = url.trim()
+  if (!trimmed) return ''
+  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+}
+
 export function ArticleEditor({ initialData, mode, initialWriters = [], initialProducts = [] }: ArticleEditorProps) {
   const router = useRouter()
   const supabase = createClient()
@@ -136,6 +142,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const savedSelectionRef = useRef<SerializedSelectionRange | null>(null)
   const validationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const titleInputRef = useRef<HTMLTextAreaElement>(null)
+  const amazonMetadataUrlRef = useRef<string | null>(null)
 
   // State
   const [title, setTitle] = useState(initialData?.title || '')
@@ -170,8 +177,15 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const listedByOptions = useMemo(() => internalTrackingStaff, [])
   
   const [showProductModal, setShowProductModal] = useState(false)
-  const [modalMode, setModalMode] = useState<'product' | 'embed'>('product')
+  const [modalMode, setModalMode] = useState<'product' | 'embed' | 'amazon'>('product')
   const [embedCode, setEmbedCode] = useState('')
+  const [amazonUrl, setAmazonUrl] = useState('')
+  const [amazonTitle, setAmazonTitle] = useState('')
+  const [amazonDescription, setAmazonDescription] = useState('')
+  const [amazonImageUrl, setAmazonImageUrl] = useState('')
+  const [amazonPrice, setAmazonPrice] = useState('')
+  const [amazonCtaLabel, setAmazonCtaLabel] = useState('View on Amazon')
+  const [fetchingAmazonMetadata, setFetchingAmazonMetadata] = useState(false)
   const [activeTab, setActiveTab] = useState<'write' | 'seo' | 'preview' | 'html'>('write')
   const [hasMounted, setHasMounted] = useState(false)
   const [htmlOutput, setHtmlOutput] = useState(() => compileArticleSourceToHtml(initialData?.content || ''))
@@ -257,6 +271,70 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     `.trim()
   }
 
+  const buildAmazonCardSourceHtml = ({
+    url,
+    title,
+    description,
+    imageUrl,
+    priceText,
+    ctaLabel,
+  }: {
+    url: string
+    title: string
+    description?: string
+    imageUrl?: string
+    priceText?: string
+    ctaLabel?: string
+  }) => {
+    const attributes = [
+      `data-url="${escapeHtml(url)}"`,
+      `data-title="${escapeHtml(title)}"`,
+      description ? `data-description="${escapeHtml(description)}"` : '',
+      imageUrl ? `data-image-url="${escapeHtml(imageUrl)}"` : '',
+      priceText ? `data-price="${escapeHtml(priceText)}"` : '',
+      ctaLabel ? `data-cta-label="${escapeHtml(ctaLabel)}"` : '',
+    ].filter(Boolean)
+
+    return `<amazon-product-card ${attributes.join(' ')}></amazon-product-card>`
+  }
+
+  const buildAmazonCardPlaceholderHtml = ({
+    rawHtml,
+    title,
+    description,
+    imageUrl,
+    priceText,
+  }: {
+    rawHtml: string
+    title: string
+    description?: string
+    imageUrl?: string
+    priceText?: string
+  }) => {
+    const encodedHtml = escapeHtml(encodeURIComponent(rawHtml))
+
+    return `
+      <div contenteditable="false" data-embed-html="${encodedHtml}" class="not-prose block w-full clear-both my-6 rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-white shadow-sm overflow-hidden">
+        <div class="flex items-center gap-4 p-4">
+          <div class="w-16 h-16 rounded-xl overflow-hidden border border-amber-100 bg-white flex items-center justify-center flex-shrink-0">
+            ${imageUrl
+              ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(title)}" class="w-full h-full object-cover" />`
+              : `<span class="text-[10px] font-black uppercase tracking-[0.22em] text-amber-500">Amazon</span>`}
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="text-[10px] font-black uppercase tracking-[0.22em] text-amber-600 mb-1">Amazon Product Card</div>
+            <div class="text-sm font-bold text-slate-900 leading-snug line-clamp-2">${escapeHtml(title)}</div>
+            <div class="mt-1 text-xs text-slate-500 line-clamp-2">${escapeHtml(description || 'Saved directly in this article. No separate product database record needed.')}</div>
+            ${priceText ? `<div class="mt-2 text-sm font-black tracking-tight text-slate-900">${escapeHtml(priceText)}</div>` : ''}
+          </div>
+          <div class="hidden sm:flex items-center rounded-full bg-amber-500 text-slate-900 px-3 py-1.5 text-[11px] font-bold whitespace-nowrap">
+            Live Amazon Block
+          </div>
+        </div>
+      </div>
+    `.trim()
+  }
+
   const replaceNodeWithHtml = (node: Element, html: string) => {
     const wrapper = document.createElement('div')
     wrapper.innerHTML = html
@@ -264,6 +342,23 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   }
 
   const decorateExistingEmbeds = (container: HTMLDivElement) => {
+    container.querySelectorAll('amazon-product-card').forEach((card) => {
+      const title = card.getAttribute('data-title') || 'Amazon Product'
+      const description = card.getAttribute('data-description') || card.getAttribute('data-url') || ''
+      const imageUrl = card.getAttribute('data-image-url') || undefined
+      const priceText = card.getAttribute('data-price') || undefined
+      replaceNodeWithHtml(
+        card,
+        buildAmazonCardPlaceholderHtml({
+          rawHtml: card.outerHTML,
+          title,
+          description,
+          imageUrl,
+          priceText,
+        }),
+      )
+    })
+
     container.querySelectorAll('blockquote.twitter-tweet').forEach((blockquote) => {
       const next = blockquote.nextElementSibling
       let rawHtml = blockquote.outerHTML
@@ -889,6 +984,160 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     toast({ title: 'Embed Code Inserted' })
   }
 
+  const resetAmazonForm = () => {
+    setAmazonUrl('')
+    setAmazonTitle('')
+    setAmazonDescription('')
+    setAmazonImageUrl('')
+    setAmazonPrice('')
+    setAmazonCtaLabel('View on Amazon')
+    amazonMetadataUrlRef.current = null
+  }
+
+  const handlePullAmazonMetadata = async ({
+    overwrite = false,
+    silent = false,
+  }: {
+    overwrite?: boolean
+    silent?: boolean
+  } = {}) => {
+    const normalizedUrl = normalizeAbsoluteUrl(amazonUrl)
+    const domain = extractCleanDomain(normalizedUrl)
+
+    if (!normalizedUrl) {
+      if (!silent) {
+        toast({
+          title: 'Missing Amazon URL',
+          description: 'Paste the Amazon product link first.',
+          variant: 'destructive',
+        })
+      }
+      return
+    }
+
+    if (!domain || (!domain.includes('amazon.') && domain !== 'amzn.to')) {
+      if (!silent) {
+        toast({
+          title: 'Amazon link required',
+          description: 'This auto-fill tool only works with Amazon product links.',
+          variant: 'destructive',
+        })
+      }
+      return
+    }
+
+    if (
+      !overwrite &&
+      amazonMetadataUrlRef.current === normalizedUrl &&
+      (amazonTitle.trim() || amazonDescription.trim() || amazonImageUrl.trim())
+    ) {
+      return
+    }
+
+    setFetchingAmazonMetadata(true)
+
+    try {
+      const response = await fetch('/api/products/metadata', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: normalizedUrl }),
+      })
+
+      const payload = await response.json().catch(() => null)
+      if (!response.ok) {
+        throw new Error(payload?.message || 'Could not pull Amazon product details.')
+      }
+
+      if (payload?.title && (overwrite || !amazonTitle.trim())) {
+        setAmazonTitle(payload.title)
+      }
+
+      if (payload?.description && (overwrite || !amazonDescription.trim())) {
+        setAmazonDescription(payload.description)
+      }
+
+      if (payload?.image_url && (overwrite || !amazonImageUrl.trim())) {
+        setAmazonImageUrl(payload.image_url)
+      }
+
+      amazonMetadataUrlRef.current = normalizedUrl
+
+      if (!silent) {
+        toast({
+          title: 'Amazon details imported',
+          description: payload?.title
+            ? 'The card title was pulled from the Amazon page metadata.'
+            : 'Available Amazon product metadata was imported.',
+        })
+      }
+    } catch (error: any) {
+      if (!silent) {
+        toast({
+          title: 'Metadata fetch failed',
+          description: error.message,
+          variant: 'destructive',
+        })
+      }
+    } finally {
+      setFetchingAmazonMetadata(false)
+    }
+  }
+
+  const handleInsertAmazonCard = () => {
+    if (!editorRef.current) return
+
+    const trimmedUrl = amazonUrl.trim()
+    const trimmedTitle = amazonTitle.trim()
+    const trimmedDescription = amazonDescription.trim()
+    const trimmedImageUrl = amazonImageUrl.trim()
+    const trimmedPrice = amazonPrice.trim()
+    const trimmedCtaLabel = amazonCtaLabel.trim() || 'View on Amazon'
+
+    if (!trimmedUrl) {
+      toast({ title: 'Missing Amazon URL', description: 'Paste the Amazon product link first.', variant: 'destructive' })
+      return
+    }
+
+    const domain = extractCleanDomain(trimmedUrl)
+    if (!domain || (!domain.includes('amazon.') && domain !== 'amzn.to')) {
+      toast({ title: 'Amazon link required', description: 'This separate card tool is only for Amazon product links.', variant: 'destructive' })
+      return
+    }
+
+    if (!trimmedTitle) {
+      toast({ title: 'Missing title', description: 'Add the product title you want the card to show.', variant: 'destructive' })
+      return
+    }
+
+    if (!trimmedPrice) {
+      toast({ title: 'Missing price', description: 'Add the product price so the Amazon card feels complete.', variant: 'destructive' })
+      return
+    }
+
+    const rawHtml = buildAmazonCardSourceHtml({
+      url: trimmedUrl,
+      title: trimmedTitle,
+      description: trimmedDescription,
+      imageUrl: trimmedImageUrl,
+      priceText: trimmedPrice,
+      ctaLabel: trimmedCtaLabel,
+    })
+
+    insertBlockHtmlAtSelection(
+      buildAmazonCardPlaceholderHtml({
+        rawHtml,
+        title: trimmedTitle,
+        description: trimmedDescription || domain,
+        imageUrl: trimmedImageUrl || undefined,
+        priceText: trimmedPrice,
+      }),
+    )
+
+    resetAmazonForm()
+    setShowProductModal(false)
+    toast({ title: 'Amazon Product Card Inserted' })
+  }
+
   const compiledHtml = useMemo(() => compileArticleSourceToHtml(content), [content])
 
   useEffect(() => {
@@ -1068,6 +1317,24 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                       <Package className="h-4 w-4 mr-1.5" />
                       Insert Product
                     </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onMouseDown={(e) => {
+                        e.preventDefault()
+                        saveSelectionRange()
+                        savedRangeRef.current = null
+                      }}
+                      onClick={() => {
+                        setModalMode('amazon')
+                        setShowProductModal(true)
+                      }}
+                      className="h-8 text-xs font-bold text-amber-700 hover:text-amber-800 hover:bg-amber-50"
+                    >
+                      <ShoppingCart className="h-4 w-4 mr-1.5" />
+                      Amazon Card
+                    </Button>
                     <Button 
                       type="button" 
                       variant="ghost" 
@@ -1118,7 +1385,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                 />
 
                 <div className="flex-shrink-0 border-t border-slate-100 bg-slate-50/60 px-6 py-2.5 text-xs text-slate-400 flex items-center justify-between">
-                  <span>WYSIWYG editor · Formatting applied directly · Product cards saved as shortcodes</span>
+                  <span>WYSIWYG editor · Formatting applied directly · Product cards use shortcodes · Amazon cards stay inside article HTML</span>
                   <span className="font-semibold px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wide bg-blue-50 text-blue-600">● Live</span>
                 </div>
               </div>
@@ -1374,14 +1641,20 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
 
         return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-               <div className="flex gap-6">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-[calc(100vw-2rem)] sm:max-w-2xl max-h-[calc(100vh-2rem)] overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col">
+            <div className="p-4 sm:p-6 border-b border-slate-100 flex flex-wrap justify-between items-start gap-3 bg-slate-50 flex-shrink-0">
+               <div className="flex min-w-0 flex-wrap gap-x-4 gap-y-2 pr-2">
                  <button 
                    onClick={() => { setModalMode('product'); setProductSearch(''); setProductDomainFilter(null) }}
                   className={`text-sm font-bold pb-1 border-b-2 transition-all ${modalMode === 'product' ? 'text-blue-600 border-blue-600' : 'text-slate-400 border-transparent hover:text-slate-600'}`}
                  >
                    Insert Product Block
+                 </button>
+                 <button
+                  onClick={() => setModalMode('amazon')}
+                  className={`text-sm font-bold pb-1 border-b-2 transition-all ${modalMode === 'amazon' ? 'text-amber-700 border-amber-500' : 'text-slate-400 border-transparent hover:text-slate-600'}`}
+                 >
+                   Amazon Product Card
                  </button>
                  <button 
                   onClick={() => setModalMode('embed')}
@@ -1390,7 +1663,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                    Raw Embed Code
                  </button>
                </div>
-               <Button variant="ghost" size="icon" onClick={() => { setShowProductModal(false); setProductSearch(''); setProductDomainFilter(null) }} className="rounded-full h-8 w-8 hover:bg-slate-200">
+               <Button variant="ghost" size="icon" onClick={() => { setShowProductModal(false); setProductSearch(''); setProductDomainFilter(null); resetAmazonForm() }} className="rounded-full h-8 w-8 hover:bg-slate-200">
                  <X className="w-4 h-4 text-slate-500" />
                </Button>
             </div>
@@ -1590,8 +1863,134 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                   })()}
                 </div>
               </div>
+            ) : modalMode === 'amazon' ? (
+              <div className="p-4 sm:p-6 space-y-5 bg-white overflow-y-auto">
+                <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                  This block is completely separate from your native product database. It gets saved directly inside the article HTML only.
+                </div>
+
+                <div className="grid gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-bold text-slate-700">Amazon Product URL</Label>
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                      <Input
+                        value={amazonUrl}
+                        onChange={(e) => {
+                          setAmazonUrl(e.target.value)
+                          amazonMetadataUrlRef.current = null
+                        }}
+                        onBlur={() => {
+                          if (!amazonTitle.trim()) {
+                            void handlePullAmazonMetadata({ silent: true })
+                          }
+                        }}
+                        placeholder="https://www.amazon.com/..."
+                        className="bg-slate-50 border-slate-200"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => void handlePullAmazonMetadata({ overwrite: true })}
+                        disabled={!amazonUrl.trim() || fetchingAmazonMetadata}
+                        className="shrink-0 border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100"
+                      >
+                        {fetchingAmazonMetadata ? 'Pulling...' : 'Pull Details'}
+                      </Button>
+                    </div>
+                    <p className="text-xs text-slate-500">The title auto-fills from the Amazon link metadata when available.</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm font-bold text-slate-700">Card Title</Label>
+                    <Input
+                      value={amazonTitle}
+                      onChange={(e) => setAmazonTitle(e.target.value)}
+                      placeholder="Teenage Engineering OP-1 Field"
+                      className="bg-slate-50 border-slate-200"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm font-bold text-slate-700">Short Note</Label>
+                    <Textarea
+                      value={amazonDescription}
+                      onChange={(e) => setAmazonDescription(e.target.value)}
+                      placeholder="Portable synthesizer, sampler & drum machine"
+                      className="min-h-[92px] bg-slate-50 border-slate-200 resize-none"
+                    />
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-bold text-slate-700">Image URL (Optional)</Label>
+                      <Input
+                        value={amazonImageUrl}
+                        onChange={(e) => setAmazonImageUrl(e.target.value)}
+                        placeholder="https://..."
+                        className="bg-slate-50 border-slate-200"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-bold text-slate-700">Price</Label>
+                      <Input
+                        value={amazonPrice}
+                        onChange={(e) => setAmazonPrice(e.target.value)}
+                        placeholder="$1,999"
+                        className="bg-slate-50 border-slate-200"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-bold text-slate-700">CTA Label</Label>
+                      <Input
+                        value={amazonCtaLabel}
+                        onChange={(e) => setAmazonCtaLabel(e.target.value)}
+                        placeholder="View on Amazon"
+                        className="bg-slate-50 border-slate-200"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="mb-3 text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">Preview Summary</p>
+                  <div className="rounded-2xl border border-amber-200 bg-white shadow-sm overflow-hidden">
+                    <div className="bg-[#131921] px-4 py-3 text-white">
+                      <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-300">Amazon Product Card</div>
+                      <div className="mt-1 text-sm font-bold leading-snug text-white">
+                        {amazonTitle.trim() || 'Amazon product title'}
+                      </div>
+                    </div>
+                    <div className="p-4 space-y-3">
+                      <p className="text-sm text-slate-600">
+                        {amazonDescription.trim() || 'This separate card is saved directly inside the article and does not create a product record in your database.'}
+                      </p>
+                      <div className="text-2xl font-black tracking-tight text-slate-900">
+                        {amazonPrice.trim() || '$0'}
+                      </div>
+                      <div className="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-amber-700">
+                        {extractCleanDomain(amazonUrl) || 'amazon.com'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <Button
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                  }}
+                  onClick={handleInsertAmazonCard}
+                  disabled={!amazonUrl.trim() || !amazonTitle.trim() || !amazonPrice.trim()}
+                  className="w-full bg-amber-500 font-bold h-10 text-slate-900 hover:bg-amber-400"
+                >
+                  Insert Amazon Card
+                </Button>
+              </div>
             ) : (
-              <div className="p-6 space-y-4 bg-white">
+              <div className="p-4 sm:p-6 space-y-4 bg-white overflow-y-auto">
                 <div className="space-y-2">
                   <Label className="text-sm font-bold text-slate-700">Paste HTML Embed Code</Label>
                   <Textarea 

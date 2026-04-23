@@ -11,6 +11,15 @@ function extractMetaContent(html: string, patterns: RegExp[]) {
   return null
 }
 
+function normalizeMetadataTitle(value: string | null) {
+  if (!value) return null
+
+  return value
+    .replace(/^Amazon\.[^:]+:\s*/i, '')
+    .replace(/\s*[|\-]\s*Amazon\.[^|:-]+.*$/i, '')
+    .trim() || null
+}
+
 function resolveUrl(candidate: string, baseUrl: string) {
   try {
     return new URL(candidate, baseUrl).toString()
@@ -85,16 +94,41 @@ export async function POST(request: NextRequest) {
       /<link[^>]+href=["']([^"']+)["'][^>]+rel=["']image_src["'][^>]*>/i,
     ])
 
+    const title = normalizeMetadataTitle(
+      extractMetaContent(html, [
+        /<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["'][^>]*>/i,
+        /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:title["'][^>]*>/i,
+        /<meta[^>]+name=["']twitter:title["'][^>]+content=["']([^"']+)["'][^>]*>/i,
+        /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:title["'][^>]*>/i,
+        /<meta[^>]+itemprop=["']name["'][^>]+content=["']([^"']+)["'][^>]*>/i,
+        /<meta[^>]+content=["']([^"']+)["'][^>]+itemprop=["']name["'][^>]*>/i,
+        /<title[^>]*>([^<]+)<\/title>/i,
+      ]),
+    )
+
+    const description = extractMetaContent(html, [
+      /<meta[^>]+property=["']og:description["'][^>]+content=["']([^"']+)["'][^>]*>/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:description["'][^>]*>/i,
+      /<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["'][^>]*>/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']description["'][^>]*>/i,
+      /<meta[^>]+name=["']twitter:description["'][^>]+content=["']([^"']+)["'][^>]*>/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:description["'][^>]*>/i,
+    ])
+
     const resolvedImage = image ? resolveUrl(image, response.url || targetUrl.toString()) : null
 
-    if (!resolvedImage) {
+    if (!resolvedImage && !title && !description) {
       return NextResponse.json(
-        { message: 'No preview image metadata was found on that product page.' },
+        { message: 'No useful metadata was found on that product page.' },
         { status: 404 },
       )
     }
 
-    return NextResponse.json({ image_url: normalizeMerchantImageUrl(resolvedImage) }, { status: 200 })
+    return NextResponse.json({
+      image_url: resolvedImage ? normalizeMerchantImageUrl(resolvedImage) : null,
+      title,
+      description,
+    }, { status: 200 })
   } catch (error) {
     return NextResponse.json(
       {

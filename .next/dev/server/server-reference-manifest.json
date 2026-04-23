@@ -19,19 +19,12 @@
           "async": false,
           "exportedName": "logoutAction",
           "filename": "app/actions/auth.ts"
-        },
-        "app/admin/products/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/products/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "logoutAction",
-          "filename": "app/actions/auth.ts"
         }
       },
       "layer": {
         "app/admin/articles/edit/[slug]/page": "action-browser",
         "app/admin/articles/page": "action-browser",
-        "app/admin/page": "action-browser",
-        "app/admin/products/page": "action-browser"
+        "app/admin/page": "action-browser"
       },
       "filename": "app/actions/auth.ts",
       "exportedName": "logoutAction"

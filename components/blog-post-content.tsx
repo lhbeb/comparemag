@@ -1,6 +1,5 @@
 import Link from "next/link"
 import Image from "next/image"
-import { SupabaseImage } from "@/components/supabase-image"
 import { Logo } from "@/components/logo"
 import { BookOpen, BrainCircuit, Clock, Twitter, Facebook, Linkedin, Rss, Mail, Github, User } from "lucide-react"
 import type { BlogPost } from "@/lib/data/blogPosts"
@@ -115,15 +114,17 @@ export function BlogPostContent({ post, article, preloadedProducts }: BlogPostCo
               </div>
 
               {/* Hero Image with proper SEO */}
-              <div className="relative h-[400px] md:h-[500px] rounded-xl overflow-hidden border border-gray-200 shadow-md mb-8">
-                <SupabaseImage
-                  src={post.image || "/placeholder.svg"}
-                  alt={heroImageAlt}
-                  fill
-                  className="object-cover"
-                  priority
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-                />
+              <div className="mb-8 overflow-hidden rounded-xl border border-gray-200 bg-slate-50 shadow-md">
+                <div className="flex justify-center">
+                  <img
+                    src={post.image || "/placeholder.svg"}
+                    alt={heroImageAlt}
+                    className="block h-auto max-h-[78vh] w-auto max-w-full"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                  />
+                </div>
               </div>
             </header>
 

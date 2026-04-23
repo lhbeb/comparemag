@@ -1,11 +1,9 @@
 {
-  "/(public)/blog/[slug]/page": "app/(public)/blog/[slug]/page.js",
   "/(public)/page": "app/(public)/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/admin/articles/edit/[slug]/page": "app/admin/articles/edit/[slug]/page.js",
   "/admin/articles/page": "app/admin/articles/page.js",
   "/admin/page": "app/admin/page.js",
-  "/admin/products/page": "app/admin/products/page.js",
-  "/api/products/[slug]/route": "app/api/products/[slug]/route.js",
   "/api/products/route": "app/api/products/route.js",
   "/api/track-session/route": "app/api/track-session/route.js"
 }
