@@ -12,6 +12,13 @@ interface ArticleShareButtonsProps {
 export function ArticleShareButtons({ title }: ArticleShareButtonsProps) {
   const { toast } = useToast()
 
+  const shareOptions = [
+    { key: "twitter", label: "Tweet", icon: Twitter },
+    { key: "facebook", label: "Share", icon: Facebook },
+    { key: "linkedin", label: "Post", icon: Linkedin },
+    { key: "clipboard", label: "Copy", icon: Share2 },
+  ] as const
+
   const handleShare = (platform: string) => {
     // Only execute on client
     if (typeof window === "undefined") return
@@ -45,45 +52,21 @@ export function ArticleShareButtons({ title }: ArticleShareButtonsProps) {
   }
 
   return (
-    <div className="flex justify-between items-center mb-8 bg-slate-50 p-4 rounded-lg border border-slate-100">
-      <div className="flex flex-wrap gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-9 border-slate-200 text-slate-700 hover:bg-white hover:text-blue-600"
-          onClick={() => handleShare("twitter")}
-        >
-          <Twitter className="h-4 w-4 mr-2" />
-          Tweet
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-9 border-slate-200 text-slate-700 hover:bg-white hover:text-blue-600"
-          onClick={() => handleShare("facebook")}
-        >
-          <Facebook className="h-4 w-4 mr-2" />
-          Share
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-9 border-slate-200 text-slate-700 hover:bg-white hover:text-blue-600"
-          onClick={() => handleShare("linkedin")}
-        >
-          <Linkedin className="h-4 w-4 mr-2" />
-          Post
-        </Button>
+    <div className="mb-8 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:p-4">
+      <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
+        {shareOptions.map(({ key, label, icon: Icon }) => (
+          <Button
+            key={key}
+            variant="outline"
+            size="sm"
+            className="h-10 w-full justify-center whitespace-nowrap border-slate-200 bg-white px-3 text-slate-700 hover:bg-white hover:text-slate-900 sm:h-9 sm:w-auto"
+            onClick={() => handleShare(key)}
+          >
+            <Icon className="mr-2 h-4 w-4 shrink-0" />
+            <span className="truncate">{label}</span>
+          </Button>
+        ))}
       </div>
-      <Button
-        variant="outline"
-        size="sm"
-        className="h-9 border-slate-200 text-slate-700 hover:bg-white hover:text-blue-600"
-        onClick={() => handleShare("clipboard")}
-      >
-        <Share2 className="h-4 w-4 mr-2" />
-        Copy
-      </Button>
     </div>
   )
 }
