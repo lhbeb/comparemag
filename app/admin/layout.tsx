@@ -119,7 +119,7 @@ export default function AdminLayout({
 
   if (pathname === '/admin/login') {
     return (
-      <div className="admin-page flex min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" style={{ fontFamily: 'var(--font-monument), sans-serif' }}>
+      <div className="admin-page flex min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
         {children}
       </div>
     )

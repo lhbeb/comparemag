@@ -18,11 +18,11 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        /* Custom font — Monument Grotesk */
-        sans: ['var(--font-monument)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        display: ['var(--font-monument)', 'sans-serif'],
-        jakarta: ['var(--font-monument)', 'sans-serif'],
-        nunito: ['var(--font-monument)', 'sans-serif'],
+        /* Custom font — DM Sans */
+        sans: ['var(--font-dm-sans)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['var(--font-dm-sans)', 'sans-serif'],
+        jakarta: ['var(--font-dm-sans)', 'sans-serif'],
+        nunito: ['var(--font-dm-sans)', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       colors: {

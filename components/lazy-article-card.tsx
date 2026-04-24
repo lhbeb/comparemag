@@ -9,12 +9,12 @@ interface ArticleCardProps {
   title: string
   description: string
   category: string
-  date: string
+  readTime: string
   slug: string
   image: string
 }
 
-export function LazyArticleCard({ title, description, category, date, slug, image }: ArticleCardProps) {
+export function LazyArticleCard({ title, description, category, readTime, slug, image }: ArticleCardProps) {
   const [isVisible, setIsVisible] = useState(false)
   const [imageLoaded, setImageLoaded] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
@@ -72,7 +72,7 @@ export function LazyArticleCard({ title, description, category, date, slug, imag
               <div className="flex justify-between items-center mt-6 pt-4 border-t border-slate-100">
                 <div className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-400 uppercase tracking-widest">
                   <Clock className="h-3.5 w-3.5 flex-shrink-0" />
-                  <span>{date}</span>
+                  <span>{readTime}</span>
                 </div>
                 <span className="text-[13px] font-bold text-blue-700 group-hover:text-orange-600 transition-colors duration-200 uppercase tracking-wider">
                   Read more

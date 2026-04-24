@@ -1,116 +1,184 @@
-[00:00:01.670] Server  LOG     [System] Running Background Database Health Check on Startup...
-[00:00:05.445] Server  LOG     [System] Database Health Check: ✅ PASS (Connection: OK, Tables: articles, writers, product_cards checked)
-[00:00:05.453] Server  LOG      ✓ Ready in 5.2s
-[00:00:08.317] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:14.659] Server  WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:01.383] Server  LOG     [System] Running Background Database Health Check on Startup...
+[00:00:04.602] Server  LOG     [System] Database Health Check: ✅ PASS (Connection: OK, Tables: articles, writers, product_cards checked)
+[00:00:04.605] Server  LOG      ✓ Ready in 4.3s
+[00:00:07.825] Server  WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:15.387] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:15.607] Browser WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:07.829] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776663533146.jpeg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:15.607] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:00:15.607] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776909921761-4ipfe6.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:07.830] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776651777361.jpg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:15.614] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776903972708-r90zm.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:07.831] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776651478590.jpg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:15.624] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776896099408-g90tur.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:07.832] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776657564897.png" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:15.625] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776885566303-type2.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:08.032] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:08.254] Browser WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:16.677] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776859721425-174hff.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:08.254] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776663533146.jpeg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:16.677] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776749632879-zw993f.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:08.254] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776651777361.jpg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:17.077] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663655142-j30bg.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:08.254] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776651478590.jpg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:17.077] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663742025-tn20r8.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:08.254] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776657564897.png" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:17.077] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663759001-ivsio8.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:08.254] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:00:08.254] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776997826666-djgp7d.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:22.130] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776909921761-4ipfe6.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:08.254] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776903972708-r90zm.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:22.134] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776903972708-r90zm.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:08.254] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776896099408-g90tur.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:22.135] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776896099408-g90tur.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:00:08.254] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776885566303-type2.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:22.135] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776885566303-type2.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:22.136] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776859721425-174hff.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:22.537] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:22.667] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776909921761-4ipfe6.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:22.667] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776903972708-r90zm.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:22.667] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776896099408-g90tur.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:22.667] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776885566303-type2.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:22.667] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776859721425-174hff.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:26.076] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
-[00:00:26.076] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776749632879-zw993f.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:26.076] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663655142-j30bg.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:26.076] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663742025-tn20r8.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:26.076] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663759001-ivsio8.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:26.076] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663775743-l3kab6.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
-Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:00:31.966] Browser INFO    %c[TikTok] 
+[00:00:31.101] Server  LOG      ✓ Compiled in 1247ms
+[00:00:45.057] Server  LOG      ✓ Compiled in 523ms
+[00:00:57.736] Server  LOG      ✓ Compiled in 161ms
+[00:00:57.844] Browser ERROR   ./app/layout.tsx:8:10
+Ecmascript file had an error
+   6 | import "./globals.css"
+   7 | import type { Metadata } from "next"
+>  8 | import { Toaster } from "@/components/ui/toaster"
+     |          ^^^^^^^
+   9 | import SessionTracker from "@/components/SessionTracker"
+  10 |
+  11 | export const metadata: Metadata = {
 
-We're hiring!
-Are you ready to make a change?
-Check out some of our available positions at https://careers.tiktok.com/ color: #fe2c55
-[00:01:54.904] Server  LOG      ✓ Compiled in 75.2s
-[00:04:50.755] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:04:50.942] Browser WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+the name `Toaster` is defined multiple times
+[00:01:13.903] Server  WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:04:50.942] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:04:50.942] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776909921761-4ipfe6.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:01:13.907] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776663533146.jpeg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:04:50.942] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776903972708-r90zm.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:01:13.908] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776651777361.jpg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:04:50.942] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776896099408-g90tur.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:01:13.909] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776651478590.jpg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:04:50.942] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776885566303-type2.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:01:13.909] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776657564897.png" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:04:54.905] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:04:55.010] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776909921761-4ipfe6.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:01:14.026] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:14.753] Browser WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:04:55.010] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776903972708-r90zm.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:01:14.754] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776663533146.jpeg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:04:55.010] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776896099408-g90tur.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:01:14.754] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776651777361.jpg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:04:55.010] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776885566303-type2.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:01:14.754] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776651478590.jpg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:04:55.010] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776859721425-174hff.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:01:14.754] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776657564897.png" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:04:57.268] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
-[00:04:57.268] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776749632879-zw993f.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:05:47.902] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:05:47.902] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776997826666-djgp7d.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:04:57.268] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663655142-j30bg.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:05:47.902] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776903972708-r90zm.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:04:57.268] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663742025-tn20r8.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:05:47.902] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776896099408-g90tur.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:04:57.268] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663759001-ivsio8.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:05:47.902] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776885566303-type2.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:04:57.268] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663775743-l3kab6.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+[00:05:52.482] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776859721425-174hff.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
 Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
-[00:05:00.606] Browser INFO    %c[TikTok] 
-
-We're hiring!
-Are you ready to make a change?
-Check out some of our available positions at https://careers.tiktok.com/ color: #fe2c55
-[00:09:39.741] Server  WARN    Could not fetch products (table may not exist yet): "TypeError: fetch failed"
-[00:09:39.741] Server  WARN    Could not fetch writers: "TypeError: fetch failed"
-[00:09:40.004] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:09:45.872] Server  LOG      ✓ Compiled in 470.6s
-[00:13:27.294] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:13:27.759] Browser INFO    %c[TikTok] 
-
-We're hiring!
-Are you ready to make a change?
-Check out some of our available positions at https://careers.tiktok.com/ color: #fe2c55
-[00:15:52.840] Server  LOG      ✓ Compiled in 361.2s
+[00:05:52.482] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776749632879-zw993f.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:05:53.146] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663655142-j30bg.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:05:53.146] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663742025-tn20r8.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:05:53.146] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663759001-ivsio8.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:07:14.485] Server  LOG      ✓ Compiled in 542ms
+[00:08:25.486] Server  LOG      ✓ Compiled in 544ms
+[00:19:09.667] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:19:09.834] Browser WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:19:09.834] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776663533146.jpeg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:19:09.834] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776651777361.jpg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:19:09.834] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776651478590.jpg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:19:09.834] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776657564897.png" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:19:09.834] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:19:09.834] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776997826666-djgp7d.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:19:09.834] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776903972708-r90zm.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:19:09.834] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776896099408-g90tur.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:19:09.834] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776885566303-type2.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:19:40.279] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776859721425-174hff.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:19:40.279] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776749632879-zw993f.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:19:44.277] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663655142-j30bg.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:19:44.277] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663742025-tn20r8.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:19:44.277] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663759001-ivsio8.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:20:19.466] Server  LOG      ✓ Compiled in 98ms
+[00:20:24.943] Server  LOG      ✓ Compiled in 104ms
+[00:21:16.279] Server  LOG      ✓ Compiled in 0ms
+[00:21:17.573] Server  WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:21:17.577] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776663533146.jpeg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:21:17.579] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776651777361.jpg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:21:17.580] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776651478590.jpg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:21:17.580] Server  WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776657564897.png" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:21:17.688] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:21:18.567] Browser WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:21:18.567] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776663533146.jpeg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:21:18.567] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776651777361.jpg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:21:18.567] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776651478590.jpg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:21:18.567] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776657564897.png" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:21:18.567] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:21:18.676] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776997826666-djgp7d.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:21:18.676] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776903972708-r90zm.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:21:18.676] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776896099408-g90tur.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:21:18.676] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776885566303-type2.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:21:27.165] Server  LOG      ✓ Compiled in 1910ms
+[00:21:41.153] Server  LOG      ✓ Compiled in 658ms
+[00:30:14.788] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:30:14.956] Browser WARN    Image with src "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:30:14.956] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776663533146.jpeg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:30:14.957] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776651777361.jpg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:30:14.957] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776651478590.jpg" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:30:14.957] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/avatars/writer-1776657564897.png" is using quality "78" which is not configured in images.qualities [75]. Please update your config to [75, 78].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:30:14.957] Browser WARN    Image with src "/logo.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:30:14.957] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776997826666-djgp7d.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:30:14.957] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776903972708-r90zm.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:30:14.957] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776896099408-g90tur.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:30:14.957] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776885566303-type2.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:30:18.687] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776859721425-174hff.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:30:18.687] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776749632879-zw993f.png" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:30:23.936] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663655142-j30bg.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:30:23.936] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663742025-tn20r8.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:30:23.936] Browser WARN    Image with src "https://fgkvrbdpmwyfjvpubzxn.supabase.co/storage/v1/object/public/article_images/articles/1776663759001-ivsio8.jpeg" is using quality "85" which is not configured in images.qualities [75]. Please update your config to [75, 85].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities

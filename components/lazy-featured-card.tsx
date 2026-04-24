@@ -10,13 +10,13 @@ interface FeaturedCardProps {
   title: string
   description: string
   image: string
-  date: string
+  readTime: string
   category: string
   icon: React.ReactNode
   slug: string
 }
 
-export function LazyFeaturedCard({ title, description, image, date, category, icon, slug }: FeaturedCardProps) {
+export function LazyFeaturedCard({ title, description, image, readTime, category, icon, slug }: FeaturedCardProps) {
   const [isVisible, setIsVisible] = useState(false)
   const [imageLoaded, setImageLoaded] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
@@ -74,7 +74,7 @@ export function LazyFeaturedCard({ title, description, image, date, category, ic
               <div className="flex justify-between items-center mt-6 pt-4 border-t border-slate-100">
                 <div className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-400 uppercase tracking-widest">
                   <Clock className="h-3.5 w-3.5 flex-shrink-0" />
-                  <span>{date}</span>
+                  <span>{readTime}</span>
                 </div>
                 <span className="text-[13px] font-bold text-blue-700 group-hover:text-orange-600 transition-colors duration-200 uppercase tracking-wider">
                   Read review
