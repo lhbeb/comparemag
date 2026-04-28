@@ -9,17 +9,24 @@ import { ArticleShareButtons } from "@/components/article-share-buttons"
 import { EmbedHydrator } from "@/components/embed-hydrator"
 import { ArticleRenderer } from "@/components/article-renderer"
 import type { ProductCardData } from "@/components/blocks/product-card-embed"
+import { SupabaseImage } from "@/components/supabase-image"
 
 interface BlogPostContentProps {
   post: BlogPost
   article?: Article
   preloadedProducts?: Record<string, ProductCardData>
+  authorProfile?: {
+    name: string
+    slug: string
+    avatarUrl: string | null
+  }
 }
 
-export function BlogPostContent({ post, article, preloadedProducts }: BlogPostContentProps) {
+export function BlogPostContent({ post, article, preloadedProducts, authorProfile }: BlogPostContentProps) {
   if (!post) return null
 
   const publishedDateTime = article?.published_at || article?.created_at || ''
+  const authorHref = `/writers/${authorProfile?.slug || post.author.toLowerCase().replace(/\s+/g, '-')}`
 
   // Generate breadcrumb items
   const categorySlug = (post.category || 'General').toLowerCase().replace(/\s+/g, '-')
@@ -93,15 +100,34 @@ export function BlogPostContent({ post, article, preloadedProducts }: BlogPostCo
                   <BookOpen className="h-4 w-4" aria-hidden="true" />
                   <span>{post.readTime}</span>
                 </div>
-                <div className="flex items-center gap-1" itemProp="author" itemScope itemType="https://schema.org/Person">
-                  <User className="h-4 w-4" aria-hidden="true" />
-                  <span>
+                <div className="flex items-center gap-2.5" itemProp="author" itemScope itemType="https://schema.org/Person">
+                  {authorProfile?.avatarUrl ? (
+                    <span className="relative h-9 w-9 flex-shrink-0 overflow-hidden rounded-full ring-2 ring-blue-50">
+                      <SupabaseImage
+                        src={authorProfile.avatarUrl}
+                        alt={authorProfile.name}
+                        width={36}
+                        height={36}
+                        sizes="36px"
+                        quality={72}
+                        className="h-full w-full rounded-full object-cover"
+                      />
+                    </span>
+                  ) : (
+                    <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-blue-50 ring-2 ring-blue-50">
+                      <User className="h-4 w-4 text-blue-600" aria-hidden="true" />
+                    </span>
+                  )}
+                  {authorProfile?.avatarUrl && (
+                    <meta itemProp="image" content={authorProfile.avatarUrl} />
+                  )}
+                  <span className="min-w-0">
                     <Link
-                      href={`/writers/${post.author.toLowerCase().replace(/\s+/g, '-')}`}
+                      href={authorHref}
                       itemProp="url"
                       className="font-semibold text-slate-700 transition-colors hover:text-blue-600 hover:underline"
                     >
-                      <span itemProp="name">{post.author}</span>
+                      <span itemProp="name">{authorProfile?.name || post.author}</span>
                     </Link>
                   </span>
                 </div>

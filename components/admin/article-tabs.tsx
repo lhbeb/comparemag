@@ -4,7 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight, Edit, Eye, EyeOff, FilePen, FileText, UserCog, Wand2, Trash2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Download, Edit, Eye, EyeOff, FilePen, FileText, UserCog, Wand2, Trash2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { SupabaseImage } from '@/components/supabase-image'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
@@ -372,6 +372,7 @@ function ArticleList({ articles, onDeleted }: { articles: any[], onDeleted: (slu
                         View
                       </Link>
                     </Button>
+                    <ExportArticleButton slug={article.slug} title={article.title} />
                     <DeleteArticleButton slug={article.slug} title={article.title} onDeleted={onDeleted} />
                   </div>
                 </div>
@@ -475,6 +476,7 @@ function ArticleGrid({ articles, onDeleted }: { articles: any[], onDeleted: (slu
                     <span className="sr-only">View</span>
                   </Link>
                 </Button>
+                <ExportArticleButton slug={article.slug} title={article.title} iconOnly />
                 <DeleteArticleButton slug={article.slug} title={article.title} onDeleted={onDeleted} iconOnly />
               </div>
             </div>
@@ -566,6 +568,81 @@ function PaginationControls({
         <ChevronRight className="ml-1 h-3.5 w-3.5" />
       </Button>
     </div>
+  )
+}
+
+function ExportArticleButton({
+  slug,
+  title,
+  iconOnly = false,
+}: {
+  slug: string
+  title: string
+  iconOnly?: boolean
+}) {
+  const [isExporting, setIsExporting] = React.useState(false)
+
+  const handleExport = async () => {
+    setIsExporting(true)
+    try {
+      const response = await fetch(`/api/articles/${slug}/export`, {
+        method: 'GET',
+      })
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => null)
+        throw new Error(body?.message || 'Failed to export article.')
+      }
+
+      const blob = await response.blob()
+      const objectUrl = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      const contentDisposition = response.headers.get('Content-Disposition')
+      const filenameMatch = contentDisposition?.match(/filename="([^"]+)"/)
+
+      link.href = objectUrl
+      link.download = filenameMatch?.[1] || `${slug}-export.json`
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.URL.revokeObjectURL(objectUrl)
+
+      toast({
+        title: 'Article exported',
+        description: `"${title}" downloaded with full settings and HTML output.`,
+      })
+    } catch (error) {
+      toast({
+        title: 'Export failed',
+        description: error instanceof Error ? error.message : 'Unable to export article right now.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={() => void handleExport()}
+      disabled={isExporting}
+      className={
+        iconOnly
+          ? 'h-8 w-8 border-slate-200 bg-white p-0 text-slate-700'
+          : 'h-8 px-3 text-xs font-medium border-slate-200 bg-white text-slate-700'
+      }
+      aria-label={`Export ${title}`}
+      title="Export"
+    >
+      <Download className={`h-3.5 w-3.5 ${iconOnly ? '' : 'mr-1.5'}`} />
+      {iconOnly ? (
+        <span className="sr-only">{isExporting ? 'Exporting...' : 'Export'}</span>
+      ) : (
+        isExporting ? 'Exporting...' : 'Export'
+      )}
+    </Button>
   )
 }
 

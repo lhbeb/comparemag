@@ -1,4 +1,5 @@
 import { getArticleBySlug, getAllSlugs, getAllArticles } from "@/lib/supabase/articles"
+import { getAllWriters } from "@/lib/supabase/writers"
 import { BlogPostContent } from "@/components/blog-post-content"
 import { notFound } from "next/navigation"
 import type { BlogPost } from "@/lib/data/blogPosts"
@@ -56,7 +57,10 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     notFound()
   }
 
-  const allArticles = await getAllArticles(true)
+  const [allArticles, writers] = await Promise.all([
+    getAllArticles(true),
+    getAllWriters(),
+  ])
   // Advanced algorithm: Prioritize same category, backfill with others to ensure engagement
   const otherAvailableArticles = allArticles.filter(a => a.slug !== article.slug)
   const categoryMatches = otherAvailableArticles.filter(a => a.category === article.category)
@@ -73,6 +77,12 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
   // Server-side preload for high-performance zero-waterfall embed rendering
   const preloadedProducts = await getPreloadProducts(article.content)
+
+  const normalizedAuthorSlug = article.author.toLowerCase().replace(/\s+/g, '-')
+  const authorProfile = writers.find((writer) =>
+    writer.slug === normalizedAuthorSlug ||
+    writer.name.trim().toLowerCase() === article.author.trim().toLowerCase()
+  )
   
   const post: BlogPost = {
     title: article.title,
@@ -95,7 +105,16 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   return (
     <>
       <StructuredData data={articleStructuredDataGraph} />
-      <BlogPostContent post={post} article={article} preloadedProducts={preloadedProducts} />
+      <BlogPostContent
+        post={post}
+        article={article}
+        preloadedProducts={preloadedProducts}
+        authorProfile={authorProfile ? {
+          name: authorProfile.name,
+          slug: authorProfile.slug,
+          avatarUrl: authorProfile.avatar_url,
+        } : undefined}
+      />
     </>
   )
 }
