@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { getAllArticlesOverview } from '@/lib/supabase/articles'
 import { Plus } from 'lucide-react'
+import { ArticleImportButton } from '@/components/admin/article-import-button'
 
 async function getArticles() {
   try {
@@ -57,7 +58,8 @@ export default async function AdminPage() {
         ))}
       </div>
 
-      <div className="mb-6">
+      <div className="mb-6 flex flex-wrap items-center gap-3">
+        <ArticleImportButton className="border-slate-200 bg-white text-slate-700 hover:bg-slate-50" />
         <Button asChild style={{ background: 'var(--admin-primary)', color: 'white' }}>
           <Link href="/admin/articles/new">
             <Plus className="mr-2 h-4 w-4" />

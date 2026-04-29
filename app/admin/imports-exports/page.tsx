@@ -10,6 +10,23 @@ export default function ImportsExportsDashboard() {
       </div>
 
       <div className="grid md:grid-cols-2 gap-6 mt-8">
+
+        <Link href="/admin/imports-exports/import-articles" className="group">
+          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-blue-400 hover:shadow-md transition-all">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="bg-blue-50 text-blue-600 p-3 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <UploadCloud className="h-6 w-6" />
+              </div>
+              <h2 className="text-xl font-semibold text-slate-900">Import Articles</h2>
+            </div>
+            <p className="text-slate-600 text-sm">
+              Upload an exported article JSON file to recreate or update a full article, including editor settings and HTML-ready content.
+            </p>
+            <div className="mt-4 flex gap-2">
+              <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-600 text-xs font-semibold px-2.5 py-1 rounded-md"><FileJson className="h-3.5 w-3.5" /> JSON</span>
+            </div>
+          </div>
+        </Link>
         
         {/* Import Products */}
         <Link href="/admin/imports-exports/import-products" className="group">

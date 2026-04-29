@@ -81,6 +81,7 @@ const navGroups = [
         href: '/admin/imports-exports',
         icon: Database,
         children: [
+          { label: 'Import Articles', href: '/admin/imports-exports/import-articles', icon: PlusCircle },
           { label: 'Import Products', href: '/admin/imports-exports/import-products', icon: PlusCircle },
           { label: 'Export Data', href: '/admin/imports-exports/export-data' },
         ],
