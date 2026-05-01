@@ -143,6 +143,27 @@ function formatDisplayPrice(priceText: string) {
   return trimmed
 }
 
+function buildInlineImageBlockHtml({
+  imageUrl,
+  alt,
+  caption,
+}: {
+  imageUrl: string
+  alt: string
+  caption?: string
+}) {
+  const trimmedCaption = (caption || '').trim()
+
+  return `
+    <figure class="not-prose my-8 w-full">
+      <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(alt)}" class="w-full rounded-2xl shadow-md" />
+      ${trimmedCaption
+        ? `<figcaption class="mt-3 text-center text-sm italic text-slate-500">${escapeHtml(trimmedCaption)}</figcaption>`
+        : ''}
+    </figure>
+  `.trim()
+}
+
 export function ArticleEditor({ initialData, mode, initialWriters = [], initialProducts = [] }: ArticleEditorProps) {
   const router = useRouter()
   const supabase = createClient()
@@ -855,14 +876,20 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
 
       const { data } = supabase.storage.from('article_images').getPublicUrl(storagePath)
       const imageAlt = file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').trim() || 'Article image'
-      const imageBlockHtml = `
-        <figure class="not-prose my-8 w-full">
-          <img src="${escapeHtml(data.publicUrl)}" alt="${escapeHtml(imageAlt)}" class="w-full rounded-2xl shadow-md" />
-        </figure>
-      `.trim()
+      const imageCaption = window.prompt('Optional image quote/caption (leave empty to skip):', '') || ''
+      const imageBlockHtml = buildInlineImageBlockHtml({
+        imageUrl: data.publicUrl,
+        alt: imageAlt,
+        caption: imageCaption,
+      })
 
       insertBlockHtmlAtSelection(imageBlockHtml)
-      toast({ title: 'Image inserted', description: 'The image was uploaded and placed into the article body.' })
+      toast({
+        title: 'Image inserted',
+        description: imageCaption.trim()
+          ? 'The image and its caption were added to the article body.'
+          : 'The image was uploaded and placed into the article body.',
+      })
     } catch (error: any) {
       toast({ title: 'Image insert failed', description: error.message, variant: 'destructive' })
     } finally {
