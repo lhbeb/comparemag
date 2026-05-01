@@ -147,6 +147,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const router = useRouter()
   const supabase = createClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const inlineImageInputRef = useRef<HTMLInputElement>(null)
   const editorRef = useRef<HTMLDivElement>(null)
   const editorHtmlRef = useRef(initialData?.content || '')
   const savedRangeRef = useRef<Range | null>(null)
@@ -831,6 +832,45 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     } finally { setUploading(false); if (fileInputRef.current) fileInputRef.current.value = '' }
   }
 
+  const handleInlineImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      toast({ title: 'Invalid file type', description: 'Choose an image file to insert into the article.', variant: 'destructive' })
+      return
+    }
+
+    setUploading(true)
+
+    try {
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${file.name.split('.').pop()}`
+      const storagePath = `articles/inline/${fileName}`
+      const { error: uploadError } = await supabase.storage.from('article_images').upload(storagePath, file, {
+        cacheControl: '31536000',
+        upsert: false,
+      })
+
+      if (uploadError) throw uploadError
+
+      const { data } = supabase.storage.from('article_images').getPublicUrl(storagePath)
+      const imageAlt = file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').trim() || 'Article image'
+      const imageBlockHtml = `
+        <figure class="not-prose my-8 w-full">
+          <img src="${escapeHtml(data.publicUrl)}" alt="${escapeHtml(imageAlt)}" class="w-full rounded-2xl shadow-md" />
+        </figure>
+      `.trim()
+
+      insertBlockHtmlAtSelection(imageBlockHtml)
+      toast({ title: 'Image inserted', description: 'The image was uploaded and placed into the article body.' })
+    } catch (error: any) {
+      toast({ title: 'Image insert failed', description: error.message, variant: 'destructive' })
+    } finally {
+      setUploading(false)
+      if (inlineImageInputRef.current) inlineImageInputRef.current.value = ''
+    }
+  }
+
   const handleSave = async (publish: boolean = false) => {
     let contentToSave = content
 
@@ -1379,6 +1419,22 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                         saveSelectionRange()
                         savedRangeRef.current = null
                       }}
+                      onClick={() => inlineImageInputRef.current?.click()}
+                      disabled={uploading}
+                      className="h-8 text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 disabled:opacity-60"
+                    >
+                      <ImageIcon className="h-4 w-4 mr-1.5" />
+                      {uploading ? 'Uploading...' : 'Insert Image'}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onMouseDown={(e) => {
+                        e.preventDefault()
+                        saveSelectionRange()
+                        savedRangeRef.current = null
+                      }}
                       onClick={() => {
                         setModalMode('amazon')
                         setShowProductModal(true)
@@ -1436,9 +1492,16 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                     empty:before:content-[attr(data-placeholder)] empty:before:text-slate-300 empty:before:italic empty:before:pointer-events-none"
                   style={{ minHeight: '720px' }}
                 />
+                <input
+                  ref={inlineImageInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleInlineImageUpload}
+                />
 
                 <div className="flex-shrink-0 border-t border-slate-100 bg-slate-50/60 px-6 py-2.5 text-xs text-slate-400 flex items-center justify-between">
-                  <span>WYSIWYG editor · Formatting applied directly · Product cards use shortcodes · Amazon cards stay inside article HTML</span>
+                  <span>WYSIWYG editor · Formatting applied directly · Inline images upload into article assets · Product cards use shortcodes · Amazon cards stay inside article HTML</span>
                   <span className="font-semibold px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wide bg-blue-50 text-blue-600">● Live</span>
                 </div>
               </div>

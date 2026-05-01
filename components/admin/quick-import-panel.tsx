@@ -9,8 +9,15 @@ import { toast } from '@/hooks/use-toast'
 interface QuickImportResult {
   slug: string
   title: string
-  status: 'success' | 'error'
+  status: 'success' | 'error' | 'skipped'
   message?: string
+}
+
+interface ImportSummary {
+  total: number
+  imported: number
+  skipped: number
+  failed: number
 }
 
 function slugify(text: string) {
@@ -49,7 +56,16 @@ export function QuickImportPanel({ onImported }: { onImported: () => void }) {
   const [json, setJson] = useState('')
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState<QuickImportResult[]>([])
+  const [summary, setSummary] = useState<ImportSummary | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const resetPanel = () => {
+    setJson('')
+    setResults([])
+    setSummary(null)
+    setLoading(false)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -82,7 +98,24 @@ export function QuickImportPanel({ onImported }: { onImported: () => void }) {
 
     setLoading(true)
     setResults([])
+    setSummary(null)
     const importResults: QuickImportResult[] = []
+    const seenSlugs = new Set<string>()
+    let existingSlugs = new Set<string>()
+
+    try {
+      const existingRes = await fetch('/api/products?full=true&published=false', { cache: 'no-store' })
+      if (existingRes.ok) {
+        const existingProducts = await existingRes.json()
+        existingSlugs = new Set(
+          (Array.isArray(existingProducts) ? existingProducts : [])
+            .map((product: any) => product?.slug)
+            .filter(Boolean)
+        )
+      }
+    } catch {
+      // If this lookup fails, we still continue and let the per-item API response decide.
+    }
 
     for (const item of parsed) {
       // Map new schema → internal fields
@@ -103,6 +136,38 @@ export function QuickImportPanel({ onImported }: { onImported: () => void }) {
       }
 
       const slug = item.slug || slugify(title)
+      const normalizedTitle = title || 'Unknown'
+
+      if (!slug) {
+        importResults.push({
+          slug: 'unknown',
+          title: normalizedTitle,
+          status: 'error',
+          message: 'Could not generate a usable slug for this product.',
+        })
+        continue
+      }
+
+      if (seenSlugs.has(slug)) {
+        importResults.push({
+          slug,
+          title: normalizedTitle,
+          status: 'skipped',
+          message: 'Skipped: duplicate slug detected inside this same import batch.',
+        })
+        continue
+      }
+      seenSlugs.add(slug)
+
+      if (existingSlugs.has(slug)) {
+        importResults.push({
+          slug,
+          title: normalizedTitle,
+          status: 'skipped',
+          message: 'Skipped: this product already exists in the database.',
+        })
+        continue
+      }
 
       // Try to fetch OG image from the product URL
       let imageUrl = item.image_url || null
@@ -134,13 +199,23 @@ export function QuickImportPanel({ onImported }: { onImported: () => void }) {
         })
 
         if (res.ok) {
-          importResults.push({ slug, title: item.title, status: 'success' })
+          importResults.push({ slug, title: normalizedTitle, status: 'success', message: 'Imported successfully.' })
+          existingSlugs.add(slug)
         } else {
           const err = await res.json()
-          importResults.push({ slug, title: item.title, status: 'error', message: err.error || 'API error' })
+          const apiMessage = err.error || 'API error'
+          const isDuplicate = /duplicate key value violates unique constraint .*product_cards_slug_key/i.test(apiMessage)
+          importResults.push({
+            slug,
+            title: normalizedTitle,
+            status: isDuplicate ? 'skipped' : 'error',
+            message: isDuplicate
+              ? 'Skipped: this product already exists in the database.'
+              : apiMessage,
+          })
         }
       } catch (e) {
-        importResults.push({ slug, title: item.title, status: 'error', message: 'Network error' })
+        importResults.push({ slug, title: normalizedTitle, status: 'error', message: 'Network error' })
       }
     }
 
@@ -148,9 +223,28 @@ export function QuickImportPanel({ onImported }: { onImported: () => void }) {
     setLoading(false)
 
     const successes = importResults.filter(r => r.status === 'success').length
-    if (successes > 0) {
-      toast({ title: `${successes} product${successes > 1 ? 's' : ''} imported!`, description: 'Products are now live.' })
+    const skipped = importResults.filter(r => r.status === 'skipped').length
+    const failed = importResults.filter(r => r.status === 'error').length
+
+    setSummary({
+      total: importResults.length,
+      imported: successes,
+      skipped,
+      failed,
+    })
+
+    if (successes > 0 || skipped > 0) {
+      toast({
+        title: 'Import finished',
+        description: `${successes} imported, ${skipped} skipped, ${failed} failed.`,
+      })
       onImported()
+    } else if (failed > 0) {
+      toast({
+        title: 'Import finished with errors',
+        description: `${failed} product${failed > 1 ? 's' : ''} failed and nothing new was imported.`,
+        variant: 'destructive',
+      })
     }
   }
 
@@ -172,7 +266,7 @@ export function QuickImportPanel({ onImported }: { onImported: () => void }) {
       <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-100">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
               <Zap className="h-5 w-5 text-blue-600" />
             </div>
@@ -181,7 +275,7 @@ export function QuickImportPanel({ onImported }: { onImported: () => void }) {
               <p className="text-sm text-slate-500">Paste JSON or upload a .json file — images are pulled from product URLs automatically</p>
             </div>
           </div>
-          <button onClick={() => { setOpen(false); setResults([]) }} className="text-slate-400 hover:text-slate-600 transition-colors">
+          <button onClick={() => { setOpen(false); resetPanel() }} className="text-slate-400 hover:text-slate-600 transition-colors">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -225,18 +319,52 @@ export function QuickImportPanel({ onImported }: { onImported: () => void }) {
           </div>
 
           {/* Results */}
+          {summary && (
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-wrap items-center gap-3 text-sm">
+                <span className="font-bold text-slate-900">Import Summary</span>
+                <span className="text-emerald-700 font-semibold">{summary.imported} imported</span>
+                <span className="text-amber-700 font-semibold">{summary.skipped} skipped</span>
+                <span className="text-red-700 font-semibold">{summary.failed} failed</span>
+                <span className="text-slate-500">out of {summary.total}</span>
+              </div>
+            </div>
+          )}
+
           {results.length > 0 && (
             <div className="space-y-2">
               <p className="text-sm font-medium text-slate-700">Import Results</p>
               {results.map((r, i) => (
-                <div key={i} className={`flex items-start gap-3 p-3 rounded-lg text-sm ${r.status === 'success' ? 'bg-green-50 border border-green-100' : 'bg-red-50 border border-red-100'}`}>
-                  {r.status === 'success' 
-                    ? <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    : <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+                <div key={i} className={`flex items-start gap-3 p-3 rounded-lg text-sm ${
+                  r.status === 'success'
+                    ? 'bg-green-50 border border-green-100'
+                    : r.status === 'skipped'
+                      ? 'bg-amber-50 border border-amber-100'
+                      : 'bg-red-50 border border-red-100'
+                }`}>
+                  {r.status === 'success' ? (
+                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  ) : (
+                    <AlertCircle className={`h-4 w-4 mt-0.5 flex-shrink-0 ${r.status === 'skipped' ? 'text-amber-600' : 'text-red-500'}`} />
+                  )
                   }
                   <div>
-                    <span className={`font-medium ${r.status === 'success' ? 'text-green-800' : 'text-red-700'}`}>{r.title}</span>
-                    {r.message && <p className="text-red-600 text-xs mt-0.5">{r.message}</p>}
+                    <span className={`font-medium ${
+                      r.status === 'success'
+                        ? 'text-green-800'
+                        : r.status === 'skipped'
+                          ? 'text-amber-800'
+                          : 'text-red-700'
+                    }`}>{r.title}</span>
+                    {r.message && (
+                      <p className={`text-xs mt-0.5 ${
+                        r.status === 'success'
+                          ? 'text-green-700'
+                          : r.status === 'skipped'
+                            ? 'text-amber-700'
+                            : 'text-red-600'
+                      }`}>{r.message}</p>
+                    )}
                   </div>
                 </div>
               ))}
@@ -246,7 +374,11 @@ export function QuickImportPanel({ onImported }: { onImported: () => void }) {
 
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 p-6 border-t border-slate-100">
-          <Button variant="ghost" onClick={() => { setOpen(false); setResults([]) }}>Cancel</Button>
+          {results.length > 0 ? (
+            <Button variant="outline" onClick={resetPanel}>Start New Import</Button>
+          ) : (
+            <Button variant="ghost" onClick={() => { setOpen(false); resetPanel() }}>Cancel</Button>
+          )}
           <Button
             onClick={handleImport}
             disabled={loading || !json.trim()}
