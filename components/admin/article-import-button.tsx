@@ -20,6 +20,12 @@ type ImportFeedback =
       detail?: string | null
     }
   | {
+      status: 'warning'
+      title: string
+      message: string
+      detail?: string | null
+    }
+  | {
       status: 'error'
       title: string
       message: string
@@ -72,13 +78,14 @@ export function ArticleImportButton({
         throw new Error(errorMessage)
       }
 
+      const feedbackStatus = payload?.action === 'updated' ? 'warning' : 'success'
       const successTitle = payload?.action === 'updated' ? 'Article updated' : 'Article imported'
       const successMessage = payload?.title
         ? `"${payload.title}" is now available in the admin.`
         : 'The article import completed successfully.'
 
       setFeedback({
-        status: 'success',
+        status: feedbackStatus,
         title: successTitle,
         message: successMessage,
         detail: payload?.reason || null,
@@ -134,6 +141,8 @@ export function ArticleImportButton({
           className={`rounded-xl border px-4 py-3 text-sm shadow-sm ${
             feedback.status === 'success'
               ? 'border-emerald-200 bg-emerald-50/80 text-emerald-900'
+              : feedback.status === 'warning'
+                ? 'border-amber-200 bg-amber-50/80 text-amber-900'
               : 'border-red-200 bg-red-50/80 text-red-900'
           }`}
         >
@@ -141,6 +150,8 @@ export function ArticleImportButton({
             <div className="mt-0.5 flex-shrink-0">
               {feedback.status === 'success' ? (
                 <CheckCircle2 className="h-4 w-4" />
+              ) : feedback.status === 'warning' ? (
+                <AlertCircle className="h-4 w-4" />
               ) : (
                 <AlertCircle className="h-4 w-4" />
               )}
