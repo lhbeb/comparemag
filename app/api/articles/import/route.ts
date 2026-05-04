@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { createArticle, updateArticle } from '@/lib/supabase/articles'
 import type { ArticleInsert, ArticleUpdate } from '@/lib/supabase/types'
 
+const DEFAULT_IMPORTED_ARTICLE_AUTHOR = 'Adam Molina'
+
 type ImportedArticleSettings = {
   originalSlug?: string
   slug?: string
@@ -83,6 +85,21 @@ function buildArticlePayload(settings: ImportedArticleSettings): ArticleInsert {
   }
 }
 
+async function getDefaultImportedArticleAuthor(supabase: Awaited<ReturnType<typeof createClient>>) {
+  const { data, error } = await supabase
+    .from('writers')
+    .select('name')
+    .ilike('name', DEFAULT_IMPORTED_ARTICLE_AUTHOR)
+    .is('deleted_at', null)
+    .maybeSingle()
+
+  if (error || !data?.name) {
+    return DEFAULT_IMPORTED_ARTICLE_AUTHOR
+  }
+
+  return data.name
+}
+
 export async function POST(request: NextRequest) {
   try {
     const payload = await request.json()
@@ -110,11 +127,11 @@ export async function POST(request: NextRequest) {
 
     const articleData = buildArticlePayload(settings)
 
-    if (!articleData.slug || !articleData.title || !articleData.content || !articleData.author || !articleData.category) {
+    if (!articleData.slug || !articleData.title || !articleData.content || !articleData.category) {
       return NextResponse.json(
         {
           message: 'The import file is missing one or more required article fields.',
-          reason: 'Required fields: slug, title, content, author, and category.',
+          reason: 'Required fields: slug, title, content, and category.',
         },
         { status: 400 }
       )
@@ -126,6 +143,20 @@ export async function POST(request: NextRequest) {
       .select('slug')
       .eq('slug', articleData.slug)
       .maybeSingle()
+
+    if (!existingArticle) {
+      articleData.author = await getDefaultImportedArticleAuthor(supabase)
+    }
+
+    if (!articleData.author) {
+      return NextResponse.json(
+        {
+          message: 'The import file is missing one or more required article fields.',
+          reason: 'Required field: author.',
+        },
+        { status: 400 }
+      )
+    }
 
     let result
     let action: 'created' | 'updated'

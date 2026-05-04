@@ -21,6 +21,11 @@ export const metadata: Metadata = {
   other: {
     'format-detection': 'telephone=no',
   },
+  alternates: {
+    types: {
+      'application/rss+xml': '/feed.xml',
+    },
+  },
 }
 
 export default function RootLayout({
