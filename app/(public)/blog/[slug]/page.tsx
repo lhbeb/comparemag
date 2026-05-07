@@ -100,7 +100,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   }
 
   // Generate structured data for SEO (Fully connected @graph)
-  const articleStructuredDataGraph = generateArticleStructuredDataGraph(article)
+  const articleStructuredDataGraph = generateArticleStructuredDataGraph(article, undefined, preloadedProducts)
 
   return (
     <>
