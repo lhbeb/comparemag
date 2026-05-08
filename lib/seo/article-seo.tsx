@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import type { Article } from '@/lib/supabase/types'
 import type { ProductCardData } from '@/components/blocks/product-card-embed'
 import { SITE_URL, TWITTER_HANDLE } from '@/lib/site-config'
+import { getArticleImageDeliveryUrl } from '@/lib/article-image-delivery'
 
 interface ArticleSEOProps {
   article: Article
@@ -10,7 +11,9 @@ interface ArticleSEOProps {
 
 export function generateArticleMetadata(article: Article, siteUrl: string = SITE_URL): Metadata {
   const url = `${siteUrl}/blog/${article.slug}`
-  const imageUrl = article.image_url || article.og_image || `${siteUrl}/placeholder.svg`
+  const imageUrl = article.image_url
+    ? getArticleImageDeliveryUrl(article.image_url, { absolute: true })
+    : article.og_image || `${siteUrl}/placeholder.svg`
   
   // Use provided meta description or generate from content
   const metaDescription = article.meta_description || article.content
@@ -322,7 +325,9 @@ export function generateArticleStructuredDataGraph(
   preloadedProducts: Record<string, ProductCardData> = {},
 ) {
   const url = `${siteUrl}/blog/${article.slug}`
-  const imageUrl = article.image_url || `${siteUrl}/placeholder.svg`
+  const imageUrl = article.image_url
+    ? getArticleImageDeliveryUrl(article.image_url, { absolute: true })
+    : `${siteUrl}/placeholder.svg`
   
   // Extract text content for description
   const description = stripHtml(article.content).substring(0, 200)

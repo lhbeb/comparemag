@@ -1,5 +1,4 @@
 import Link from "next/link"
-import Image from "next/image"
 import { Logo } from "@/components/logo"
 import { BookOpen, BrainCircuit, Clock, Twitter, Facebook, Linkedin, Rss, Mail, Github, User } from "lucide-react"
 import type { BlogPost } from "@/lib/data/blogPosts"
@@ -54,7 +53,7 @@ export function BlogPostContent({ post, article, preloadedProducts, authorProfil
                 {post.relatedPosts.slice(0, 3).map((relatedPost, index) => (
                   <Link href={`/blog/${relatedPost.slug}/`} className="group flex flex-col gap-3" key={index}>
                     <div className="relative h-40 w-full rounded-xl overflow-hidden shadow-sm border border-slate-100">
-                      <Image
+                      <SupabaseImage
                         src={relatedPost.image || "/placeholder.svg"}
                         alt={`${relatedPost.title} thumbnail`}
                         fill
@@ -189,7 +188,7 @@ export function BlogPostContent({ post, article, preloadedProducts, authorProfil
                   <Link href={`/blog/${relatedPost.slug}/`} className="group block h-full" key={index}>
                     <div className="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all duration-200 h-full flex flex-col">
                       <div className="relative h-48 w-full flex-shrink-0">
-                        <Image
+                        <SupabaseImage
                           src={relatedPost.image || "/placeholder.svg"}
                           alt={`${relatedPost.title} thumbnail`}
                           fill

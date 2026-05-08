@@ -1,4 +1,5 @@
 import Image from "next/image"
+import { getArticleImageDeliveryUrl, isArticleImageProxyUrl } from "@/lib/article-image-delivery"
 
 interface SupabaseImageProps {
   src: string
@@ -31,12 +32,15 @@ export function SupabaseImage({
   quality = 85,
   onLoad,
 }: SupabaseImageProps) {
-  const isRemoteUrl = typeof src === "string" && /^https?:\/\//i.test(src)
+  const deliveredSrc = getArticleImageDeliveryUrl(src)
+  const isRemoteUrl = typeof deliveredSrc === "string" && /^https?:\/\//i.test(deliveredSrc)
+  const isProxiedArticleImage = isArticleImageProxyUrl(deliveredSrc)
   const canUseNextImage = (() => {
+    if (isProxiedArticleImage) return false
     if (!isRemoteUrl) return true
 
     try {
-      const hostname = new URL(src).hostname.toLowerCase()
+      const hostname = new URL(deliveredSrc).hostname.toLowerCase()
       return (
         hostname === "images.unsplash.com" ||
         hostname.endsWith(".supabase.co") ||
@@ -52,7 +56,7 @@ export function SupabaseImage({
   if (!canUseNextImage) {
     return fill ? (
       <img
-        src={src}
+        src={deliveredSrc}
         alt={alt}
         className={className}
         loading={priority ? "eager" : "lazy"}
@@ -61,7 +65,7 @@ export function SupabaseImage({
       />
     ) : (
       <img
-        src={src}
+        src={deliveredSrc}
         alt={alt}
         width={width}
         height={height}
@@ -74,7 +78,7 @@ export function SupabaseImage({
 
   return (
     <Image
-      src={src}
+      src={deliveredSrc}
       alt={alt}
       fill={fill}
       width={width}

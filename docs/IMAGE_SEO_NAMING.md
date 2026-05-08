@@ -54,3 +54,21 @@ switch-v2-price-drop-amazon-may-2026.webp
 - Do not start alt text with filler like "image of" or "photo showing".
 - Decorative images must use `alt=""` explicitly.
 - Never keyword-stuff alt text.
+
+## Article Thumbnail Delivery
+
+Article thumbnails stored in Supabase under `article_images/articles/` are delivered through the CompareMag domain by default:
+
+```text
+https://comparemag.com/media/articles/{seo-file-name}
+```
+
+The proxy route is intentionally limited to those article thumbnail files. Product card images and other buckets still use their source URL.
+
+To switch article thumbnails back to direct Supabase URLs, set:
+
+```text
+NEXT_PUBLIC_ARTICLE_IMAGE_DELIVERY=supabase
+```
+
+Leaving the variable unset uses the CompareMag proxy route.

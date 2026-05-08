@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import { SITE_URL } from '@/lib/site-config'
+import { getArticleImageDeliveryUrl } from '@/lib/article-image-delivery'
 
 interface ArticleHeadProps {
   article: {
@@ -19,7 +20,9 @@ interface ArticleHeadProps {
 
 export function ArticleHead({ article, siteUrl = SITE_URL }: ArticleHeadProps) {
   const url = `${siteUrl}/blog/${article.slug}`
-  const imageUrl = article.image_url || `${siteUrl}/placeholder.svg`
+  const imageUrl = article.image_url
+    ? getArticleImageDeliveryUrl(article.image_url, { absolute: true })
+    : `${siteUrl}/placeholder.svg`
   const metaDescription = article.meta_description || article.title
 
   return (

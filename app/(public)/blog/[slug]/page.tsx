@@ -6,6 +6,7 @@ import type { BlogPost } from "@/lib/data/blogPosts"
 import { generateArticleMetadata, generateArticleStructuredDataGraph } from "@/lib/seo/article-seo"
 import { StructuredData } from "@/components/seo/structured-data"
 import { getPreloadProducts } from "@/lib/products/embed"
+import { getArticleImageDeliveryUrl } from "@/lib/article-image-delivery"
 import type { Metadata } from "next"
 
 // Required for static export - generates all static paths at build time
@@ -71,7 +72,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     .map(a => ({
       title: a.title,
       slug: a.slug,
-      image: a.image_url || "/placeholder.svg",
+      image: getArticleImageDeliveryUrl(a.image_url) || "/placeholder.svg",
       category: a.category,
     }))
 
@@ -94,7 +95,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     author: article.author,
     category: article.category,
     readTime: article.read_time,
-    image: article.image_url || "/placeholder.svg",
+    image: getArticleImageDeliveryUrl(article.image_url) || "/placeholder.svg",
     content: article.content,
     relatedPosts: relatedArticles,
   }
