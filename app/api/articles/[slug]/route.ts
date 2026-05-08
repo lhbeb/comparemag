@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { updateArticle, deleteArticle } from '@/lib/supabase/articles'
 import type { ArticleUpdate } from '@/lib/supabase/types'
 import { revalidatePath } from 'next/cache'
+import { safeSubmitIndexNowUrls } from '@/lib/indexnow'
 
 export async function PUT(
   request: NextRequest,
@@ -17,6 +18,8 @@ export async function PUT(
       author,
       category,
       image_url,
+      image_alt,
+      image_title,
       read_time,
       published,
       published_at,
@@ -44,6 +47,8 @@ export async function PUT(
     if (author !== undefined) updateData.author = author
     if (category !== undefined) updateData.category = category
     if (image_url !== undefined) updateData.image_url = image_url
+    if (image_alt !== undefined) updateData.image_alt = image_alt
+    if (image_title !== undefined) updateData.image_title = image_title
     if (read_time !== undefined) updateData.read_time = read_time
     if (published !== undefined) updateData.published = published
     if (published_at !== undefined) updateData.published_at = published_at
@@ -67,6 +72,9 @@ export async function PUT(
     const article = await updateArticle(resolvedParams.slug, updateData)
 
     revalidatePath('/', 'layout')
+    if (article.published) {
+      await safeSubmitIndexNowUrls([`/blog/${article.slug}`])
+    }
 
     return NextResponse.json(article)
   } catch (error) {
@@ -90,6 +98,7 @@ export async function DELETE(
     await deleteArticle(resolvedParams.slug)
 
     revalidatePath('/', 'layout')
+    await safeSubmitIndexNowUrls([`/blog/${resolvedParams.slug}`])
 
     return NextResponse.json({ message: 'Article deleted successfully' })
   } catch (error) {

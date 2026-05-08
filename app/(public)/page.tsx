@@ -22,7 +22,8 @@ export default async function Home() {
     description: article.content.replace(/<[^>]*>/g, '').substring(0, 200).trim() + '...',
     category: article.category,
     readTime: article.read_time || '5 min read',
-    image: article.image_url || '/placeholder.svg'
+    image: article.image_url || '/placeholder.svg',
+    imageAlt: article.image_alt || `${article.title}, ${article.category} review`
   }))
 
   return (
@@ -101,6 +102,7 @@ export default async function Home() {
                     title={article.title}
                     description={article.description}
                     image={article.image}
+                    imageAlt={article.imageAlt}
                     readTime={article.readTime}
                     category={article.category}
                     icon={iconMap[article.category] || <ShoppingBag className="h-5 w-5" />}
@@ -187,6 +189,7 @@ export default async function Home() {
                 readTime={article.readTime}
                 slug={article.slug}
                 image={article.image}
+                imageAlt={article.imageAlt}
               />
             ))}
           </div>

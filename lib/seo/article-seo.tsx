@@ -55,7 +55,7 @@ export function generateArticleMetadata(article: Article, siteUrl: string = SITE
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: article.title,
+          alt: article.image_alt || article.title,
         },
       ],
       locale: 'en_US',
@@ -393,6 +393,7 @@ export function generateArticleStructuredDataGraph(
         inLanguage: 'en-US',
         url: imageUrl,
         contentUrl: imageUrl,
+        caption: article.image_alt || article.title,
       },
       {
         '@type': 'WebPage',

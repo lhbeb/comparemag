@@ -50,6 +50,8 @@ export async function GET(
           author: article.author,
           category: article.category,
           image_url: article.image_url,
+          image_alt: article.image_alt,
+          image_title: article.image_title,
           read_time: article.read_time,
           published: article.published,
           article_type: article.article_type,

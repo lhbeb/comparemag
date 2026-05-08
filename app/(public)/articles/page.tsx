@@ -94,6 +94,7 @@ export default async function ArticlesPage() {
                   date={format(new Date(article.created_at), 'MMMM d, yyyy')}
                   slug={article.slug}
                   image={article.image_url || "/placeholder.svg"}
+                  imageAlt={article.image_alt || `${article.title}, ${article.category} review`}
                 />
               )
             })}
@@ -106,12 +107,12 @@ export default async function ArticlesPage() {
   )
 }
 
-function ArticleCard({ title, description, category, date, slug = "", image }: any) {
+function ArticleCard({ title, description, category, date, slug = "", image, imageAlt }: any) {
   return (
     <Link href={`/blog/${slug}/`} className="group">
       <div className="space-y-3">
         <div className="relative h-48 rounded-lg overflow-hidden border border-gray-200 group-hover:border-blue-300 transition-colors shadow-sm group-hover:shadow-md">
-          <SupabaseImage src={image || "/placeholder.svg"} alt={`${title} thumbnail`} fill className="object-cover" />
+          <SupabaseImage src={image || "/placeholder.svg"} alt={imageAlt || `${title} thumbnail`} fill className="object-cover" />
         </div>
         <div>
           <div className="flex items-center gap-2 text-xs text-blue-600 mb-2 font-medium min-w-0">

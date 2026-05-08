@@ -65,6 +65,8 @@ export interface Database {
           author: string
           category: string
           image_url: string | null
+          image_alt: string | null
+          image_title: string | null
           read_time: string
           published: boolean
           created_at: string
@@ -96,6 +98,8 @@ export interface Database {
           generation_status?: string | null
           id?: string
           image_url?: string | null
+          image_alt?: string | null
+          image_title?: string | null
           meta_description?: string | null
           meta_keywords?: string | null
           og_description?: string | null
@@ -126,6 +130,8 @@ export interface Database {
           generation_status?: string | null
           id?: string
           image_url?: string | null
+          image_alt?: string | null
+          image_title?: string | null
           meta_description?: string | null
           meta_keywords?: string | null
           og_description?: string | null

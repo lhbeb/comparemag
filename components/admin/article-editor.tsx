@@ -26,6 +26,14 @@ import Link from 'next/link'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
 import { ArticleRenderer, compileArticleSourceToHtml } from '@/components/article-renderer'
 import { SITE_DOMAIN } from '@/lib/site-config'
+import {
+  addUniqueSuffix,
+  buildArticleThumbnailAlt,
+  buildArticleThumbnailFileName,
+  buildInlineImageFileName,
+  getArticleYear,
+  getImageExtension,
+} from '@/lib/seo/image-naming'
 
 interface SerializedSelectionPoint {
   path: number[]
@@ -47,6 +55,8 @@ interface ArticleEditorProps {
     author: string
     category: string
     image_url: string | null
+    image_alt?: string | null
+    image_title?: string | null
     read_time: string
     published: boolean
     meta_description?: string | null
@@ -189,6 +199,14 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   
   const [readTime, setReadTime] = useState(initialData?.read_time || '5 min read')
   const [imageUrl, setImageUrl] = useState(initialData?.image_url || '')
+  const [imageAlt, setImageAlt] = useState(
+    initialData?.image_alt || buildArticleThumbnailAlt({
+      title: initialData?.title || '',
+      category: initialData?.category || categories[0] || '',
+      year: getArticleYear(initialData?.published_at),
+    }),
+  )
+  const [imageTitle, setImageTitle] = useState(initialData?.image_title || '')
   const [metaDescription, setMetaDescription] = useState(initialData?.meta_description || '')
   const [metaKeywords, setMetaKeywords] = useState(initialData?.meta_keywords || '')
   const [focusKeyword, setFocusKeyword] = useState(initialData?.focus_keyword || '')
@@ -832,6 +850,13 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
   const handleTitleChange = (value: string) => {
     setTitle(value)
     if (mode === 'create' && !initialData?.slug) setSlug(generateSlug(value))
+    if (!initialData?.image_alt && (!imageAlt.trim() || imageAlt === buildArticleThumbnailAlt({ title, category, year: getArticleYear(initialData?.published_at) }))) {
+      setImageAlt(buildArticleThumbnailAlt({
+        title: value,
+        category,
+        year: getArticleYear(initialData?.published_at),
+      }))
+    }
   }
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -839,7 +864,14 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     if (!file.type.startsWith('image/')) { toast({ title: 'Invalid file type', variant: 'destructive' }); return }
     setUploading(true)
     try {
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${file.name.split('.').pop()}`
+      const extension = getImageExtension(file.name, file.type.split('/')[1] || 'webp')
+      const baseFileName = buildArticleThumbnailFileName({
+        title: title || slug || 'comparemag-review',
+        category,
+        year: getArticleYear(initialData?.published_at),
+        extension,
+      })
+      const fileName = addUniqueSuffix(baseFileName)
       const { error: uploadError } = await supabase.storage.from('article_images').upload(`articles/${fileName}`, file, {
         cacheControl: '31536000',
         upsert: false,
@@ -847,6 +879,14 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
       if (uploadError) throw uploadError
       const { data } = supabase.storage.from('article_images').getPublicUrl(`articles/${fileName}`)
       setImageUrl(data.publicUrl)
+      setImageTitle(baseFileName.replace(/\.[^.]+$/, '').replace(/-/g, ' '))
+      if (!imageAlt.trim()) {
+        setImageAlt(buildArticleThumbnailAlt({
+          title: title || slug || 'CompareMag product review',
+          category,
+          year: getArticleYear(initialData?.published_at),
+        }))
+      }
       toast({ title: 'Image uploaded' })
     } catch (error: any) {
       toast({ title: 'Upload failed', description: error.message, variant: 'destructive' })
@@ -865,7 +905,14 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
     setUploading(true)
 
     try {
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${file.name.split('.').pop()}`
+      const imageAlt = file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').trim() || `${title || 'Article'} image`
+      const imageCaption = window.prompt('Optional image quote/caption (leave empty to skip):', '') || ''
+      const extension = getImageExtension(file.name, file.type.split('/')[1] || 'webp')
+      const fileName = addUniqueSuffix(buildInlineImageFileName({
+        articleTitle: title || slug || 'comparemag-article',
+        imageAlt,
+        extension,
+      }))
       const storagePath = `articles/inline/${fileName}`
       const { error: uploadError } = await supabase.storage.from('article_images').upload(storagePath, file, {
         cacheControl: '31536000',
@@ -875,8 +922,6 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
       if (uploadError) throw uploadError
 
       const { data } = supabase.storage.from('article_images').getPublicUrl(storagePath)
-      const imageAlt = file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').trim() || 'Article image'
-      const imageCaption = window.prompt('Optional image quote/caption (leave empty to skip):', '') || ''
       const imageBlockHtml = buildInlineImageBlockHtml({
         imageUrl: data.publicUrl,
         alt: imageAlt,
@@ -991,6 +1036,8 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
         og_image: derivedOgImage || null,
         canonical_url: canonicalUrl || null,
         listed_by: listedBy || null,
+        image_alt: imageAlt || null,
+        image_title: imageTitle || null,
       }
 
       const apiUrl = mode === 'create'
@@ -1677,7 +1724,7 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                >
                   {imageUrl ? (
                     <>
-                      <img src={imageUrl} className="w-full aspect-[1.91/1] object-cover" alt="Featured" />
+                      <img src={imageUrl} className="w-full aspect-[1.91/1] object-cover" alt={imageAlt || title || 'Featured article image'} />
                       <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center gap-3 transition-opacity duration-200 backdrop-blur-[2px]">
                         <Button variant="secondary" size="sm" onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click() }} className="h-8 font-bold w-32 border-none">Replace Image</Button>
                         <Button variant="destructive" size="sm" onClick={(e) => { e.stopPropagation(); setImageUrl('') }} className="h-8 font-bold w-32">Remove</Button>
@@ -1700,6 +1747,27 @@ export function ArticleEditor({ initialData, mode, initialWriters = [], initialP
                   placeholder="Or paste an exact URL..." 
                   className="text-xs bg-slate-50 border-slate-200 h-9 font-mono"
                />
+               <div className="space-y-2 rounded-xl border border-slate-100 bg-slate-50/60 p-3">
+                 <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Image Alt Text</Label>
+                 <Textarea
+                   value={imageAlt}
+                   onChange={(e) => setImageAlt(e.target.value)}
+                   placeholder="Canon G7X Mark III review 2026 for photography"
+                   className="min-h-[76px] resize-none border-slate-200 bg-white text-xs leading-relaxed"
+                 />
+                 <p className="text-[10px] leading-4 text-slate-400">
+                   Describe the image naturally for Google Images and accessibility. Do not paste the filename or stuff keywords.
+                 </p>
+               </div>
+               <div className="space-y-2">
+                 <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Image Title / Filename Label</Label>
+                 <Input
+                   value={imageTitle}
+                   onChange={(e) => setImageTitle(e.target.value)}
+                   placeholder="canon g7x mark iii review 2026 good for photography"
+                   className="text-xs bg-slate-50 border-slate-200 h-9"
+                 />
+               </div>
             </div>
           </div>
 

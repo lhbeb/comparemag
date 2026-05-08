@@ -12,9 +12,10 @@ interface ArticleCardProps {
   readTime: string
   slug: string
   image: string
+  imageAlt?: string
 }
 
-export function LazyArticleCard({ title, description, category, readTime, slug, image }: ArticleCardProps) {
+export function LazyArticleCard({ title, description, category, readTime, slug, image, imageAlt }: ArticleCardProps) {
   const [isVisible, setIsVisible] = useState(false)
   const [imageLoaded, setImageLoaded] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
@@ -51,7 +52,7 @@ export function LazyArticleCard({ title, description, category, readTime, slug, 
               )}
               <SupabaseImage
                 src={image || "/placeholder.svg"}
-                alt={`${title} thumbnail`}
+                alt={imageAlt || `${title} thumbnail`}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

@@ -14,9 +14,10 @@ interface FeaturedCardProps {
   category: string
   icon: React.ReactNode
   slug: string
+  imageAlt?: string
 }
 
-export function LazyFeaturedCard({ title, description, image, readTime, category, icon, slug }: FeaturedCardProps) {
+export function LazyFeaturedCard({ title, description, image, readTime, category, icon, slug, imageAlt }: FeaturedCardProps) {
   const [isVisible, setIsVisible] = useState(false)
   const [imageLoaded, setImageLoaded] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
@@ -53,7 +54,7 @@ export function LazyFeaturedCard({ title, description, image, readTime, category
               )}
               <SupabaseImage
                 src={image || "/placeholder.svg"}
-                alt={title}
+                alt={imageAlt || title}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                 sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"

@@ -9,7 +9,11 @@
     "start": "next start",
     "db:health": "tsx scripts/check-db-health.ts",
     "migrate:articles": "tsx scripts/migrate-articles-to-supabase.ts",
-    "update:authors": "tsx scripts/update-all-authors.ts"
+    "update:authors": "tsx scripts/update-all-authors.ts",
+    "seo:rename-article-images": "tsx scripts/seo-rename-article-images.ts",
+    "seo:list-skipped-article-images": "tsx scripts/list-skipped-article-images.ts",
+    "indexnow:submit": "tsx scripts/indexnow-submit.ts",
+    "indexnow:submit-all-articles": "tsx scripts/indexnow-submit-all-articles.ts"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",

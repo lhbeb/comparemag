@@ -37,9 +37,9 @@ export function BlogPostContent({ post, article, preloadedProducts, authorProfil
   ]
 
   // Generate proper alt text for hero image
-  const heroImageAlt = article?.image_url 
-    ? `${post.title} - Featured image for article about ${post.category}`
-    : 'Article hero image'
+  const heroImageAlt = article?.image_alt || (article?.image_url
+    ? `${post.title}, ${post.category} review`
+    : 'Article hero image')
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">

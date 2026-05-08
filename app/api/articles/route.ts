@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createArticle } from '@/lib/supabase/articles'
 import type { ArticleInsert } from '@/lib/supabase/types'
 import { revalidatePath } from 'next/cache'
+import { safeSubmitIndexNowUrls } from '@/lib/indexnow'
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,6 +14,8 @@ export async function POST(request: NextRequest) {
       author,
       category,
       image_url,
+      image_alt,
+      image_title,
       read_time,
       published,
       published_at,
@@ -47,6 +50,8 @@ export async function POST(request: NextRequest) {
       author,
       category,
       image_url: image_url || null,
+      image_alt: image_alt || null,
+      image_title: image_title || null,
       read_time: read_time || '5 min read',
       published: published || false,
       published_at: published_at || null,
@@ -69,6 +74,9 @@ export async function POST(request: NextRequest) {
     const article: any = await createArticle(articleData)
 
     revalidatePath('/', 'layout')
+    if (article.published) {
+      await safeSubmitIndexNowUrls([`/blog/${article.slug}`])
+    }
 
     return NextResponse.json(article, { status: 201 })
   } catch (error) {

@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { createArticle, updateArticle } from '@/lib/supabase/articles'
 import type { ArticleInsert, ArticleUpdate } from '@/lib/supabase/types'
+import { safeSubmitIndexNowUrls } from '@/lib/indexnow'
 
 const DEFAULT_IMPORTED_ARTICLE_AUTHOR = 'Adam Molina'
 
@@ -15,6 +16,8 @@ type ImportedArticleSettings = {
   author?: string
   category?: string
   image_url?: string | null
+  image_alt?: string | null
+  image_title?: string | null
   read_time?: string
   published?: boolean
   article_type?: string | null
@@ -64,6 +67,8 @@ function buildArticlePayload(settings: ImportedArticleSettings): ArticleInsert {
     author: settings.author || '',
     category: settings.category || '',
     image_url: settings.image_url || null,
+    image_alt: settings.image_alt || null,
+    image_title: settings.image_title || null,
     read_time: settings.read_time || '5 min read',
     published: Boolean(settings.published),
     published_at: settings.published ? settings.published_at || new Date().toISOString() : null,
@@ -171,6 +176,9 @@ export async function POST(request: NextRequest) {
     }
 
     revalidatePath('/', 'layout')
+    if (result.published) {
+      await safeSubmitIndexNowUrls([`/blog/${result.slug}`])
+    }
 
     return NextResponse.json(
       {

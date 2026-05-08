@@ -194,7 +194,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
                  <div className="relative h-[300px] sm:h-[400px] w-full rounded-2xl overflow-hidden mb-6 border border-slate-200 shadow-sm">
                    <SupabaseImage
                      src={heroArticle.image_url || "/placeholder.svg"}
-                     alt={heroArticle.title}
+                     alt={heroArticle.image_alt || `${heroArticle.title}, ${heroArticle.category} review`}
                      fill
                      className="object-cover transition-transform duration-500 group-hover:scale-105"
                      priority
@@ -227,7 +227,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
                     <div className="relative w-24 h-24 sm:w-32 sm:h-24 rounded-lg overflow-hidden flex-shrink-0 border border-slate-200">
                       <SupabaseImage
                         src={article.image_url || "/placeholder.svg"}
-                        alt={article.title}
+                        alt={article.image_alt || `${article.title}, ${article.category} review`}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-110"
                       />
