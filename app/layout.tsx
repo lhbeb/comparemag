@@ -1,6 +1,7 @@
 import type React from "react"
 import "./globals.css"
 import type { Metadata } from "next"
+import Script from "next/script"
 import { Toaster } from "@/components/ui/toaster"
 import SessionTracker from "@/components/SessionTracker"
 import { DM_Sans } from "next/font/google"
@@ -44,6 +45,15 @@ export default function RootLayout({
         {children}
         <Toaster />
         <SessionTracker />
+        <Script id="microsoft-clarity" strategy="afterInteractive">
+          {`
+            (function(c,l,a,r,i,t,y){
+              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
+              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "wnurg5z4y3");
+          `}
+        </Script>
       </body>
     </html>
   )
