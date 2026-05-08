@@ -38,6 +38,7 @@ export default function RootLayout({
       <head>
         <link rel="dns-prefetch" href="https://fgkvrbdpmwyfjvpubzxn.supabase.co" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        <meta name="msvalidate.01" content="75494FC1101908256EEEA046C47C3264" />
       </head>
       <body className={`${dmSans.variable} font-sans flex flex-col min-h-screen overflow-x-hidden`}>
         {children}
