@@ -15,14 +15,17 @@ interface FeaturedCardProps {
   icon: React.ReactNode
   slug: string
   imageAlt?: string
+  eager?: boolean
 }
 
-export function LazyFeaturedCard({ title, description, image, readTime, category, icon, slug, imageAlt }: FeaturedCardProps) {
-  const [isVisible, setIsVisible] = useState(false)
+export function LazyFeaturedCard({ title, description, image, readTime, category, icon, slug, imageAlt, eager = false }: FeaturedCardProps) {
+  const [isVisible, setIsVisible] = useState(eager)
   const [imageLoaded, setImageLoaded] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    if (eager) return
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -40,7 +43,7 @@ export function LazyFeaturedCard({ title, description, image, readTime, category
     }
 
     return () => observer.disconnect()
-  }, [])
+  }, [eager])
 
   return (
     <div ref={cardRef} className="h-full">
@@ -58,6 +61,7 @@ export function LazyFeaturedCard({ title, description, image, readTime, category
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                 sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"
+                priority={eager}
                 onLoad={() => setImageLoaded(true)}
               />
             </div>
@@ -67,7 +71,7 @@ export function LazyFeaturedCard({ title, description, image, readTime, category
               <h3 className="font-bold tracking-tight text-slate-900 text-xl leading-[1.2] mb-2 group-hover:text-blue-700 transition-colors duration-200 line-clamp-2">
                 {title}
               </h3>
-              <p className="text-slate-500 text-[15px] leading-relaxed line-clamp-2 flex-1">
+              <p className="text-slate-600 text-[15px] leading-relaxed line-clamp-2 flex-1">
                 {description}
               </p>
 

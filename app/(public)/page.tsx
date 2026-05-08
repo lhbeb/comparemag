@@ -36,7 +36,7 @@ export default async function Home() {
               <h1 className="text-5xl md:text-6xl lg:text-[4.2rem] font-extrabold leading-[1.05] tracking-tight break-words text-white">
                 Real Reviews. Best Prices. Smart Choices.
               </h1>
-              <p className="text-lg text-white/80 leading-relaxed font-medium max-w-xl">
+              <p className="text-lg text-white/90 leading-relaxed font-medium max-w-xl">
                 In-depth product reviews, breaking consumer news, and side-by-side price comparisons so you always buy better.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
@@ -52,7 +52,7 @@ export default async function Home() {
                 </Button>
               </div>
             </div>
-            <div className="relative h-[260px] sm:h-[340px] lg:h-[400px] rounded-xl overflow-hidden bg-white">
+            <div className="relative hidden h-[340px] rounded-xl overflow-hidden bg-white md:block lg:h-[400px]">
               <Image
                 src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1200&h=800&auto=format&fit=crop"
                 alt="Shopping and product comparison concept"
@@ -60,7 +60,7 @@ export default async function Home() {
                 className="object-cover"
                 priority
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                quality={85}
+                quality={72}
               />
               <div
                 aria-hidden="true"
@@ -107,6 +107,7 @@ export default async function Home() {
                     category={article.category}
                     icon={iconMap[article.category] || <ShoppingBag className="h-5 w-5" />}
                     slug={article.slug}
+                    eager
                   />
                 )
               })
@@ -121,7 +122,7 @@ export default async function Home() {
               <div className="section-heading max-w-2xl">
                 <div>
                   <h2 className="text-3xl md:text-[2.5rem] leading-tight tracking-tight font-bold text-slate-900 mb-3">Meet the Experts</h2>
-                  <p className="text-slate-500 text-base mt-2 leading-relaxed max-w-2xl">
+                  <p className="text-slate-600 text-base mt-2 leading-relaxed max-w-2xl">
                     Our editors believe in innovation that helps you succeed in work and life. They research and review so you can move forward today.
                   </p>
                 </div>

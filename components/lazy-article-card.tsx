@@ -65,7 +65,7 @@ export function LazyArticleCard({ title, description, category, readTime, slug, 
               <h3 className="font-bold tracking-tight text-slate-900 text-xl leading-[1.2] mb-2 group-hover:text-blue-700 transition-colors duration-200 line-clamp-2">
                 {title}
               </h3>
-              <p className="text-slate-500 text-[15px] leading-relaxed line-clamp-3 flex-1">
+              <p className="text-slate-600 text-[15px] leading-relaxed line-clamp-3 flex-1">
                 {description}
               </p>
 
