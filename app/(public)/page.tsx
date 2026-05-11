@@ -86,7 +86,7 @@ export default async function Home() {
             {articles.length === 0 ? (
               <div className="col-span-1 sm:col-span-2 lg:col-span-4 text-center py-8 text-gray-600">No articles yet</div>
             ) : (
-              articles.slice(0, 4).map((article) => {
+              articles.slice(0, 4).map((article, index) => {
                 const iconMap: Record<string, React.ReactElement> = {
                   "Electronics": <ShoppingBag className="h-5 w-5" />,
                   "Smartphones": <ShoppingBag className="h-5 w-5" />,
@@ -107,7 +107,7 @@ export default async function Home() {
                     category={article.category}
                     icon={iconMap[article.category] || <ShoppingBag className="h-5 w-5" />}
                     slug={article.slug}
-                    eager
+                    eager={index === 0}
                   />
                 )
               })
@@ -165,7 +165,11 @@ export default async function Home() {
                     {editor.bio && (
                       <p className="expert-card-bio line-clamp-3">{editor.bio}</p>
                     )}
-                    <Link href={`/writers/${editor.slug}`} className="expert-card-link">
+                    <Link
+                      href={`/writers/${editor.slug}`}
+                      className="expert-card-link"
+                      aria-label={`Full bio and credentials for ${editor.name}`}
+                    >
                       Full bio & credentials →
                     </Link>
                   </div>

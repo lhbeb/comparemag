@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { getArticleImageDeliveryUrl, isArticleImageProxyUrl } from "@/lib/article-image-delivery"
+import { getArticleImageDeliveryUrl } from "@/lib/article-image-delivery"
 
 interface SupabaseImageProps {
   src: string
@@ -34,9 +34,7 @@ export function SupabaseImage({
 }: SupabaseImageProps) {
   const deliveredSrc = getArticleImageDeliveryUrl(src)
   const isRemoteUrl = typeof deliveredSrc === "string" && /^https?:\/\//i.test(deliveredSrc)
-  const isProxiedArticleImage = isArticleImageProxyUrl(deliveredSrc)
   const canUseNextImage = (() => {
-    if (isProxiedArticleImage) return false
     if (!isRemoteUrl) return true
 
     try {
