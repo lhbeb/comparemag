@@ -6,16 +6,16 @@ export default function ImportArticlesPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">Import Articles</h1>
         <p className="text-slate-500 mt-2">
-          Upload a CompareMag article export file to create or update an article with its full editor settings and HTML-ready content.
+          Upload one or more CompareMag article export files to create or update articles with their full editor settings and HTML-ready content.
         </p>
       </div>
 
       <div className="bg-white border border-slate-200 rounded-xl p-8 shadow-sm">
         <div className="max-w-2xl">
-          <h2 className="text-xl font-bold text-slate-900 mb-2">Accepts exported article JSON</h2>
+          <h2 className="text-xl font-bold text-slate-900 mb-2">Accepts exported article JSON files</h2>
           <p className="text-sm leading-6 text-slate-600 mb-6">
-            The importer accepts the article export file from the admin dashboard. If the imported slug already exists,
-            the article is updated in place. If it does not exist, a new article is created.
+            The importer accepts one or multiple article export files from the admin dashboard. Files are processed one by one.
+            If an imported slug already exists, the article is updated in place. If it does not exist, a new article is created.
           </p>
 
           <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6">
