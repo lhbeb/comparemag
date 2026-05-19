@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Logo } from "@/components/logo"
-import { Github, Linkedin, Mail, Twitter, MapPin } from "lucide-react"
+import { Github, Linkedin, Mail, Newspaper, Twitter, MapPin } from "lucide-react"
 import { CONTACT_EMAIL, SITE_DOMAIN, TWITTER_HANDLE } from "@/lib/site-config"
 
 const footerSocialLinks = [
@@ -18,6 +18,11 @@ const footerSocialLinks = [
     href: 'https://linkedin.com/company/comparemag',
     label: 'CompareMag on LinkedIn',
     icon: Linkedin,
+  },
+  {
+    href: 'https://comparemag.substack.com/',
+    label: 'CompareMag on Substack',
+    icon: Newspaper,
   },
 ]
 

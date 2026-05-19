@@ -23,12 +23,22 @@ function stripHtml(value: string) {
   return value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
 }
 
+function stripFeedShortcodes(value: string) {
+  return value
+    .replace(/\[product-card:[^\]]+\]/gi, '')
+    .replace(/<amazon-product-card\b[^>]*>\s*<\/amazon-product-card>/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 function getExcerpt(article: { meta_description?: string | null; og_description?: string | null; content?: string | null }) {
-  return (
+  const excerpt = (
     article.meta_description ||
     article.og_description ||
     stripHtml(article.content || '').slice(0, 240)
   ).trim()
+
+  return stripFeedShortcodes(excerpt)
 }
 
 function absolutizeHtmlUrls(html: string) {
@@ -124,8 +134,23 @@ function renderAmazonProductCard(tag: string) {
 function renderProductCardsForFeed(html: string, productsBySlug: Map<string, ProductCard>) {
   return html
     .replace(/\[product-card:([^\]]+)\]/gi, (match, slug) => {
-      const product = productsBySlug.get(String(slug).trim())
-      return product ? buildPortableProductCard(product) : match
+      const productSlug = String(slug).trim()
+      const product = productsBySlug.get(productSlug)
+
+      if (product) {
+        return buildPortableProductCard(product)
+      }
+
+      const readableTitle = productSlug
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, (letter) => letter.toUpperCase())
+
+      return `
+        <div>
+          <h3>${escapeXml(readableTitle)}</h3>
+          <p>This product card is available in the original CompareMag article.</p>
+        </div>
+      `
     })
     .replace(/<amazon-product-card\b[^>]*>\s*<\/amazon-product-card>/gi, (tag) => {
       return renderAmazonProductCard(tag)
@@ -174,7 +199,7 @@ function getImageMimeType(url: string) {
 export async function GET() {
   const [articles, products] = await Promise.all([
     getAllArticles(true),
-    getAllProducts(true),
+    getAllProducts(false),
   ])
   const productsBySlug = new Map(products.map((product) => [product.slug, product]))
 
